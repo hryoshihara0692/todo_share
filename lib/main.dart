@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:todo_share/widgets/admob_banner.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Google Mobile Ads SDK を初期化
+  MobileAds.instance.initialize();
+
   runApp(const MyApp());
 }
 
@@ -56,6 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            AdMobBanner(),
           ],
         ),
       ),
