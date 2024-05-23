@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       key: _scaffoldKey,
       appBar: AppBar(
         toolbarHeight: 64.0,
-        backgroundColor: Color.fromARGB(255, 255, 247, 223),
+        backgroundColor: Color.fromARGB(255, 249, 245, 236),
         leading: Builder(
           builder: (context) {
             return Container(
@@ -42,6 +43,30 @@ class _HomePageState extends State<HomePage> {
               ),
             );
           },
+        ),
+        centerTitle: true,
+        title: Text(
+          '吉原家',
+          style: TextStyle(
+            fontSize: 40,
+            fontFamily: GoogleFonts.notoSansJp(
+              textStyle: TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
+            ).fontFamily,
+            shadows: [
+              Shadow(
+                // blurRadius: 40.0,
+                // // color: Color.fromRGBO(225, 222, 229, 0.5)
+                // color: Colors.red,
+                // offset: Offset.zero,
+                color: Color.fromARGB(255, 195, 195, 195),
+                blurRadius: 0, // ぼかしの半径を0に設定
+                offset: Offset(0, 2.5), // シャドウのオフセットを設定
+              ),
+
+            ],
+          ),
         ),
         actions: [
           Stack(
