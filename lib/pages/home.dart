@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 
@@ -141,12 +138,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      ///
+      /// ボディ
+      ///
       body: Container(
         color: Color.fromARGB(255, 249, 245, 236),
         child: Column(
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+              ///
+              /// TODOリスト一覧
+              ///
               child: SizedBox(
                 height: 48,
                 child: ListView.builder(
@@ -156,8 +159,10 @@ class _HomePageState extends State<HomePage> {
                     final todo = todoListCollection[index];
                     final isSelected = todo == selectedTodoList;
 
+                    // todoListCollectionのTODOリストを順番に表示する
                     return Container(
-                      margin: EdgeInsets.fromLTRB(2.0, 4, 2, 4),
+                      // 左右のTODOリストと2x2で4開けて、上下は4開ける
+                      margin: EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 4.0),
                       child: isSelected
                           ? ElevatedButton(
                               onPressed: () {},
@@ -201,23 +206,22 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+            ///
+            /// TODO追加ボタン
+            ///
             Padding(
               padding: EdgeInsets.only(bottom: 30),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
+                  ///
+                  /// ボタン本体
+                  ///
                   Container(
                     width: 200,
                     height: 50,
+                    // ボタンの形と影を設定する
                     decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromRGBO(255, 143, 158, 1),
-                            Color.fromRGBO(255, 188, 143, 1),
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
                         borderRadius: const BorderRadius.all(
                           Radius.circular(25.0),
                         ),
@@ -232,18 +236,15 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         print('Tapおっけー');
                       },
+                      // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: 12),
                         foregroundColor: Colors.white,
                         backgroundColor: Color.fromARGB(255, 69, 206, 237),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
                         side: BorderSide(color: Colors.black, width: 2),
-                        elevation: 100,
-                        shadowColor: Colors.black,
                       ),
                       child: Padding(
+                        // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
                         padding: EdgeInsets.fromLTRB(0, 0, 24, 4),
                         child: Text(
                           'TODOを追加',
@@ -266,6 +267,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  // TODO追加ボタン用の指マーク
                   Positioned(
                     right: -30,
                     top: 2,
