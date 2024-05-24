@@ -38,6 +38,9 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         toolbarHeight: 64.0,
         backgroundColor: Color.fromARGB(255, 249, 245, 236),
+        ///
+        /// ハンバーガーメニュー
+        ///
         leading: Transform.translate(
           offset: const Offset(20, 0),
           child: Container(
@@ -54,6 +57,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+        ///
+        /// グループ名
+        ///
         centerTitle: true,
         title: Text(
           '吉原家',
@@ -73,6 +79,9 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+        ///
+        /// 通知ボタン
+        ///
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.0),
@@ -114,6 +123,9 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+      ///
+      /// サイドメニュー
+      ///
       drawer: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
