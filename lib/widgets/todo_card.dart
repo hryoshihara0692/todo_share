@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/utils/modal_utils.dart';
+import 'package:todo_share/widgets/delete_dialog.dart';
 
 class TodoCard extends StatelessWidget {
   const TodoCard({
@@ -44,15 +46,32 @@ class TodoCard extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'お米あああああああああああああああああああああああああああああああああああああああああああ',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontFamily: GoogleFonts.notoSansJp().fontFamily,
-                  height: 1.0, // ここで行間を設定
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(0),
+                ),
+                onPressed: () {
+                  showModal(context);
+                },
+                onLongPress: () {
+                  showDialog<void>(
+                    context: context,
+                    builder: (_) {
+                      return DeleteDialog();
+                    },
+                  );
+                },
+                child: Text(
+                  'お米あああああああああああああああああああああああああああああああああああああああああああ',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 24,
+                    fontFamily: GoogleFonts.notoSansJp().fontFamily,
+                    height: 1.0, // ここで行間を設定
+                  ),
                 ),
               ),
             ),

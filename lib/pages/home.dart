@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/widgets/add_todo_modal.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:todo_share/widgets/todo_card.dart';
 import 'package:todo_share/widgets/todolist_collection.dart';
+import 'package:todo_share/utils/modal_utils.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -244,7 +246,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: ElevatedButton(
                       onPressed: () {
-                        print('Tapおっけー');
+                        // print('Tapおっけー');
+                        showModal(context);
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(
@@ -283,7 +286,8 @@ class _HomePageState extends State<HomePage> {
                     top: 2,
                     child: InkWell(
                       onTap: () {
-                        print('Tapおっけー');
+                        // print('Tapおっけー');
+                        showModal(context);
                       },
                       child: Image.asset(
                         'assets/images/add_todo_button.png',
