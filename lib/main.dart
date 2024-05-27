@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:todo_share/pages/home.dart';
 
@@ -8,7 +9,11 @@ void main() {
   // Google Mobile Ads SDK を初期化
   MobileAds.instance.initialize();
 
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

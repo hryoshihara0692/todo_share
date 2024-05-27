@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
+import 'package:todo_share/widgets/todo_card.dart';
+import 'package:todo_share/widgets/todolist_collection.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,17 +23,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  var todoListCollection = [
-    '買い物リスト',
-    'やることリスト',
-    '引っ越し',
-    'TODOリスト',
-    'お返しリスト',
-    '電話帳',
-    'おいしかったご飯'
-  ];
-  var selectedTodoList = '買い物リスト';
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +80,7 @@ class _HomePageState extends State<HomePage> {
         ///
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 20.0),
+            padding: EdgeInsets.only(right: 8.0),
             child: Stack(
               children: [
                 TextButton(
@@ -168,72 +159,8 @@ class _HomePageState extends State<HomePage> {
             /// TODOリスト一覧
             ///
             Padding(
-              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: SizedBox(
-                height: 48,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: todoListCollection.length,
-                  itemBuilder: (context, index) {
-                    final todo = todoListCollection[index];
-                    final isSelected = todo == selectedTodoList;
-
-                    // todoListCollectionのTODOリストを順番に表示する
-                    return Container(
-                      // 左右のTODOリストと2x2で4開けて、上下は4開ける
-                      margin: EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 4.0),
-                      child: isSelected
-                          ? ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
-                                foregroundColor: Colors.white,
-                                backgroundColor: Color.fromARGB(255, 15, 9, 64),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              child: Text(
-                                todo,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts.notoSansJp(
-                                    textStyle: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ).fontFamily,
-                                ),
-                              ),
-                            )
-                          : TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedTodoList = todo;
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 12),
-                                foregroundColor: Color.fromARGB(255, 15, 9, 64),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                              ),
-                              child: Text(
-                                todo,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: GoogleFonts.notoSansJp(
-                                    textStyle: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ).fontFamily,
-                                ),
-                              ),
-                            ),
-                    );
-                  },
-                ),
-              ),
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
+              child: TodoListCollection(),
             ),
 
             ///
@@ -241,106 +168,44 @@ class _HomePageState extends State<HomePage> {
             ///
             Expanded(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(24, 8, 24, 8),
-                child: Column(
+                padding: EdgeInsets.fromLTRB(24, 8, 20, 8),
+                child: ListView(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 80,
-                      // TODOの形と影を設定する
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(10.0),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 0,
-                            offset: Offset(5, 5),
-                          )
-                        ],
-                        border: Border.all(color: Colors.black, width: 2.0),
-                      ),
-                      child: Row(
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: Column(
                         children: [
-                          InkWell(
-                            onTap: () {
-                              print('Tapおっけー');
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Image.asset(
-                                'assets/images/check_button.png',
-                                width: 48,
-                                height: 48,
-                              ),
-                            ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Text(
-                                'お米あああああああああああああああああああああああああああああああああああああああああああ',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
-                                  fontFamily:
-                                      GoogleFonts.notoSansJp().fontFamily,
-                                  height: 1.0, // ここで行間を設定
-                                ),
-                              ),
-                            ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
                           ),
-                          Container(
-                            width: 80.0,
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: 32.0,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          width: 32.0,
-                                          height: 32.0,
-                                          child: Image.asset(
-                                              'assets/images/add_user_button.png'),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 4.0,
-                                  ),
-                                  Container(
-                                    height: 24.0,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          width: 24.0,
-                                          height: 24.0,
-                                          child: Image.asset(
-                                              'assets/images/Deadline.jpeg'),
-                                        ),
-                                        Container(
-                                          width: 24.0,
-                                          height: 24.0,
-                                          child: Image.asset(
-                                              'assets/images/Memo.png'),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
+                          ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
+                          ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
+                          ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
+                          ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
+                          ),
+                          TodoCard(),
+                          SizedBox(
+                            height: 12.0,
                           ),
                         ],
                       ),
