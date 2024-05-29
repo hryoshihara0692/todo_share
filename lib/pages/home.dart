@@ -60,22 +60,33 @@ class _HomePageState extends State<HomePage> {
         /// グループ名
         ///
         centerTitle: true,
-        title: Text(
-          '吉原家',
-          style: TextStyle(
-            fontSize: 40,
-            fontFamily: GoogleFonts.notoSansJp(
-              textStyle: TextStyle(
-                fontWeight: FontWeight.w700,
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 4.0),
+          child: TextButton(
+            onPressed: () {
+              showGroupSettingModal(context);
+            },
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+            ),
+            child: Text(
+              '吉原家',
+              style: TextStyle(
+                fontSize: 40,
+                fontFamily: GoogleFonts.notoSansJp(
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ).fontFamily,
+                shadows: [
+                  Shadow(
+                    color: Color.fromARGB(255, 195, 195, 195),
+                    blurRadius: 0,
+                    offset: Offset(0, 2.5),
+                  ),
+                ],
               ),
-            ).fontFamily,
-            shadows: [
-              Shadow(
-                color: Color.fromARGB(255, 195, 195, 195),
-                blurRadius: 0,
-                offset: Offset(0, 2.5),
-              ),
-            ],
+            ),
           ),
         ),
 
@@ -226,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         // print('Tapおっけー');
-                        showModal(context);
+                        showAddTodoModal(context);
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(
@@ -266,7 +277,7 @@ class _HomePageState extends State<HomePage> {
                     child: InkWell(
                       onTap: () {
                         // print('Tapおっけー');
-                        showModal(context);
+                        showAddTodoModal(context);
                       },
                       child: Image.asset(
                         'assets/images/add_todo_button.png',

@@ -52,7 +52,7 @@ class TodoCard extends StatelessWidget {
                   padding: EdgeInsets.all(0),
                 ),
                 onPressed: () {
-                  showModal(context);
+                  showAddTodoModal(context);
                 },
                 onLongPress: () {
                   showDialog<void>(
