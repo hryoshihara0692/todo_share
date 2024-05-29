@@ -70,7 +70,7 @@ class TodoCard extends StatelessWidget {
                     color: Colors.black,
                     fontSize: 24,
                     fontFamily: GoogleFonts.notoSansJp().fontFamily,
-                    height: 1.0, // ここで行間を設定
+                    height: 1.0,
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/widgets/add_todo_modal.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
+import 'package:todo_share/widgets/side_menu.dart';
 import 'package:todo_share/widgets/todo_card.dart';
 import 'package:todo_share/widgets/todolist_collection.dart';
 import 'package:todo_share/utils/modal_utils.dart';
@@ -46,7 +47,8 @@ class _HomePageState extends State<HomePage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(5),
               onTap: () {
-                print('aaaaaaa');
+                // print('aaaaaaa');
+                _scaffoldKey.currentState?.openDrawer();
               },
               splashColor: const Color(0xff000000).withAlpha(30),
               child: Image.asset('assets/images/humburger.png'),
@@ -125,30 +127,7 @@ class _HomePageState extends State<HomePage> {
       ///
       /// サイドメニュー
       ///
-      drawer: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: Text(
-              'Drawer Header',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
+      drawer: SideMenu(),
 
       ///
       /// ボディ
