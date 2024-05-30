@@ -442,7 +442,9 @@ class GroupSettingModal extends ConsumerWidget {
                 ),
               ],
             ),
-
+            ///
+            /// メンバー一覧
+            ///
             Container(
               width: double.infinity,
               height: 160,
@@ -544,6 +546,65 @@ class GroupSettingModal extends ConsumerWidget {
                   ),
                   Divider(),
                 ],
+              ),
+            ),
+
+            SizedBox(
+              height: 12.0,
+            ),
+            ///
+            /// メンバー招待ボタン
+            ///
+            Container(
+              width: 192,
+              height: 40,
+              // ボタンの形と影を設定する
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(25.0),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 0,
+                    offset: Offset(0, 3),
+                  )
+                ],
+              ),
+              child: ElevatedButton(
+                onPressed: () {
+                  // print('Tapおっけー');
+                  // _showModal(context);
+                },
+                // ボタンの色と枠線を設定する
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Color.fromARGB(255, 122, 195, 220),
+                  side: BorderSide(color: Colors.black, width: 2),
+                ),
+                child: Padding(
+                  // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                  child: Text(
+                    'メンバー招待',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontFamily: GoogleFonts.notoSansJp(
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ).fontFamily,
+                      shadows: [
+                        Shadow(
+                          color: Color.fromARGB(255, 128, 128, 128),
+                          blurRadius: 0,
+                          offset: Offset(0, 2.5),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
