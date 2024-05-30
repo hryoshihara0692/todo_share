@@ -6,8 +6,8 @@ import 'package:todo_share/widgets/member_invite_dialog.dart';
 import 'package:todo_share/widgets/todo_card.dart';
 import 'package:todo_share/widgets/todolist_setting_dialog.dart';
 
-class GroupSettingModal extends ConsumerWidget {
-  const GroupSettingModal({
+class UserSettingModal extends ConsumerWidget {
+  const UserSettingModal({
     super.key,
   });
 
@@ -33,7 +33,7 @@ class GroupSettingModal extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'グループ設定',
+                  'ユーザー設定',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: GoogleFonts.notoSansJp(
@@ -48,6 +48,32 @@ class GroupSettingModal extends ConsumerWidget {
                         offset: Offset(0, 2.5),
                       ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 16.0,
+            ),
+
+            ///
+            /// ユーザー画像
+            ///
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 160,
+                  height: 160,
+                  decoration: BoxDecoration(
+                    // color: Colors.blue,
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        'assets/images/Icon_Men.jpeg',
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -99,7 +125,7 @@ class GroupSettingModal extends ConsumerWidget {
                       horizontal: 8.0,
                     ),
                     child: Text(
-                      '吉原家',
+                      'あおやぎ',
                       style: TextStyle(
                         fontSize: 20,
                         fontFamily: GoogleFonts.notoSansJp(
@@ -126,7 +152,7 @@ class GroupSettingModal extends ConsumerWidget {
             ),
 
             ///
-            /// TODOリスト一覧
+            /// グループ一覧
             ///
             SizedBox(
               height: 40,
@@ -135,7 +161,7 @@ class GroupSettingModal extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'TODOリスト一覧',
+                  'グループ一覧',
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: GoogleFonts.notoSansJp(
@@ -175,7 +201,7 @@ class GroupSettingModal extends ConsumerWidget {
                         width: 8.0,
                       ),
                       Text(
-                        '買い物リスト',
+                        '吉原家',
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: GoogleFonts.notoSansJp(
@@ -193,7 +219,7 @@ class GroupSettingModal extends ConsumerWidget {
                         child: Container(
                           width: 32,
                           height: 32,
-                          child: Image.asset('assets/images/UserSetting.png'),
+                          child: Image.asset('assets/images/Exit.png'),
                         ),
                       ),
                       Padding(
@@ -213,7 +239,7 @@ class GroupSettingModal extends ConsumerWidget {
                         width: 8.0,
                       ),
                       Text(
-                        'やることリスト',
+                        '宮川探検隊',
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: GoogleFonts.notoSansJp(
@@ -231,7 +257,7 @@ class GroupSettingModal extends ConsumerWidget {
                         child: Container(
                           width: 32,
                           height: 32,
-                          child: Image.asset('assets/images/UserSetting.png'),
+                          child: Image.asset('assets/images/Exit.png'),
                         ),
                       ),
                       Padding(
@@ -251,7 +277,7 @@ class GroupSettingModal extends ConsumerWidget {
                         width: 8.0,
                       ),
                       Text(
-                        '引っ越し',
+                        '浦安三社祭（当代島班）',
                         style: TextStyle(
                           fontSize: 20,
                           fontFamily: GoogleFonts.notoSansJp(
@@ -269,7 +295,7 @@ class GroupSettingModal extends ConsumerWidget {
                         child: Container(
                           width: 32,
                           height: 32,
-                          child: Image.asset('assets/images/UserSetting.png'),
+                          child: Image.asset('assets/images/Exit.png'),
                         ),
                       ),
                       Padding(
@@ -282,83 +308,6 @@ class GroupSettingModal extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  Divider(),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        'TODOリスト',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/UserSetting.png'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          child: Image.asset('assets/images/humburger.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        'お返しリスト',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/UserSetting.png'),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          child: Image.asset('assets/images/humburger.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
                 ],
               ),
             ),
@@ -367,7 +316,7 @@ class GroupSettingModal extends ConsumerWidget {
             ),
 
             ///
-            /// TODOリスト作成ボタン
+            /// グループ作成ボタン
             ///
             Container(
               width: 240,
@@ -406,203 +355,7 @@ class GroupSettingModal extends ConsumerWidget {
                   // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
                   padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
                   child: Text(
-                    'TODOリスト作成',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontFamily: GoogleFonts.notoSansJp(
-                        textStyle: TextStyle(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ).fontFamily,
-                      shadows: [
-                        Shadow(
-                          color: Color.fromARGB(255, 128, 128, 128),
-                          blurRadius: 0,
-                          offset: Offset(0, 2.5),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(
-              height: 24.0,
-            ),
-
-            ///
-            /// メンバー一覧
-            ///
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'メンバー一覧',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: GoogleFonts.notoSansJp(
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ).fontFamily,
-                  ),
-                ),
-              ],
-            ),
-
-            ///
-            /// メンバー一覧
-            ///
-            Container(
-              width: double.infinity,
-              height: 160,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 0,
-                    offset: Offset(2.5, 2.5),
-                  )
-                ],
-                border: Border.all(color: Colors.black, width: 1.0),
-              ),
-              child: ListView(
-                children: [
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/Icon_Men.jpeg'),
-                        ),
-                      ),
-                      Text(
-                        'ひろき',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/Icon_Women.jpeg'),
-                        ),
-                      ),
-                      Text(
-                        'ゆま',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/Icon_Men.jpeg'),
-                        ),
-                      ),
-                      Text(
-                        'ひろき',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                ],
-              ),
-            ),
-
-            SizedBox(
-              height: 12.0,
-            ),
-
-            ///
-            /// メンバー招待ボタン
-            ///
-            Container(
-              width: 192,
-              height: 40,
-              // ボタンの形と影を設定する
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(25.0),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 0,
-                    offset: Offset(0, 3),
-                  )
-                ],
-              ),
-              child: ElevatedButton(
-                onPressed: () {
-                  // print('Tapおっけー');
-                  showDialog<void>(
-                    context: context,
-                    builder: (_) {
-                      return MemberInviteDialog();
-                    },
-                  );
-                },
-                // ボタンの色と枠線を設定する
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  foregroundColor: Colors.white,
-                  backgroundColor: Color.fromARGB(255, 122, 195, 220),
-                  side: BorderSide(color: Colors.black, width: 2),
-                ),
-                child: Padding(
-                  // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
-                  child: Text(
-                    'メンバー招待',
+                    'グループ作成',
                     style: TextStyle(
                       fontSize: 24,
                       fontFamily: GoogleFonts.notoSansJp(
