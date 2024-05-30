@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:todo_share/widgets/member_invite_dialog.dart';
 import 'package:todo_share/widgets/todo_card.dart';
+import 'package:todo_share/widgets/todolist_setting_dialog.dart';
 
 class GroupSettingModal extends ConsumerWidget {
   const GroupSettingModal({
@@ -385,7 +387,12 @@ class GroupSettingModal extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // print('Tapおっけー');
-                  // _showModal(context);
+                  showDialog<void>(
+                    context: context,
+                    builder: (_) {
+                      return TodoListSettingDialog();
+                    },
+                  );
                 },
                 // ボタンの色と枠線を設定する
                 style: ElevatedButton.styleFrom(
@@ -442,6 +449,7 @@ class GroupSettingModal extends ConsumerWidget {
                 ),
               ],
             ),
+
             ///
             /// メンバー一覧
             ///
@@ -552,6 +560,7 @@ class GroupSettingModal extends ConsumerWidget {
             SizedBox(
               height: 12.0,
             ),
+
             ///
             /// メンバー招待ボタン
             ///
@@ -574,7 +583,12 @@ class GroupSettingModal extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // print('Tapおっけー');
-                  // _showModal(context);
+                  showDialog<void>(
+                    context: context,
+                    builder: (_) {
+                      return MemberInviteDialog();
+                    },
+                  );
                 },
                 // ボタンの色と枠線を設定する
                 style: ElevatedButton.styleFrom(

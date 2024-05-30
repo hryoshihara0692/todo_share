@@ -23,13 +23,6 @@ class DeleteDialog extends ConsumerWidget {
           borderRadius: const BorderRadius.all(
             Radius.circular(25.0),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black,
-              blurRadius: 0,
-              offset: Offset(0, 5),
-            )
-          ],
         ),
         child: Column(
           children: [
