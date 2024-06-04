@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:todo_share/firebase_options.dart';
+import 'package:todo_share/pages/create_user.dart';
 import 'package:todo_share/pages/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:todo_share/pages/initial.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,13 +30,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
+
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+            home: uid != null
+                  ? HomePage()
+                  : InitialPage(isNewAccount: false)
+                  // : CreateUserPage(),
     );
   }
 }

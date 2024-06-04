@@ -25,6 +25,10 @@ dev_dependencies:
   build_runner: ^2.4.9
   riverpod_generator: ^2.4.0
   cloud_firestore: ^4.17.5
+  firebase_auth: ^4.20.0
+  sign_button: ^2.0.6
+  firebase_storage: ^11.7.7
+  uuid: ^4.4.0
 
 flutter:
   uses-material-design: true
