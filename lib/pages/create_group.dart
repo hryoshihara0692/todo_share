@@ -3,10 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/components/admob/ad_mob_provider.dart';
 // import 'package:intl/intl.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/components/screen_pod.dart';
-import 'package:todo_share/components/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
 import 'package:todo_share/riverpod/selected_icon.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,19 +27,24 @@ class CreateGroupPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final adMobNotifier = ref.watch(adMobProvider);
+
     // var selectedIcon = ref.watch(selectedIconNotifierProvider);
 
     final TextEditingController _groupNameController = TextEditingController();
     // final TextEditingController _passController = TextEditingController();
     final FocusNode _groupNameFocusNode = FocusNode();
 
-    final AdMob _adMob = AdMob();
-
     final screen = ScreenRef(context).watch(screenProvider);
     final designW = screen.designW(200);
     final designH = screen.designH(50);
 
     final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
+
+    // Post-frame callback to request focus after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _groupNameFocusNode.requestFocus();
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -188,6 +194,7 @@ class CreateGroupPage extends ConsumerWidget {
                 ),
               ),
             ),
+            adMobNotifier.getAdBanner(),
           ],
         ),
       ),

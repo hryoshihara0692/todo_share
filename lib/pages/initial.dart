@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_share/components/ad_mob.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/pages/create_account.dart';
 import 'package:todo_share/pages/login.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
@@ -7,36 +9,18 @@ import 'package:todo_share/components/screen_pod.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:todo_share/pages/home.dart';
 
-class InitialPage extends StatefulWidget {
+class InitialPage extends ConsumerWidget {
   final bool isNewAccount;
 
   const InitialPage({Key? key, required this.isNewAccount}) : super(key: key);
 
   @override
-  State<InitialPage> createState() => _InitialPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final adMobNotifier = ref.watch(adMobProvider);
 
-class _InitialPageState extends State<InitialPage> {
-  late int initialTabIndex;
-  final AdMob _adMob = AdMob();
+    bool _isLoading = false;
+    int initialTabIndex = isNewAccount ? 1 : 0;
 
-  @override
-  void initState() {
-    super.initState();
-    initialTabIndex = widget.isNewAccount ? 1 : 0;
-    _adMob.load();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _adMob.dispose();
-  }
-
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
     final screen = ScreenRef(context).watch(screenProvider);
     final designW = screen.designW(200);
     final designH = screen.designH(400);
@@ -274,7 +258,7 @@ class _InitialPageState extends State<InitialPage> {
                             ],
                           ),
                         ),
-                        AdMobBanner(),
+                        adMobNotifier.getAdBanner(),
                       ],
                     ),
                   ),
@@ -464,7 +448,7 @@ class _InitialPageState extends State<InitialPage> {
                             ],
                           ),
                         ),
-                        AdMobBanner(),
+                        adMobNotifier.getAdBanner(),
                       ],
                     ),
                   ),
@@ -484,9 +468,9 @@ class _InitialPageState extends State<InitialPage> {
     );
   }
 
-///
-/// ここからコメントアウト
-///
+  ///
+  /// ここからコメントアウト
+  ///
 
   // Future<void> _handleSignInWithGoogle() async {
   //   setState(() {

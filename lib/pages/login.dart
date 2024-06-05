@@ -1,45 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/components/screen_pod.dart';
-import 'package:todo_share/components/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 // import 'package:todo/widgets/round_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final adMobNotifier = ref.watch(adMobProvider);
 
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _idController = TextEditingController();
-  final TextEditingController _passController = TextEditingController();
-  final FocusNode _idFocusNode = FocusNode(); // 追加: フォーカスノード
+    final TextEditingController _idController = TextEditingController();
+    final TextEditingController _passController = TextEditingController();
+    final FocusNode _idFocusNode = FocusNode(); // 追加: フォーカスノード
 
-  final AdMob _adMob = AdMob();
-
-  @override
-  void initState() {
-    super.initState();
-    _adMob.load();
-    Future.delayed(Duration.zero, () {
-      _idFocusNode.requestFocus();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _adMob.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final screen = ScreenRef(context).watch(screenProvider);
     final designW = screen.designW(200);
     final designH = screen.designH(200);
+
+    // Post-frame callback to request focus after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _idFocusNode.requestFocus();
+    });
 
     return DefaultTabController(
       length: 1,
@@ -154,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                AdMobBanner(),
+                adMobNotifier.getAdBanner(),
               ],
             ),
           ],

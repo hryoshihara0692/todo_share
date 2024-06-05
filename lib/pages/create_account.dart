@@ -1,47 +1,35 @@
 // import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/pages/create_user.dart';
 // import 'package:intl/intl.dart';
 import 'package:todo_share/components/screen_pod.dart';
-import 'package:todo_share/components/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class CreateAccountPage extends StatefulWidget {
-  const CreateAccountPage({super.key});
+class CreateAccountPage extends ConsumerWidget {
+  CreateAccountPage({super.key});
 
   @override
-  State<CreateAccountPage> createState() => _CreateAccountPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final adMobNotifier = ref.watch(adMobProvider);
 
-class _CreateAccountPageState extends State<CreateAccountPage> {
-  final TextEditingController _mailaddressController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final FocusNode _mailaddressFocusNode = FocusNode();
+    final TextEditingController _mailaddressController =
+        TextEditingController();
+    final TextEditingController _passwordController = TextEditingController();
+    final FocusNode _mailaddressFocusNode = FocusNode();
 
-  final AdMob _adMob = AdMob();
-
-  @override
-  void initState() {
-    super.initState();
-    _adMob.load();
-    Future.delayed(Duration.zero, () {
-      _mailaddressFocusNode.requestFocus();
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _adMob.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final screen = ScreenRef(context).watch(screenProvider);
     final designW = screen.designW(200);
     final designH = screen.designH(50);
+
+    // Post-frame callback to request focus after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _mailaddressFocusNode.requestFocus();
+    });
 
     return DefaultTabController(
       length: 1,
@@ -167,7 +155,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                     ),
                   ),
                 ),
-                AdMobBanner(),
+                adMobNotifier.getAdBanner(),
               ],
             ),
           ],

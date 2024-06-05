@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:todo_share/components/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
 
 class AdMobBanner extends StatefulWidget {
   AdMobBanner({Key? key}) : super(key: key);

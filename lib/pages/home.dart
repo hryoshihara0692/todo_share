@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/components/admob/ad_mob.dart';
+import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/widgets/add_todo_modal.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:todo_share/widgets/side_menu.dart';
@@ -10,26 +13,15 @@ import 'package:todo_share/widgets/todolist_collection.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
+class HomePage extends ConsumerWidget {
+  HomePage({super.key});
 
   @override
-  void dispose() {
-    super.dispose();
-  }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final adMobNotifier = ref.watch(adMobProvider);
 
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -290,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            AdMobBanner(),
+            adMobNotifier.getAdBanner(),
           ],
         ),
       ),
