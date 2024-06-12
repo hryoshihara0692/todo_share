@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
-import 'package:todo_share/widgets/todo_card.dart';
+import 'package:todo_share/widgets/todo_card_display.dart';
+import 'package:todo_share/widgets/todo_card_edit.dart';
 
 class DeleteDialog extends ConsumerWidget {
   const DeleteDialog({
@@ -49,7 +50,10 @@ class DeleteDialog extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12.0, 24.0, 12.0, 16.0),
-              child: TodoCard(),
+              ///
+              /// 削除するデータの取得〜表示処理の追加
+              ///
+              // child: TodoCardDisplay(todoData: todoData,),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

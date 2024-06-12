@@ -6,7 +6,7 @@ class selectedTodoListNotifier extends _$selectedTodoListNotifier {
   @override
   String build() {
     // 最初のデータ
-    return '買い物リスト';
+    return '';
   }
 
   // データを変更する関数

@@ -1,91 +1,170 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/todolist_data_service.dart';
+import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:todo_share/widgets/todolist_setting_dialog.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TodoListCollection extends ConsumerWidget {
-  const TodoListCollection({
-    super.key,
-  });
+  const TodoListCollection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var todoListCollection = [
-      '買い物リスト',
-      'やることリスト',
-      '引っ越し',
-      'TODOリスト',
-      'お返しリスト',
-      '電話帳',
-      'おいしかったご飯'
-    ];
-    // var selectedTodoList = '買い物リスト';
-    var selectedTodoList = ref.watch(selectedTodoListNotifierProvider);
+    var selectedTodoListID = ref.watch(selectedTodoListNotifierProvider);
+    var selectedGroupID = ref.watch(selectedGroupNotifierProvider);
 
-    return SizedBox(
-      height: 48,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: todoListCollection.length,
-        itemBuilder: (context, index) {
-          final todo = todoListCollection[index];
-          final isSelected = todo == selectedTodoList;
+    return StreamBuilder<QuerySnapshot>(
+      stream: TodoListDataService.getTodoListCollection(selectedGroupID.when(
+        data: (value) => value,
+        loading: () => 'loading', // 適切なローディング値に置き換えてください
+        error: (err, stack) => 'error', // 適切なエラー値に置き換えてください
+      )),
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<QuerySnapshot> snapshot,
+      ) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('エラーが発生しました'));
+        }
 
-          // todoListCollectionのTODOリストを順番に表示する
-          return Container(
-            // 左右のTODOリストと2x2で4開けて、上下は4開ける
-            margin: EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 4.0),
-            child: isSelected
-                ? ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      foregroundColor: Colors.white,
-                      backgroundColor: Color.fromARGB(255, 15, 9, 64),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
+        if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+          return SizedBox(
+            height: 48,
+            child: TextButton(
+              onPressed: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (_) {
+                    return TodoListSettingDialog();
+                  },
+                );
+              },
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                foregroundColor: Color.fromARGB(255, 15, 9, 64),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: Text(
+                '＋TODOリスト作成',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: GoogleFonts.notoSansJp(
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.normal,
                     ),
-                    child: Text(
-                      todo,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: GoogleFonts.notoSansJp(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ).fontFamily,
-                      ),
-                    ),
-                  )
-                : TextButton(
-                    onPressed: () {
-                      var notifier =
-                          ref.read(selectedTodoListNotifierProvider.notifier);
-                      notifier.update(todo);
-                    },
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      foregroundColor: Color.fromARGB(255, 15, 9, 64),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                    child: Text(
-                      todo,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: GoogleFonts.notoSansJp(
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ).fontFamily,
-                      ),
+                  ).fontFamily,
+                ),
+              ),
+            ),
+          );
+        }
+        var todoListData = snapshot.data!.docs;
+        return SizedBox(
+          height: 48,
+          child: ListView.builder(
+            // key: ValueKey(selectedTodoList),  // Add key to maintain state
+            scrollDirection: Axis.horizontal,
+            itemCount: todoListData.length + 1,
+            itemBuilder: (context, index) {
+              if (index == todoListData.length) {
+                return TextButton(
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) {
+                        return TodoListSettingDialog();
+                      },
+                    );
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    foregroundColor: Color.fromARGB(255, 15, 9, 64),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-          );
-        },
-      ),
+                  child: Text(
+                    '＋TODOリスト作成',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: GoogleFonts.notoSansJp(
+                        textStyle: TextStyle(
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ).fontFamily,
+                    ),
+                  ),
+                );
+              } else {
+                final todoList = todoListData[index]['TODOLIST_NAME'];
+                final todoListID = todoListData[index].id;
+                final isSelected = todoListID == selectedTodoListID;
+
+                // todoListCollectionのTODOリストを順番に表示する
+                return Container(
+                  // 左右のTODOリストと2x2で4開けて、上下は4開ける
+                  margin: EdgeInsets.fromLTRB(2.0, 4.0, 2.0, 4.0),
+                  child: isSelected
+                      ? ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            foregroundColor: Colors.white,
+                            backgroundColor: Color.fromARGB(255, 15, 9, 64),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: Text(
+                            todoList,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.notoSansJp(
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ).fontFamily,
+                            ),
+                          ),
+                        )
+                      : TextButton(
+                          onPressed: () {
+                            var notifier = ref.read(
+                                selectedTodoListNotifierProvider.notifier);
+                            notifier.update(todoListID);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            foregroundColor: Color.fromARGB(255, 15, 9, 64),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: Text(
+                            todoList,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: GoogleFonts.notoSansJp(
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ).fontFamily,
+                            ),
+                          ),
+                        ),
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }

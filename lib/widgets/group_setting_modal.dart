@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/member_invite_dialog.dart';
-import 'package:todo_share/widgets/todo_card.dart';
 import 'package:todo_share/widgets/todolist_setting_dialog.dart';
 
 class GroupSettingModal extends ConsumerWidget {
@@ -388,12 +387,12 @@ class GroupSettingModal extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // print('Tapおっけー');
-                  showDialog<void>(
-                    context: context,
-                    builder: (_) {
-                      return TodoListSettingDialog();
-                    },
-                  );
+                  // showDialog<void>(
+                  //   context: context,
+                  //   builder: (_) {
+                  //     return TodoListSettingDialog();
+                  //   },
+                  // );
                 },
                 // ボタンの色と枠線を設定する
                 style: ElevatedButton.styleFrom(

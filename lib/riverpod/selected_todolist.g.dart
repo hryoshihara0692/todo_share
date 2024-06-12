@@ -7,7 +7,7 @@ part of 'selected_todolist.dart';
 // **************************************************************************
 
 String _$selectedTodoListNotifierHash() =>
-    r'211517859fb675b9dcaf2cb2df939363041df43e';
+    r'8e9ff8911f44f1bb2ee45a64ff681ceb2fbf1417';
 
 /// See also [selectedTodoListNotifier].
 @ProviderFor(selectedTodoListNotifier)

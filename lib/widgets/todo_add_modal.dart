@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/class/todo_fields.dart';
+import 'package:todo_share/database/todo_data_service.dart';
+import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
-import 'package:todo_share/widgets/todo_card.dart';
+import 'package:todo_share/widgets/todo_card_edit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddTodoModal extends ConsumerWidget {
+class AddTodoModal extends ConsumerStatefulWidget {
   const AddTodoModal({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var selectedTodoList = ref.read(selectedTodoListNotifierProvider);
+  _AddTodoModalState createState() => _AddTodoModalState();
+}
+
+class _AddTodoModalState extends ConsumerState<AddTodoModal> {
+  String content = '';
+
+  @override
+  Widget build(BuildContext context) {
+    var selectedTodoListID = ref.read(selectedTodoListNotifierProvider);
+    var selectedGroupID = ref.read(selectedGroupNotifierProvider);
 
     return Container(
       height: 508,
@@ -26,7 +38,13 @@ class AddTodoModal extends ConsumerWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TodoCard(),
+            TodoCardEdit(
+              onChanged: (newValue) {
+                setState(() {
+                  content = newValue;
+                });
+              },
+            ),
             SizedBox(
               height: 16.0,
             ),
@@ -49,7 +67,8 @@ class AddTodoModal extends ConsumerWidget {
                   width: 8.0,
                 ),
                 Text(
-                  selectedTodoList,
+                  // selectedTodoListID,
+                  '買い物リスト',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: GoogleFonts.notoSansJp(
@@ -79,9 +98,35 @@ class AddTodoModal extends ConsumerWidget {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // print('Tapおっけー');
-                      // _showModal(context);
+                      // Map<String, dynamic> todoData = {
+                      //   // "CONTENT": _todoContentController.text,
+                      //   "CONTENT": 'test',
+                      //   "CHECK_FLG": false,
+                      //   "CREATE_DATE": Timestamp.fromDate(DateTime.now()),
+                      //   "UPDATE_DATE": Timestamp.fromDate(DateTime.now()),
+                      // };
+
+                      TodoFields todoFields = TodoFields(
+                        content: content.isNotEmpty
+                            ? content
+                            : 'だめっぽい', // テスト用のデフォルト値
+                        checkFlg: false,
+                        createDate: Timestamp.fromDate(DateTime.now()),
+                        updateDate: Timestamp.fromDate(DateTime.now()),
+                      );
+
+                      // TODOLISTコレクションにドキュメント追加
+                      await TodoDataService.createTodoData(
+                          selectedGroupID.when(
+                            data: (value) => value,
+                            loading: () => 'loading', // 適切なローディング値に置き換えてください
+                            error: (err, stack) => 'error', // 適切なエラー値に置き換えてください
+                          ),
+                          selectedTodoListID,
+                          todoFields.toMap());
+                      Navigator.pop(context);
                     },
                     // ボタンの色と枠線を設定する
                     style: ElevatedButton.styleFrom(

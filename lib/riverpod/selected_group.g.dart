@@ -1,27 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'selected_icon.dart';
+part of 'selected_group.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$selectedIconNotifierHash() =>
-    r'2f376ce104f1acd99cd51a3416bd1906bbfa6db7';
+String _$selectedGroupNotifierHash() =>
+    r'0b75bd27866de53ffa33e18f0ef01b8e250c811d';
 
-/// See also [selectedIconNotifier].
-@ProviderFor(selectedIconNotifier)
-final selectedIconNotifierProvider =
-    AutoDisposeNotifierProvider<selectedIconNotifier, String>.internal(
-  selectedIconNotifier.new,
-  name: r'selectedIconNotifierProvider',
+/// See also [SelectedGroupNotifier].
+@ProviderFor(SelectedGroupNotifier)
+final selectedGroupNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<SelectedGroupNotifier, String>.internal(
+  SelectedGroupNotifier.new,
+  name: r'selectedGroupNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$selectedIconNotifierHash,
+      : _$selectedGroupNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$selectedIconNotifier = AutoDisposeNotifier<String>;
+typedef _$SelectedGroupNotifier = AutoDisposeAsyncNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

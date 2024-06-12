@@ -223,6 +223,7 @@ Future<void> updateGroupListAndDateInFirestore(
     // 更新するフィールドと値のマップを作成します
     Map<String, dynamic> updateData = {
       'GROUP_LIST': groupList,
+      'SELECTED_GROUP_ID': groupIdFromUuid,
       'UPDATE_DATE': Timestamp.now(),
     };
 

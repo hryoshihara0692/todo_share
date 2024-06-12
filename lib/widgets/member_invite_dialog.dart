@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
-import 'package:todo_share/widgets/todo_card.dart';
 
 class MemberInviteDialog extends ConsumerWidget {
   const MemberInviteDialog({

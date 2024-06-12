@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/todolist_data_service.dart';
+import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
-import 'package:todo_share/widgets/todo_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TodoListSettingDialog extends ConsumerWidget {
   const TodoListSettingDialog({
@@ -12,6 +14,17 @@ class TodoListSettingDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // var selectedTodoList = ref.read(selectedTodoListNotifierProvider);
+    var selectedGroupID = ref.read(selectedGroupNotifierProvider);
+
+    final TextEditingController _todoListNameController =
+        TextEditingController();
+    // final TextEditingController _passController = TextEditingController();
+    final FocusNode _todoListNameFocusNode = FocusNode();
+
+    // Post-frame callback to request focus after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _todoListNameFocusNode.requestFocus();
+    });
 
     return Dialog(
       insetPadding: EdgeInsets.all(0.0),
@@ -71,9 +84,44 @@ class TodoListSettingDialog extends ConsumerWidget {
               SizedBox(
                 height: 8.0,
               ),
+              // Container(
+              //   width: double.infinity,
+              //   height: 40,
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: Colors.black,
+              //         blurRadius: 0,
+              //         offset: Offset(2.5, 2.5),
+              //       )
+              //     ],
+              //     border: Border.all(color: Colors.black, width: 1.0),
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Padding(
+              //         padding: EdgeInsets.symmetric(
+              //           horizontal: 8.0,
+              //         ),
+              //         child: Text(
+              //           '吉原家',
+              //           style: TextStyle(
+              //             fontSize: 20,
+              //             fontFamily: GoogleFonts.notoSansJp(
+              //               textStyle: TextStyle(
+              //                 fontWeight: FontWeight.w700,
+              //               ),
+              //             ).fontFamily,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Container(
                 width: double.infinity,
-                height: 40,
+                height: 40.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
@@ -85,36 +133,16 @@ class TodoListSettingDialog extends ConsumerWidget {
                   ],
                   border: Border.all(color: Colors.black, width: 1.0),
                 ),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                      ),
-                      child: Text(
-                        '吉原家',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(8, 16, 8, 0),
+                  child: TextField(
+                    controller: _todoListNameController,
+                    focusNode: _todoListNameFocusNode,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: '\u{2709}  sample@todolist.com',
                     ),
-                    // Expanded(
-                    //   child: Container(),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    //   child: Image.asset(
-                    //     'assets/images/SaveButton.jpg',
-                    //     width: 32,
-                    //     height: 32,
-                    //   ),
-                    // ),
-                  ],
+                  ),
                 ),
               ),
               SizedBox(
@@ -199,9 +227,26 @@ class TodoListSettingDialog extends ConsumerWidget {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // print('Tapおっけー');
                         // _showModal(context);
+                        Map<String, dynamic> todolistData = {
+                          "TODOLIST_NAME": _todoListNameController.text,
+                          "CREATE_DATE": Timestamp.fromDate(DateTime.now()),
+                          "UPDATE_DATE": Timestamp.fromDate(DateTime.now()),
+                        };
+
+                        // TODOLISTコレクションにドキュメント追加
+                        await TodoListDataService.createTodoListData(
+                            selectedGroupID.when(
+                              data: (value) => value,
+                              loading: () => 'loading', // 適切なローディング値に置き換えてください
+                              error: (err, stack) =>
+                                  'error', // 適切なエラー値に置き換えてください
+                            ),
+                            todolistData);
+                        Navigator.pop(context);
+                        ref.refresh(selectedTodoListNotifierProvider);
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(

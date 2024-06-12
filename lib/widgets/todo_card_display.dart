@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/utils/modal_utils.dart';
-import 'package:todo_share/widgets/delete_dialog.dart';
+import 'package:todo_share/widgets/todo_delete_dialog.dart';
 
-class TodoCard extends StatelessWidget {
-  const TodoCard({
+class TodoCardDisplay extends StatelessWidget {
+  final TodoFields todoFields;
+
+  const TodoCardDisplay({
     super.key,
+    required this.todoFields,
   });
 
   @override
@@ -48,11 +52,12 @@ class TodoCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: TextButton(
                 style: TextButton.styleFrom(
-                  alignment: Alignment.center,
+                  // alignment: Alignment.center,
+                  alignment: Alignment.centerLeft,
                   padding: EdgeInsets.all(0),
                 ),
                 onPressed: () {
-                  showAddTodoModal(context);
+                  // showAddTodoModal(context);
                 },
                 onLongPress: () {
                   showDialog<void>(
@@ -63,7 +68,8 @@ class TodoCard extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  'お米あああああああああああああああああああああああああああああああああああああああああああ',
+                  // 'お米あああああああああああああああああああああああああああああああああああああああああああ',
+                  todoFields.content,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
