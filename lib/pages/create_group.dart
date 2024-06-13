@@ -205,6 +205,9 @@ class CreateGroupPage extends ConsumerWidget {
 Future<void> updateGroupListAndDateInFirestore(
     BuildContext context, String uid, String groupName) async {
   try {
+    ///
+    /// USERコレクションに作成したGROUPを追加（PRIMARY_GROUP_ID）
+    ///
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('USER').doc(uid);
 
@@ -216,29 +219,53 @@ Future<void> updateGroupListAndDateInFirestore(
     var uuid = Uuid();
     var groupIdFromUuid = uuid.v4();
 
-    // GROUP_LISTの既存の配列を取得し、新しい要素を追加します
-    List<String> groupList = List<String>.from(userDoc['GROUP_LIST'] ?? []);
-    groupList.add(groupIdFromUuid);
-
     // 更新するフィールドと値のマップを作成します
     Map<String, dynamic> updateData = {
-      'GROUP_LIST': groupList,
-      'SELECTED_GROUP_ID': groupIdFromUuid,
+      'PRIMARY_GROUP_ID': groupIdFromUuid,
       'UPDATE_DATE': Timestamp.now(),
     };
 
     // ドキュメントを更新します
     await userDocRef.update(updateData);
 
-    print("Group list and update date updated successfully!");
+    ///
+    /// USERコレクション配下に、GROUP一覧用サブコレクションを追加
+    ///
+    await FirebaseFirestore.instance
+        .collection('USER')
+        .doc(uid)
+        .collection('GROUP')
+        .doc(groupIdFromUuid)
+        .set({
+      'ORDER_NO': 0,
+      'PRIMARY_TODOLIST_ID': '',
+      'CREATE_DATE': Timestamp.now(),
+      'UPDATE_DATE': Timestamp.now(),
+    });
 
+    ///
+    /// GROUPコレクション
+    ///
     await FirebaseFirestore.instance
         .collection('GROUP')
         .doc(groupIdFromUuid)
         .set({
       'GROUP_NAME': groupName,
-      'ADMINISTRATOR': uid,
-      'MEMBER_LIST': [uid],
+      'ADMIN_USER_ID': uid,
+      'CREATE_DATE': Timestamp.now(),
+      'UPDATE_DATE': Timestamp.now(),
+    });
+
+    ///
+    /// GROUPコレクション配下に、USER
+    ///
+    await FirebaseFirestore.instance
+        .collection('GROUP')
+        .doc(groupIdFromUuid)
+        .collection('USER')
+        .doc(uid)
+        .set({
+      'ORDER_NO': 0,
       'CREATE_DATE': Timestamp.now(),
       'UPDATE_DATE': Timestamp.now(),
     });

@@ -8,6 +8,7 @@ import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/database/group_data_service.dart';
 import 'package:todo_share/database/user_data_service.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:todo_share/widgets/responsive_text.dart';
 import 'package:todo_share/widgets/todo_add_modal.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:todo_share/widgets/side_menu.dart';
@@ -48,9 +49,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void fetchGroupName() async {
-    if (userData != null && userData['SELECTED_GROUP_ID'] != null) {
+    if (userData != null && userData['PRIMARY_GROUP_ID'] != null) {
       setState(() {
-        groupID = userData['SELECTED_GROUP_ID'];
+        groupID = userData['PRIMARY_GROUP_ID'];
       });
       // var groupData = await FirebaseFirestore.instance
       //     .collection('GROUP')
@@ -117,36 +118,65 @@ class _HomePageState extends ConsumerState<HomePage> {
         /// グループ名
         ///
         centerTitle: true,
-        title: Padding(
-          padding: const EdgeInsets.only(bottom: 4.0),
-          child: TextButton(
-            onPressed: () {
-              showGroupSettingModal(context);
-            },
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-            ),
-            child: Text(
-              // '吉原家',
-              groupName,
-              style: TextStyle(
-                fontSize: 40,
-                fontFamily: GoogleFonts.notoSansJp(
-                  textStyle: TextStyle(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ).fontFamily,
-                shadows: [
-                  Shadow(
-                    color: Color.fromARGB(255, 195, 195, 195),
-                    blurRadius: 0,
-                    offset: Offset(0, 2.5),
-                  ),
-                ],
+        title: LayoutBuilder(
+          builder: (context, constraints) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: TextButton(
+                onPressed: () {
+                  showGroupSettingModal(context);
+                },
+                style: ButtonStyle(
+                  foregroundColor:
+                      MaterialStateProperty.all<Color>(Colors.black),
+                ),
+                child: ResponsiveText(
+                  text: groupName,
+                  maxFontSize: 40,
+                  minFontSize: 16,
+                  maxLines: 1,
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
+        // centerTitle: true,
+        // title: Padding(
+        //   padding: const EdgeInsets.only(bottom: 4.0),
+        //   child: TextButton(
+        //     onPressed: () {
+        //       showGroupSettingModal(context);
+        //     },
+        //     style: ButtonStyle(
+        //       foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+        //     ),
+        //     child: ResponsiveText(
+        //       text: groupName,
+        //       maxFontSize: 40,
+        //       minFontSize: 20,
+        //       maxLines: 2,
+        //     ),
+        //     // child: Text(
+        //     //   // '吉原家',
+        //     //   groupName,
+        //     //   style: TextStyle(
+        //     //     fontSize: 40,
+        //     //     fontFamily: GoogleFonts.notoSansJp(
+        //     //       textStyle: TextStyle(
+        //     //         fontWeight: FontWeight.w700,
+        //     //       ),
+        //     //     ).fontFamily,
+        //     //     shadows: [
+        //     //       Shadow(
+        //     //         color: Color.fromARGB(255, 195, 195, 195),
+        //     //         blurRadius: 0,
+        //     //         offset: Offset(0, 2.5),
+        //     //       ),
+        //     //     ],
+        //     //   ),
+        //     // ),
+        //   ),
+        // ),
 
         ///
         /// 通知ボタン

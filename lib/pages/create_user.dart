@@ -321,8 +321,7 @@ Future<void> saveUrlToFirestore(
     await FirebaseFirestore.instance.collection('USER').doc(uid).set({
       'USER_NAME': userName,
       'ICON_URL': iconURL,
-      'GROUP_LIST': [],
-      'SELECTED_GROUP_ID': '',
+      'PRIMARY_GROUP_ID': '',
       'CREATE_DATE': Timestamp.now(),
       'UPDATE_DATE': Timestamp.now(),
     });

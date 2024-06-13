@@ -5,6 +5,8 @@ import 'package:todo_share/database/todolist_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class TodoListSettingDialog extends ConsumerWidget {
   const TodoListSettingDialog({
@@ -25,6 +27,8 @@ class TodoListSettingDialog extends ConsumerWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _todoListNameFocusNode.requestFocus();
     });
+
+    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
 
     return Dialog(
       insetPadding: EdgeInsets.all(0.0),
@@ -228,25 +232,63 @@ class TodoListSettingDialog extends ConsumerWidget {
                     ),
                     child: ElevatedButton(
                       onPressed: () async {
-                        // print('Tapおっけー');
-                        // _showModal(context);
+                        var uuid = Uuid();
+                        var todoListID = uuid.v4();
+
+                        ///
+                        /// TODOLISTコレクションに追加
+                        ///
                         Map<String, dynamic> todolistData = {
                           "TODOLIST_NAME": _todoListNameController.text,
                           "CREATE_DATE": Timestamp.fromDate(DateTime.now()),
                           "UPDATE_DATE": Timestamp.fromDate(DateTime.now()),
                         };
-
                         // TODOLISTコレクションにドキュメント追加
-                        await TodoListDataService.createTodoListData(
-                            selectedGroupID.when(
-                              data: (value) => value,
-                              loading: () => 'loading', // 適切なローディング値に置き換えてください
-                              error: (err, stack) =>
-                                  'error', // 適切なエラー値に置き換えてください
-                            ),
-                            todolistData);
+                        // await TodoListDataService.createTodoListData(
+                        //     selectedGroupID.value!, todolistData);
+                        await FirebaseFirestore.instance
+                            .collection('GROUP')
+                            .doc(selectedGroupID.value)
+                            .collection('TODOLIST')
+                            .doc(todoListID)
+                            .set(todolistData);
+
+                        ///
+                        /// USERコレクション配下の、GROUPサブコレクション上でTODOLIST_IDをPRIMARYに登録する
+                        ///
+                        await FirebaseFirestore.instance
+                            .collection('USER')
+                            .doc(uid)
+                            .collection('GROUP')
+                            .doc(selectedGroupID.value)
+                            .update({
+                          'PRIMARY_TODOLIST_ID': todoListID,
+                          'UPDATE_DATE': Timestamp.fromDate(DateTime.now()),
+                        }).then((_) {
+                          // 更新が成功した場合の処理
+                          print('Field updated successfully.');
+                        }).catchError((error) {
+                          // 更新が失敗した場合のエラーハンドリング
+                          print('Failed to update field : $error');
+                        });
+
+                        ///
+                        /// USER-GROUPコレクション配下に、TODOLIST一覧用サブコレクションを追加
+                        ///
+                        await FirebaseFirestore.instance
+                            .collection('USER')
+                            .doc(uid)
+                            .collection('GROUP')
+                            .doc(selectedGroupID.value)
+                            .collection('TODOLIST')
+                            .doc(todoListID)
+                            .set({
+                          'ORDER_NO': 0,
+                          'CREATE_DATE': Timestamp.now(),
+                          'UPDATE_DATE': Timestamp.now(),
+                        });
+
                         Navigator.pop(context);
-                        ref.refresh(selectedTodoListNotifierProvider);
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(

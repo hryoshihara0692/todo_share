@@ -13,7 +13,7 @@ class SelectedGroupNotifier extends AutoDisposeAsyncNotifier<String> {
       throw Exception('User not authenticated');
     }
     final userData = await UserDataService.getUserData(uid);
-    return userData['SELECTED_GROUP_ID'] ?? '';
+    return userData['PRIMARY_GROUP_ID'] ?? '';
   }
 
   // データを変更する関数

@@ -49,17 +49,17 @@ class TodoListDataService {
   ///
   /// FirestoreへTodoListの登録
   ///
-  static Future<void> createTodoListData(
-      String groupID, Map<String, dynamic> todolistData) async {
-    var uuid = Uuid();
-    var todoListID = uuid.v4();
-    await FirebaseFirestore.instance
-        .collection('GROUP')
-        .doc(groupID)
-        .collection('TODOLIST')
-        .doc(todoListID)
-        .set(todolistData);
-  }
+  // static Future<void> createTodoListData(
+  //     String groupID, Map<String, dynamic> todolistData) async {
+  //   var uuid = Uuid();
+  //   var todoListID = uuid.v4();
+  //   await FirebaseFirestore.instance
+  //       .collection('GROUP')
+  //       .doc(groupID)
+  //       .collection('TODOLIST')
+  //       .doc(todoListID)
+  //       .set(todolistData);
+  // }
 
   ///
   /// FirestoreのTodoの内容更新
