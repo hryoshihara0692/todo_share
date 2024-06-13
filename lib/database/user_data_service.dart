@@ -31,6 +31,39 @@ class UserDataService {
     }
   }
 
+  static Future<Map<String, dynamic>> getGroupData(
+      String uid, String groupID) async {
+    try {
+      // Firestoreからグループデータを取得
+      final doc = await FirebaseFirestore.instance
+          .collection('USER')
+          .doc(uid)
+          .collection('GROUP')
+          .doc(groupID)
+          .get();
+
+      // ドキュメントが存在するか確認
+      if (doc.exists) {
+        // ドキュメント内のデータを取得
+        Map<String, dynamic>? groupData = doc.data() as Map<String, dynamic>;
+
+        //空の場合、チェックしてもしなくても空を返すならチェック不要では…
+        if (groupData.isNotEmpty) {
+          return groupData;
+        } else {
+          print('指定されたユーザーIDのドキュメントが存在しません');
+          return {};
+        }
+      } else {
+        print('指定されたユーザーIDのドキュメントが存在しません');
+        return {};
+      }
+    } catch (e) {
+      print('データ取得中にエラーが発生しました: $e');
+      return {};
+    }
+  }
+
   static Future<Map<String, dynamic>> getUserDataSelectedByTodoListID(
       String todoListID) async {
     try {

@@ -249,7 +249,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             ///
             /// TODOの一覧
             ///
-            if (selectedTodoListID.isNotEmpty) ...[
+            if (todoList.isNotEmpty) ...[
               Expanded(child: TodoCollection()),
               // TodoCollection(),
               // Expanded(

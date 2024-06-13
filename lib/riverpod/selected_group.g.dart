@@ -7,7 +7,7 @@ part of 'selected_group.dart';
 // **************************************************************************
 
 String _$selectedGroupNotifierHash() =>
-    r'0b75bd27866de53ffa33e18f0ef01b8e250c811d';
+    r'1e7ca53ee25147554e970fb35e47e3c024747ffc';
 
 /// See also [SelectedGroupNotifier].
 @ProviderFor(SelectedGroupNotifier)

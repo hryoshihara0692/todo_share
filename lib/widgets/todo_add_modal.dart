@@ -119,12 +119,8 @@ class _AddTodoModalState extends ConsumerState<AddTodoModal> {
 
                       // TODOLISTコレクションにドキュメント追加
                       await TodoDataService.createTodoData(
-                          selectedGroupID.when(
-                            data: (value) => value,
-                            loading: () => 'loading', // 適切なローディング値に置き換えてください
-                            error: (err, stack) => 'error', // 適切なエラー値に置き換えてください
-                          ),
-                          selectedTodoListID,
+                          selectedGroupID.value!,
+                          selectedTodoListID.value!,
                           todoFields.toMap());
                       Navigator.pop(context);
                     },
