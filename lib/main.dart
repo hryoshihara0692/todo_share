@@ -33,15 +33,14 @@ class MyApp extends StatelessWidget {
     final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
 
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-            home: uid != null
-                  ? HomePage()
-                  : InitialPage(isNewAccount: false)
-                  // : CreateUserPage(),
-    );
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            surfaceTintColor: Colors.transparent,
+          ),
+          useMaterial3: true,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: uid != null ? HomePage() : InitialPage(isNewAccount: false)
+        );
   }
 }
