@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/components/admob/ad_mob.dart';
 import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/database/group_data_service.dart';
+import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/database/user_data_service.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void fetchUserData() async {
-    uid = FirebaseAuth.instance.currentUser?.uid.toString();
+    final String? uid = UID().uid;
     if (uid != null) {
       userData = await UserDataService.getUserData(uid);
       fetchGroupName();

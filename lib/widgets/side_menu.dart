@@ -1,447 +1,483 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/user_setting_modal.dart';
 // import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SideMenu extends ConsumerWidget {
-  const SideMenu({
-    super.key,
-  });
+  const SideMenu({Key? key}) : super(key: key);
+
+  Future<String> _getDirectory() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final String dirPath = '${directory.path}/user_icons';
+    return dirPath;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // var selectedTodoList = ref.read(selectedTodoListNotifierProvider);
+    final String? uid = UID().uid;
 
-    return Drawer(
-      child: ClipRRect(
-        borderRadius: BorderRadius.only(
-          topRight: Radius.circular(25.0),
-          bottomRight: Radius.circular(25.0),
-        ),
-        child: Container(
-          width: 272,
-          color: Color.fromARGB(255, 249, 245, 236),
+    return FutureBuilder<String>(
+      future: _getDirectory(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          final dirPath = snapshot.data ?? '';
 
-          ///
-          /// ユーザー部分
-          ///
-          child: Padding(
-            padding: const EdgeInsets.only(top: 48.0),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: Row(
+          return Drawer(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(25.0),
+                bottomRight: Radius.circular(25.0),
+              ),
+              child: Container(
+                width: 272,
+                color: Color.fromARGB(255, 249, 245, 236),
+
+                ///
+                /// ユーザー部分
+                ///
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 48.0),
+                  child: Column(
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                // color: Colors.blue,
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: AssetImage(
+                                    // 'assets/images/Icon_Men.jpeg',
+                                    '$dirPath/$uid.png',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 16.0,
+                            ),
+                            Text(
+                              'あおやぎ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: GoogleFonts.notoSansJp(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ).fontFamily,
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                child: InkWell(
+                                  onTap: () {
+                                    // print('aaaaaaa');
+                                    showUserSettingModal(context);
+                                  },
+                                  splashColor:
+                                      const Color(0xff000000).withAlpha(30),
+                                  child: Image.asset(
+                                      'assets/images/UserSetting.png'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      SizedBox(
+                        height: 16.0,
+                      ),
+
+                      ///
+                      /// グループ選択部分
+                      ///
                       Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          // color: Colors.blue,
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage(
-                              'assets/images/Icon_Men.jpeg',
+                        height: 36.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                child:
+                                    Image.asset('assets/images/SelectMark.png'),
+                              ),
                             ),
-                          ),
+                            Text(
+                              '宮川探検隊',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: GoogleFonts.notoSansJp(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ).fontFamily,
+                                // shadows: [
+                                //   Shadow(
+                                //     color: Color.fromARGB(255, 128, 128, 128),
+                                //     blurRadius: 0,
+                                //     offset: Offset(0, 2.5),
+                                //   ),
+                                // ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Stack(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 32,
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 24,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Men.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 48,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Women.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(
-                        width: 16.0,
-                      ),
-                      Text(
-                        'あおやぎ',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: InkWell(
-                            onTap: () {
-                              // print('aaaaaaa');
-                              showUserSettingModal(context);
-                            },
-                            splashColor: const Color(0xff000000).withAlpha(30),
-                            child: Image.asset('assets/images/UserSetting.png'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider(),
-                SizedBox(
-                  height: 16.0,
-                ),
-
-                ///
-                /// グループ選択部分
-                ///
-                Container(
-                  height: 36.0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/SelectMark.png'),
-                        ),
-                      ),
-                      Text(
-                        '宮川探検隊',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                          // shadows: [
-                          //   Shadow(
-                          //     color: Color.fromARGB(255, 128, 128, 128),
-                          //     blurRadius: 0,
-                          //     offset: Offset(0, 2.5),
-                          //   ),
-                          // ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Stack(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 32,
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 24,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Men.jpeg',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 48,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Women.jpeg',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Container(
-                  height: 36.0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          // child: Image.asset('assets/images/SelectMark.png'),
-                        ),
+                        height: 16.0,
                       ),
                       Container(
-                        width: 128,
-                        height: 36,
-                        child: Text(
-                          '浦安三社祭（当代島班）',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: GoogleFonts.notoSansJp(
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w700,
+                        height: 36.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                // child: Image.asset('assets/images/SelectMark.png'),
                               ),
-                            ).fontFamily,
-                            height: 1.0,
-                            // shadows: [
-                            //   Shadow(
-                            //     color: Color.fromARGB(255, 128, 128, 128),
-                            //     blurRadius: 0,
-                            //     offset: Offset(0, 2.5),
-                            //   ),
-                            // ],
-                          ),
+                            ),
+                            Container(
+                              width: 128,
+                              height: 36,
+                              child: Text(
+                                '浦安三社祭（当代島班）',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: GoogleFonts.notoSansJp(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ).fontFamily,
+                                  height: 1.0,
+                                  // shadows: [
+                                  //   Shadow(
+                                  //     color: Color.fromARGB(255, 128, 128, 128),
+                                  //     blurRadius: 0,
+                                  //     offset: Offset(0, 2.5),
+                                  //   ),
+                                  // ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Stack(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 32,
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 24,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Men.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 48,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Women.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                          ],
                         ),
                       ),
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      Container(
+                        height: 36.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                // child: Image.asset('assets/images/SelectMark.png'),
+                              ),
+                            ),
+                            Text(
+                              '吉原家',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: GoogleFonts.notoSansJp(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ).fontFamily,
+                                // shadows: [
+                                //   Shadow(
+                                //     color: Color.fromARGB(255, 128, 128, 128),
+                                //     blurRadius: 0,
+                                //     offset: Offset(0, 2.5),
+                                //   ),
+                                // ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(),
+                            ),
+                            Stack(
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 32,
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 24,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Men.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 48,
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      // color: Colors.blue,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        fit: BoxFit.fill,
+                                        image: AssetImage(
+                                          'assets/images/Icon_Women.jpeg',
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 8.0,
+                            ),
+                          ],
+                        ),
+                      ),
+
                       Expanded(
                         child: Container(),
                       ),
-                      Stack(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 32,
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 24,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Men.jpeg',
-                                  ),
-                                ),
+
+                      ///
+                      /// サイドメニュー下
+                      ///
+                      SizedBox(
+                        height: 16.0,
+                      ),
+                      Container(
+                        height: 32.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                child: Image.asset(
+                                    'assets/images/CreateGroup.png'),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 48,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Women.jpeg',
+                            Text(
+                              'グループを新しく作る',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: GoogleFonts.notoSansJp(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                ),
+                                ).fontFamily,
+                                // shadows: [
+                                //   Shadow(
+                                //     color: Color.fromARGB(255, 128, 128, 128),
+                                //     blurRadius: 0,
+                                //     offset: Offset(0, 2.5),
+                                //   ),
+                                // ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       SizedBox(
-                        width: 8.0,
+                        height: 24.0,
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Container(
-                  height: 36.0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          // child: Image.asset('assets/images/SelectMark.png'),
-                        ),
-                      ),
-                      Text(
-                        '吉原家',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                          // shadows: [
-                          //   Shadow(
-                          //     color: Color.fromARGB(255, 128, 128, 128),
-                          //     blurRadius: 0,
-                          //     offset: Offset(0, 2.5),
-                          //   ),
-                          // ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(),
-                      ),
-                      Stack(
-                        children: [
-                          Container(
-                            width: 80,
-                            height: 32,
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 24,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Men.jpeg',
-                                  ),
-                                ),
+                      Container(
+                        height: 32.0,
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Container(
+                                width: 32,
+                                height: 32,
+                                child:
+                                    Image.asset('assets/images/Settings.png'),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            top: 0,
-                            left: 48,
-                            child: Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                // color: Colors.blue,
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: AssetImage(
-                                    'assets/images/Icon_Women.jpeg',
+                            Text(
+                              'その他（設定など）',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: GoogleFonts.notoSansJp(
+                                  textStyle: TextStyle(
+                                    fontWeight: FontWeight.w700,
                                   ),
-                                ),
+                                ).fontFamily,
+                                // shadows: [
+                                //   Shadow(
+                                //     color: Color.fromARGB(255, 128, 128, 128),
+                                //     blurRadius: 0,
+                                //     offset: Offset(0, 2.5),
+                                //   ),
+                                // ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                      ElevatedButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                          },
+                          child: Text('ログアウト')),
                       SizedBox(
-                        width: 8.0,
+                        height: 48.0,
                       ),
                     ],
                   ),
                 ),
-
-                Expanded(
-                  child: Container(),
-                ),
-
-                ///
-                /// サイドメニュー下
-                ///
-                SizedBox(
-                  height: 16.0,
-                ),
-                Container(
-                  height: 32.0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/CreateGroup.png'),
-                        ),
-                      ),
-                      Text(
-                        'グループを新しく作る',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                          // shadows: [
-                          //   Shadow(
-                          //     color: Color.fromARGB(255, 128, 128, 128),
-                          //     blurRadius: 0,
-                          //     offset: Offset(0, 2.5),
-                          //   ),
-                          // ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 24.0,
-                ),
-                Container(
-                  height: 32.0,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          child: Image.asset('assets/images/Settings.png'),
-                        ),
-                      ),
-                      Text(
-                        'その他（設定など）',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                          // shadows: [
-                          //   Shadow(
-                          //     color: Color.fromARGB(255, 128, 128, 128),
-                          //     blurRadius: 0,
-                          //     offset: Offset(0, 2.5),
-                          //   ),
-                          // ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 48.0,
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/firebase_options.dart';
 import 'package:todo_share/pages/create_user.dart';
 import 'package:todo_share/pages/home.dart';
@@ -14,6 +15,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await UID().initialize();
 
   // Google Mobile Ads SDK を初期化
   MobileAds.instance.initialize();
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
+    final String? uid = UID().uid;
 
     return MaterialApp(
         theme: ThemeData(
@@ -40,7 +43,6 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
-        home: uid != null ? HomePage() : InitialPage(isNewAccount: false)
-        );
+        home: uid != null ? HomePage() : InitialPage(isNewAccount: false));
   }
 }

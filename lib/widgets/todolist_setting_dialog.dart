@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/database/todolist_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
@@ -28,7 +29,7 @@ class TodoListSettingDialog extends ConsumerWidget {
       _todoListNameFocusNode.requestFocus();
     });
 
-    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
+    final String? uid = UID().uid;
 
     return Dialog(
       insetPadding: EdgeInsets.all(0.0),
