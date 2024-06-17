@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/components/admob/ad_mob_provider.dart';
-import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/pages/create_group.dart';
 // import 'package:intl/intl.dart';
 import 'package:todo_share/components/screen_pod.dart';
@@ -37,7 +36,7 @@ class CreateUserPage extends ConsumerWidget {
     final designW = screen.designW(200);
     final designH = screen.designH(50);
 
-    final String? uid = UID().uid;
+    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
 
     // Post-frame callback to request focus after build
     WidgetsBinding.instance.addPostFrameCallback((_) {

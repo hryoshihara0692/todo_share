@@ -9,6 +9,7 @@ import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/components/screen_pod.dart';
 import 'package:todo_share/components/admob/ad_mob.dart';
+import 'package:todo_share/database/all_data_service.dart';
 import 'package:todo_share/riverpod/selected_icon.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,7 +41,7 @@ class CreateGroupPage extends ConsumerWidget {
     final designW = screen.designW(200);
     final designH = screen.designH(50);
 
-    final String? uid = UID().uid;
+    final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
 
     // Post-frame callback to request focus after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -161,8 +162,32 @@ class CreateGroupPage extends ConsumerWidget {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  updateGroupListAndDateInFirestore(
-                      context, uid!, _groupNameController.text);
+                  AllDataService.updateGroupListAndDateInFirestore(
+                      uid!, _groupNameController.text);
+                  Navigator.of(context).pushReplacement(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return HomePage();
+                      },
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        // 右から左
+                        final Offset begin = Offset(1.0, 0.0);
+                        // 左から右
+                        // final Offset begin = Offset(-1.0, 0.0);
+                        final Offset end = Offset.zero;
+                        final Animatable<Offset> tween =
+                            Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: Curves.easeInOut));
+                        final Animation<Offset> offsetAnimation =
+                            animation.drive(tween);
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
                 },
                 // ボタンの色と枠線を設定する
                 style: ElevatedButton.styleFrom(
@@ -200,100 +225,5 @@ class CreateGroupPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-}
-
-Future<void> updateGroupListAndDateInFirestore(
-    BuildContext context, String uid, String groupName) async {
-  try {
-    ///
-    /// USERコレクションに作成したGROUPを追加（PRIMARY_GROUP_ID）
-    ///
-    DocumentReference userDocRef =
-        FirebaseFirestore.instance.collection('USER').doc(uid);
-
-    DocumentSnapshot userDoc = await userDocRef.get();
-    if (!userDoc.exists) {
-      throw Exception("User document does not exist!");
-    }
-
-    var uuid = Uuid();
-    var groupIdFromUuid = uuid.v4();
-
-    // 更新するフィールドと値のマップを作成します
-    Map<String, dynamic> updateData = {
-      'PRIMARY_GROUP_ID': groupIdFromUuid,
-      'UPDATE_DATE': Timestamp.now(),
-    };
-
-    // ドキュメントを更新します
-    await userDocRef.update(updateData);
-
-    ///
-    /// USERコレクション配下に、GROUP一覧用サブコレクションを追加
-    ///
-    await FirebaseFirestore.instance
-        .collection('USER')
-        .doc(uid)
-        .collection('GROUP')
-        .doc(groupIdFromUuid)
-        .set({
-      'ORDER_NO': 0,
-      'PRIMARY_TODOLIST_ID': '',
-      'CREATE_DATE': Timestamp.now(),
-      'UPDATE_DATE': Timestamp.now(),
-    });
-
-    ///
-    /// GROUPコレクション
-    ///
-    await FirebaseFirestore.instance
-        .collection('GROUP')
-        .doc(groupIdFromUuid)
-        .set({
-      'GROUP_NAME': groupName,
-      'ADMIN_USER_ID': uid,
-      'CREATE_DATE': Timestamp.now(),
-      'UPDATE_DATE': Timestamp.now(),
-    });
-
-    ///
-    /// GROUPコレクション配下に、USER
-    ///
-    await FirebaseFirestore.instance
-        .collection('GROUP')
-        .doc(groupIdFromUuid)
-        .collection('USER')
-        .doc(uid)
-        .set({
-      'ORDER_NO': 0,
-      'CREATE_DATE': Timestamp.now(),
-      'UPDATE_DATE': Timestamp.now(),
-    });
-
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) {
-          return HomePage();
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // 右から左
-          final Offset begin = Offset(1.0, 0.0);
-          // 左から右
-          // final Offset begin = Offset(-1.0, 0.0);
-          final Offset end = Offset.zero;
-          final Animatable<Offset> tween = Tween(begin: begin, end: end)
-              .chain(CurveTween(curve: Curves.easeInOut));
-          final Animation<Offset> offsetAnimation = animation.drive(tween);
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
-        },
-      ),
-    );
-  } catch (e) {
-    print('Error updating group list and update date in Firestore: $e');
-    throw e;
   }
 }
