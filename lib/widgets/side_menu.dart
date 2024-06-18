@@ -2,10 +2,13 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/singleton/uid.dart';
+import 'package:todo_share/pages/create_group.dart';
 import 'package:todo_share/utils/modal_utils.dart';
+import 'package:todo_share/widgets/group_join_dialog.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
 import 'package:todo_share/widgets/user_setting_modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -219,12 +222,12 @@ class SideMenu extends ConsumerWidget {
                               ],
                             ),
                             SizedBox(height: 24.0),
+
                             ...groupMap.entries.map((entry) {
                               String groupId = entry.key;
                               String groupName = entry.value;
                               List<String> userIds =
                                   groupUsersMap[groupId] ?? [];
-                              print('userIds: ${userIds}');
 
                               return Padding(
                                 padding:
@@ -251,117 +254,241 @@ class SideMenu extends ConsumerWidget {
                                         maxLines: 1,
                                       ),
                                     ),
-                                    Stack(
-                                      children: userIds.map((userId) {
-                                        return Container(
-                                          height: 32,
-                                          child: FutureBuilder<String>(
-                                            future: getUserIconPath(
-                                                userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return Center(
-                                                  child:
-                                                      CircularProgressIndicator(),
-                                                );
-                                              } else if (snapshot.hasError) {
-                                                return Center(
-                                                  child: Text(
-                                                      'Error: ${snapshot.error}'),
-                                                );
-                                              } else {
-                                                String? iconPath =
-                                                    snapshot.data;
+                                    Stack(children: [
+                                      Container(
+                                        width: 80,
+                                        height: 32,
+                                      ),
+                                      ...userIds.map((userId) {
+                                        int index = userIds.indexOf(userId);
+                                        if (index > 0) {
+                                          return Positioned(
+                                            top: 0,
+                                            right: 24,
+                                            child: Container(
+                                              height: 32,
+                                              child: FutureBuilder<String>(
+                                                future: getUserIconPath(
+                                                    userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                                                builder: (context, snapshot) {
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return Center(
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    );
+                                                  } else if (snapshot
+                                                      .hasError) {
+                                                    return Center(
+                                                      child: Text(
+                                                          'Error: ${snapshot.error}'),
+                                                    );
+                                                  } else {
+                                                    String? iconPath =
+                                                        snapshot.data;
 
-                                                if (iconPath != null) {
-                                                  // ローカルにファイルが存在する場合はその画像を表示
-                                                  return Image.file(
-                                                    File(iconPath),
-                                                    width: 32,
-                                                    height: 32,
-                                                  );
-                                                } else {
-                                                  // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
-                                                  return FutureBuilder<String>(
-                                                    future:
-                                                        _getUserIconUrl(userId),
-                                                    builder:
-                                                        (context, snapshot) {
-                                                      if (snapshot
-                                                              .connectionState ==
-                                                          ConnectionState
-                                                              .waiting) {
-                                                        return Center(
-                                                          child:
-                                                              CircularProgressIndicator(),
-                                                        );
-                                                      } else if (snapshot
-                                                          .hasError) {
-                                                        return Center(
-                                                          child: Text(
-                                                              'Failed to load image'),
-                                                        );
-                                                      } else {
-                                                        String iconUrl =
-                                                            snapshot.data ?? '';
-
-                                                        return Image.network(
-                                                          iconUrl,
-                                                          width: 32,
-                                                          height: 32,
-                                                          loadingBuilder:
-                                                              (BuildContext
-                                                                      context,
-                                                                  Widget child,
-                                                                  ImageChunkEvent?
-                                                                      loadingProgress) {
-                                                            if (loadingProgress ==
-                                                                null)
-                                                              return child;
+                                                    if (iconPath != null) {
+                                                      // ローカルにファイルが存在する場合はその画像を表示
+                                                      return Image.file(
+                                                        File(iconPath),
+                                                        width: 32,
+                                                        height: 32,
+                                                      );
+                                                    } else {
+                                                      print(
+                                                          'Firestore Storageから直接表示してます');
+                                                      // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                                      return FutureBuilder<
+                                                          String>(
+                                                        future: _getUserIconUrl(
+                                                            userId),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
                                                             return Center(
                                                               child:
-                                                                  CircularProgressIndicator(
-                                                                value: loadingProgress
-                                                                            .expectedTotalBytes !=
-                                                                        null
-                                                                    ? loadingProgress
-                                                                            .cumulativeBytesLoaded /
-                                                                        loadingProgress
-                                                                            .expectedTotalBytes!
-                                                                    : null,
-                                                              ),
+                                                                  CircularProgressIndicator(),
                                                             );
-                                                          },
-                                                          errorBuilder:
-                                                              (BuildContext
+                                                          } else if (snapshot
+                                                              .hasError) {
+                                                            return Center(
+                                                              child: Text(
+                                                                  'Failed to load image'),
+                                                            );
+                                                          } else {
+                                                            String iconUrl =
+                                                                snapshot.data ??
+                                                                    '';
+
+                                                            return Image
+                                                                .network(
+                                                              iconUrl,
+                                                              width: 32,
+                                                              height: 32,
+                                                              loadingBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Widget
+                                                                          child,
+                                                                      ImageChunkEvent?
+                                                                          loadingProgress) {
+                                                                if (loadingProgress ==
+                                                                    null)
+                                                                  return child;
+                                                                return Center(
+                                                                  child:
+                                                                      CircularProgressIndicator(
+                                                                    value: loadingProgress.expectedTotalBytes !=
+                                                                            null
+                                                                        ? loadingProgress.cumulativeBytesLoaded /
+                                                                            loadingProgress.expectedTotalBytes!
+                                                                        : null,
+                                                                  ),
+                                                                );
+                                                              },
+                                                              errorBuilder: (BuildContext
                                                                       context,
                                                                   Object
                                                                       exception,
                                                                   StackTrace?
                                                                       stackTrace) {
-                                                            // エラー時の処理
-                                                            return Center(
-                                                              child: Text(
-                                                                  'Failed to load image'),
+                                                                // エラー時の処理
+                                                                return Center(
+                                                                  child: Text(
+                                                                      'Failed to load image'),
+                                                                );
+                                                              },
                                                             );
-                                                          },
-                                                        );
-                                                      }
-                                                    },
+                                                          }
+                                                        },
+                                                      );
+                                                    }
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          return Container(
+                                            height: 32,
+                                            child: FutureBuilder<String>(
+                                              future: getUserIconPath(
+                                                  userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
                                                   );
+                                                } else if (snapshot.hasError) {
+                                                  return Center(
+                                                    child: Text(
+                                                        'Error: ${snapshot.error}'),
+                                                  );
+                                                } else {
+                                                  String? iconPath =
+                                                      snapshot.data;
+
+                                                  if (iconPath != null) {
+                                                    // ローカルにファイルが存在する場合はその画像を表示
+                                                    return Image.file(
+                                                      File(iconPath),
+                                                      width: 32,
+                                                      height: 32,
+                                                    );
+                                                  } else {
+                                                    print(
+                                                        'Firestore Storageから直接表示してます');
+                                                    // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                                    return FutureBuilder<
+                                                        String>(
+                                                      future: _getUserIconUrl(
+                                                          userId),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          return Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          );
+                                                        } else if (snapshot
+                                                            .hasError) {
+                                                          return Center(
+                                                            child: Text(
+                                                                'Failed to load image'),
+                                                          );
+                                                        } else {
+                                                          String iconUrl =
+                                                              snapshot.data ??
+                                                                  '';
+
+                                                          return Image.network(
+                                                            iconUrl,
+                                                            width: 32,
+                                                            height: 32,
+                                                            loadingBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Widget
+                                                                        child,
+                                                                    ImageChunkEvent?
+                                                                        loadingProgress) {
+                                                              if (loadingProgress ==
+                                                                  null)
+                                                                return child;
+                                                              return Center(
+                                                                child:
+                                                                    CircularProgressIndicator(
+                                                                  value: loadingProgress
+                                                                              .expectedTotalBytes !=
+                                                                          null
+                                                                      ? loadingProgress
+                                                                              .cumulativeBytesLoaded /
+                                                                          loadingProgress
+                                                                              .expectedTotalBytes!
+                                                                      : null,
+                                                                ),
+                                                              );
+                                                            },
+                                                            errorBuilder:
+                                                                (BuildContext
+                                                                        context,
+                                                                    Object
+                                                                        exception,
+                                                                    StackTrace?
+                                                                        stackTrace) {
+                                                              // エラー時の処理
+                                                              return Center(
+                                                                child: Text(
+                                                                    'Failed to load image'),
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                    );
+                                                  }
                                                 }
-                                              }
-                                            },
-                                          ),
-                                        );
+                                              },
+                                            ),
+                                          );
+                                        }
                                       }).toList(),
-                                    ),
+                                    ]),
                                     SizedBox(width: 8.0),
                                   ],
                                 ),
                               );
                             }).toList(),
+
                             SizedBox(height: 16.0),
                             Expanded(child: Container()),
 
@@ -369,32 +496,101 @@ class SideMenu extends ConsumerWidget {
                             /// サイドメニュー下
                             ///
                             SizedBox(height: 16.0),
-                            Container(
-                              height: 32.0,
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child: Container(
-                                      width: 32,
-                                      height: 32,
-                                      child: Image.asset(
-                                          'assets/images/CreateGroup.png'),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const GroupJoinDialog();
+                                  },
+                                );
+                              },
+                              child: Container(
+                                height: 32.0,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: Container(
+                                        width: 32,
+                                        height: 32,
+                                        child: Image.asset(
+                                            'assets/images/CreateGroup.png'),
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    'グループを新しく作る',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: GoogleFonts.notoSansJp(
-                                        textStyle: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ).fontFamily,
+                                    Text(
+                                      'グループに参加する',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: GoogleFonts.notoSansJp(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ).fontFamily,
+                                      ),
                                     ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 24.0),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
+                                      return CreateGroupPage();
+                                    },
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      // 右から左
+                                      final Offset begin = Offset(1.0, 0.0);
+                                      // 左から右
+                                      // final Offset begin = Offset(-1.0, 0.0);
+                                      final Offset end = Offset.zero;
+                                      final Animatable<Offset> tween =
+                                          Tween(begin: begin, end: end).chain(
+                                              CurveTween(
+                                                  curve: Curves.easeInOut));
+                                      final Animation<Offset> offsetAnimation =
+                                          animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
                                   ),
-                                ],
+                                );
+                              },
+                              child: Container(
+                                height: 32.0,
+                                child: Row(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: Container(
+                                        width: 32,
+                                        height: 32,
+                                        child: Image.asset(
+                                            'assets/images/CreateGroup.png'),
+                                      ),
+                                    ),
+                                    Text(
+                                      'グループを新しく作る',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontFamily: GoogleFonts.notoSansJp(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ).fontFamily,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             SizedBox(height: 24.0),
