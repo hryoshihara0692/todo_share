@@ -31,6 +31,41 @@ class UserDataService {
     }
   }
 
+  ///
+  /// FirestoreのTodoの内容更新
+  ///
+  static Future<void> updateUserPrimaryGroupID(
+      String uid, String primaryGroupID) async {
+    try {
+      // DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+      //     .instance
+      //     .collection('USER')
+      //     .doc(uid)
+      //     .get();
+      // if (snapshot.exists) {
+      //   var user = snapshot.data()!;
+      //   List<String> userIDs =
+      //       List<String>.from(todoList['UserIDs'].cast<String>() ?? []);
+      //   if (!userIDs.contains(uid)) {
+      //     userIDs.add(uid);
+      await FirebaseFirestore.instance.collection('USER').doc(uid).update({
+        'PRIMARY_GROUP_ID': primaryGroupID,
+        'UPDATE_DATE': Timestamp.fromDate(DateTime.now()),
+      });
+      // }
+      // todoListName = todoList['TodoListName'];
+      // } else {
+      //   throw Exception('Document does not exist'); // エラーをスローする
+      //   // ドキュメントが存在しない場合の処理
+      //   // 例: エラーメッセージの表示など
+      // }
+    } catch (e) {
+      throw e; // エラーを再スローして呼び出し元に伝える
+      // エラーが発生した場合の処理
+      // 例: エラーメッセージの表示など
+    }
+  }
+
   static Future<Map<String, dynamic>> getGroupData(
       String uid, String groupID) async {
     try {
