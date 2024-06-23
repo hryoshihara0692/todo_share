@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/todo_card_display.dart';
-import 'package:todo_share/widgets/todo_card_edit.dart';
 
 class DeleteDialog extends ConsumerWidget {
   const DeleteDialog({

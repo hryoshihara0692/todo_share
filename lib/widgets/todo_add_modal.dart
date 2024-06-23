@@ -5,7 +5,7 @@ import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/database/todo_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
-import 'package:todo_share/widgets/todo_card_edit.dart';
+import 'package:todo_share/widgets/todo_card_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTodoModal extends ConsumerStatefulWidget {
@@ -38,7 +38,7 @@ class _AddTodoModalState extends ConsumerState<AddTodoModal> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TodoCardEdit(
+            TodoCardCreate(
               onChanged: (newValue) {
                 setState(() {
                   content = newValue;

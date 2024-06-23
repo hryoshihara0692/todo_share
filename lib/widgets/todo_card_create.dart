@@ -3,19 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 
-class TodoCardEdit extends StatefulWidget {
+class TodoCardCreate extends StatefulWidget {
   final ValueChanged<String> onChanged;
 
-  const TodoCardEdit({
+  const TodoCardCreate({
     super.key,
     required this.onChanged,
   });
 
   @override
-  _TodoCardEditState createState() => _TodoCardEditState();
+  _TodoCardCreateState createState() => _TodoCardCreateState();
 }
 
-class _TodoCardEditState extends State<TodoCardEdit> {
+class _TodoCardCreateState extends State<TodoCardCreate> {
   final TextEditingController _todoContentController = TextEditingController();
   final FocusNode _todoContentFocusNode = FocusNode();
 
@@ -99,17 +99,6 @@ class _TodoCardEditState extends State<TodoCardEdit> {
                     hintText: '\u{2709}  sample@todolist.com',
                   ),
                 ),
-                // child: Text(
-                //   'お米あああああああああああああああああああああああああああああああああああああああああああ',
-                //   maxLines: 2,
-                //   overflow: TextOverflow.ellipsis,
-                //   style: TextStyle(
-                //     color: Colors.black,
-                //     fontSize: 24,
-                //     fontFamily: GoogleFonts.notoSansJp().fontFamily,
-                //     height: 1.0,
-                //   ),
-                // ),
               ),
             ),
           ),
