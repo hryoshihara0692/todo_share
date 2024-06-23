@@ -8,8 +8,8 @@ import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/todo_card_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AddTodoModal extends ConsumerStatefulWidget {
-  const AddTodoModal({
+class TodoAddModal extends ConsumerStatefulWidget {
+  const TodoAddModal({
     super.key,
   });
 
@@ -17,7 +17,7 @@ class AddTodoModal extends ConsumerStatefulWidget {
   _AddTodoModalState createState() => _AddTodoModalState();
 }
 
-class _AddTodoModalState extends ConsumerState<AddTodoModal> {
+class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   String content = '';
 
   @override

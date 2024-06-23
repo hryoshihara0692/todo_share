@@ -7,7 +7,7 @@ void showAddTodoModal(BuildContext context, String groupID) {
   showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
-      return AddTodoModal();
+      return TodoAddModal();
     },
   );
 }
