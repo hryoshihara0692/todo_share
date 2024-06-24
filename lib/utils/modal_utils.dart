@@ -3,7 +3,7 @@ import 'package:todo_share/widgets/todo_add_modal.dart';
 import 'package:todo_share/widgets/group_setting_modal.dart';
 import 'package:todo_share/widgets/user_setting_modal.dart';
 
-void showAddTodoModal(BuildContext context, String groupID) {
+void showTodoAddModal(BuildContext context, String groupID) {
   showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {

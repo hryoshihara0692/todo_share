@@ -216,7 +216,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         // print('Tapおっけー');
-                        showAddTodoModal(context, groupIdAsyncValue.value!);
+                        showTodoAddModal(context, groupIdAsyncValue.value!);
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(
@@ -256,7 +256,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     child: InkWell(
                       onTap: () {
                         // print('Tapおっけー');
-                        showAddTodoModal(context, groupIdAsyncValue.value!);
+                        showTodoAddModal(context, groupIdAsyncValue.value!);
                       },
                       child: Image.asset(
                         'assets/images/add_todo_button.png',
