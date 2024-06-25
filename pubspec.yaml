@@ -29,6 +29,9 @@ dev_dependencies:
   sign_button: ^2.0.6
   firebase_storage: ^11.7.7
   uuid: ^4.4.0
+  intl: ^0.18.1
+  flutter_localization: ^0.2.0
+  table_calendar: ^3.0.9
 
 flutter:
   uses-material-design: true
