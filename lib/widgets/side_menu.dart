@@ -161,12 +161,95 @@ class SideMenu extends ConsumerWidget {
                                   Container(
                                     width: 64,
                                     height: 64,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        fit: BoxFit.fill,
-                                        image: AssetImage('$dirPath/$uid.png'),
-                                      ),
+                                    child: FutureBuilder<String>(
+                                      future: getUserIconPath(
+                                          uid), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Center(
+                                            child: Text(
+                                                'Error: ${snapshot.error}'),
+                                          );
+                                        } else {
+                                          String? iconPath = snapshot.data;
+
+                                          if (iconPath != null) {
+                                            // ローカルにファイルが存在する場合はその画像を表示
+                                            return Image.file(
+                                              File(iconPath),
+                                              width: 32,
+                                              height: 32,
+                                            );
+                                          } else {
+                                            print(
+                                                'Firestore Storageから直接表示してます');
+                                            // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                            return FutureBuilder<String>(
+                                              future: _getUserIconUrl(uid),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  );
+                                                } else if (snapshot.hasError) {
+                                                  return Center(
+                                                    child: Text(
+                                                        'Failed to load image'),
+                                                  );
+                                                } else {
+                                                  String iconUrl =
+                                                      snapshot.data ?? '';
+
+                                                  return Image.network(
+                                                    iconUrl,
+                                                    width: 32,
+                                                    height: 32,
+                                                    loadingBuilder: (BuildContext
+                                                            context,
+                                                        Widget child,
+                                                        ImageChunkEvent?
+                                                            loadingProgress) {
+                                                      if (loadingProgress ==
+                                                          null) return child;
+                                                      return Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          value: loadingProgress
+                                                                      .expectedTotalBytes !=
+                                                                  null
+                                                              ? loadingProgress
+                                                                      .cumulativeBytesLoaded /
+                                                                  loadingProgress
+                                                                      .expectedTotalBytes!
+                                                              : null,
+                                                        ),
+                                                      );
+                                                    },
+                                                    errorBuilder:
+                                                        (BuildContext context,
+                                                            Object exception,
+                                                            StackTrace?
+                                                                stackTrace) {
+                                                      // エラー時の処理
+                                                      return Center(
+                                                        child: Text(
+                                                            'Failed to load image'),
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                            );
+                                          }
+                                        }
+                                      },
                                     ),
                                   ),
                                   SizedBox(width: 16.0),
@@ -238,7 +321,8 @@ class SideMenu extends ConsumerWidget {
                                     var notifier = ref.read(
                                         selectedGroupNotifierProvider.notifier);
                                     notifier.setSelectedGroup(groupId);
-                                    await UserDataService.updateUserPrimaryGroupID(uid, groupId);
+                                    await UserDataService
+                                        .updateUserPrimaryGroupID(uid, groupId);
                                     // Scaffold.of(context).closeDrawer();
                                   }
                                 },
@@ -253,7 +337,8 @@ class SideMenu extends ConsumerWidget {
                                         child: Container(
                                           width: 32,
                                           height: 32,
-                                          child: groupId == selectedGroupID.value
+                                          child: groupId ==
+                                                  selectedGroupID.value
                                               ? Image.asset(
                                                   'assets/images/SelectMark.png')
                                               : Container(), // 画像のサイズの空白
