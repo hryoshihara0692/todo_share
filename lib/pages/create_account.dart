@@ -6,8 +6,6 @@ import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/pages/create_user.dart';
 // import 'package:intl/intl.dart';
 import 'package:todo_share/components/screen_pod.dart';
-import 'package:todo_share/components/admob/ad_mob.dart';
-import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateAccountPage extends ConsumerWidget {
@@ -155,7 +153,6 @@ class CreateAccountPage extends ConsumerWidget {
                     ),
                   ),
                 ),
-                adMobNotifier.getAdBanner(),
               ],
             ),
           ],

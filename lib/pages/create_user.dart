@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/pages/create_group.dart';
 // import 'package:intl/intl.dart';
 import 'package:todo_share/components/screen_pod.dart';
-import 'package:todo_share/components/admob/ad_mob.dart';
 import 'package:todo_share/riverpod/selected_icon.dart';
-import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_share/widgets/icon_setting_dialog.dart';
@@ -26,7 +23,6 @@ class CreateUserPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var selectedIcon = ref.watch(selectedIconNotifierProvider);
-    final adMobNotifier = ref.watch(adMobProvider);
 
     final TextEditingController _userNameController = TextEditingController();
     final TextEditingController _passController = TextEditingController();
@@ -252,7 +248,6 @@ class CreateUserPage extends ConsumerWidget {
                 ),
               ),
             ),
-            adMobNotifier.getAdBanner(),
           ],
         ),
       ),

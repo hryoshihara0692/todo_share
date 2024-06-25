@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:todo_share/components/admob/ad_mob.dart';
-import 'package:todo_share/components/admob/ad_mob_provider.dart';
 import 'package:todo_share/pages/create_account.dart';
 import 'package:todo_share/pages/login.dart';
-import 'package:todo_share/widgets/admob_banner.dart';
 import 'package:todo_share/components/screen_pod.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:todo_share/pages/home.dart';
@@ -16,8 +13,6 @@ class InitialPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final adMobNotifier = ref.watch(adMobProvider);
-
     bool _isLoading = false;
     int initialTabIndex = isNewAccount ? 1 : 0;
 
@@ -258,7 +253,6 @@ class InitialPage extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        adMobNotifier.getAdBanner(),
                       ],
                     ),
                   ),
@@ -448,7 +442,6 @@ class InitialPage extends ConsumerWidget {
                             ],
                           ),
                         ),
-                        adMobNotifier.getAdBanner(),
                       ],
                     ),
                   ),
