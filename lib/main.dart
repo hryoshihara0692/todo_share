@@ -8,6 +8,7 @@ import 'package:todo_share/pages/create_user.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_share/pages/initial.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,13 +37,24 @@ class MyApp extends StatelessWidget {
     final String? uid = UID().uid;
 
     return MaterialApp(
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            surfaceTintColor: Colors.transparent,
-          ),
-          useMaterial3: true,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          surfaceTintColor: Colors.transparent,
         ),
-        debugShowCheckedModeBanner: false,
-        home: uid != null ? HomePage() : InitialPage(isNewAccount: false));
+        useMaterial3: true,
+      ),
+      debugShowCheckedModeBanner: false,
+      home: uid != null ? HomePage() : InitialPage(isNewAccount: false),
+      // home: DeadlineSetting(),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en',''),
+        const Locale('ja',''),
+      ],
+    );
   }
 }
