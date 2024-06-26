@@ -332,7 +332,14 @@ class _DeadlineSettingDialogState extends State<DeadlineSettingDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       // ここに決定ボタンの処理を追加
-                      Navigator.of(context).pop();
+                      DateTime selectedDateTime = DateTime(
+                        _selectedDay.year,
+                        _selectedDay.month,
+                        _selectedDay.day,
+                        _selectedTime.hour,
+                        _selectedTime.minute,
+                      );
+                      Navigator.of(context).pop(selectedDateTime);
                     },
                     // ボタンの色と枠線を設定する
                     style: ElevatedButton.styleFrom(

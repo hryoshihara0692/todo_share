@@ -6,12 +6,16 @@ import 'package:todo_share/widgets/deadline_setting_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 
 class TodoCardCreate extends StatefulWidget {
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onContentChanged;
+  final ValueChanged<bool> onCheckChanged;
+  final ValueChanged<DateTime> onDeadlineChanged;
 
   const TodoCardCreate({
-    super.key,
-    required this.onChanged,
-  });
+    Key? key,
+    required this.onContentChanged,
+    required this.onCheckChanged,
+    required this.onDeadlineChanged,
+  }) : super(key: key);
 
   @override
   _TodoCardCreateState createState() => _TodoCardCreateState();
@@ -21,10 +25,13 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
   final TextEditingController _todoContentController = TextEditingController();
   final FocusNode _todoContentFocusNode = FocusNode();
 
+  bool isChecked = false;
+  DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
+
   @override
   void dispose() {
     _todoContentController.dispose();
-    _todoContentFocusNode.dispose(); // Dispose the focus node
+    _todoContentFocusNode.dispose(); // フォーカスノードの破棄
     super.dispose();
   }
 
@@ -60,12 +67,17 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
           ///
           InkWell(
             onTap: () {
-              print('Tapおっけー');
+              setState(() {
+                isChecked = !isChecked;
+                widget.onCheckChanged(isChecked);
+              });
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Image.asset(
-                'assets/images/check_button.png',
+                isChecked
+                    ? 'assets/images/check_button_checked.png'
+                    : 'assets/images/check_button.png',
                 width: 32,
                 height: 32,
               ),
@@ -85,10 +97,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                   controller: _todoContentController,
                   focusNode: _todoContentFocusNode,
                   onChanged: (newValue) {
-                    // Call setState to notify the parent widget about the change
-                    setState(() {
-                      widget.onChanged(newValue);
-                    });
+                    widget.onContentChanged(newValue);
                   },
                   decoration: const InputDecoration(
                     border: InputBorder.none,
@@ -114,14 +123,22 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                     /// 期限ボタン
                     ///
                     GestureDetector(
-                      onTap: () {
-                        // showDeadlineSettingModal(context);
-                        showDialog(
+                      onTap: () async {
+                        final selectedDateTime = await showDialog<DateTime>(
                           context: context,
                           builder: (BuildContext context) {
                             return DeadlineSettingDialog();
                           },
                         );
+
+                        if (selectedDateTime != null) {
+                          // 選択された日時を受け取る処理
+                          print('選択された日時: $selectedDateTime');
+                          setState(() {
+                            deadline = selectedDateTime;
+                          });
+                          widget.onDeadlineChanged(deadline);
+                        }
                       },
                       child: Container(
                         width: 32.0,
@@ -129,6 +146,28 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                         child: Image.asset('assets/images/Deadline.jpeg'),
                       ),
                     ),
+
+                    SizedBox(
+                      width: 8.0,
+                    ),
+
+                    ///
+                    /// 期限テキスト表示
+                    ///
+                    if (deadline.year != 2000 &&
+                        deadline.month != 1 &&
+                        deadline.day != 1)
+                      Text(
+                        deadline.toString().substring(0, 16),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: GoogleFonts.notoSansJp(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ).fontFamily,
+                        ),
+                      ),
                     Expanded(
                       child: Container(),
                     ),

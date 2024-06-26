@@ -19,6 +19,8 @@ class TodoAddModal extends ConsumerStatefulWidget {
 
 class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   String content = '';
+  bool isChecked = false;
+  DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +41,26 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
           mainAxisSize: MainAxisSize.min,
           children: [
             TodoCardCreate(
-              onChanged: (newValue) {
-                setState(() {
-                  content = newValue;
-                });
+              onContentChanged: (newValue) {
+                setState(
+                  () {
+                    content = newValue;
+                  },
+                );
+              },
+              onCheckChanged: (newValue) {
+                setState(
+                  () {
+                    isChecked = newValue;
+                  },
+                );
+              },
+              onDeadlineChanged: (newValue) {
+                setState(
+                  () {
+                    deadline = newValue;
+                  },
+                );
               },
             ),
             SizedBox(
@@ -100,28 +118,23 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                   child: ElevatedButton(
                     onPressed: () async {
                       // print('Tapおっけー');
-                      // Map<String, dynamic> todoData = {
-                      //   // "CONTENT": _todoContentController.text,
-                      //   "CONTENT": 'test',
-                      //   "CHECK_FLG": false,
-                      //   "CREATE_DATE": Timestamp.fromDate(DateTime.now()),
-                      //   "UPDATE_DATE": Timestamp.fromDate(DateTime.now()),
-                      // };
+                      // TodoFields todoFields = TodoFields(
+                      //   content: content.isNotEmpty
+                      //       ? content
+                      //       : 'だめっぽい', // テスト用のデフォルト値
+                      //   checkFlg: false,
+                      //   createDate: Timestamp.fromDate(DateTime.now()),
+                      //   updateDate: Timestamp.fromDate(DateTime.now()),
+                      // );
 
-                      TodoFields todoFields = TodoFields(
-                        content: content.isNotEmpty
-                            ? content
-                            : 'だめっぽい', // テスト用のデフォルト値
-                        checkFlg: false,
-                        createDate: Timestamp.fromDate(DateTime.now()),
-                        updateDate: Timestamp.fromDate(DateTime.now()),
-                      );
-
-                      // TODOLISTコレクションにドキュメント追加
-                      await TodoDataService.createTodoData(
-                          selectedGroupID.value!,
-                          selectedTodoListID.value!,
-                          todoFields.toMap());
+                      // // TODOLISTコレクションにドキュメント追加
+                      // await TodoDataService.createTodoData(
+                      //     selectedGroupID.value!,
+                      //     selectedTodoListID.value!,
+                      //     todoFields.toMap());
+                      print('content: $content');
+                      print('isChecked: $isChecked');
+                      print('deadline: $deadline');
                       Navigator.pop(context);
                     },
                     // ボタンの色と枠線を設定する
