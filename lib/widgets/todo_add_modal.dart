@@ -21,6 +21,7 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   String content = '';
   bool isChecked = false;
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
+  String memo = '';
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +60,13 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                 setState(
                   () {
                     deadline = newValue;
+                  },
+                );
+              },
+              onMemoChanged: (newValue) {
+                setState(
+                  () {
+                    memo = newValue;
                   },
                 );
               },

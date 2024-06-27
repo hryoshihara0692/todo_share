@@ -1,20 +1,25 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
+import 'package:todo_share/widgets/memo_setting_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 
 class TodoCardCreate extends StatefulWidget {
   final ValueChanged<String> onContentChanged;
   final ValueChanged<bool> onCheckChanged;
   final ValueChanged<DateTime> onDeadlineChanged;
+  final ValueChanged<String> onMemoChanged;
 
   const TodoCardCreate({
     Key? key,
     required this.onContentChanged,
     required this.onCheckChanged,
     required this.onDeadlineChanged,
+    required this.onMemoChanged,
+
   }) : super(key: key);
 
   @override
@@ -27,6 +32,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
 
   bool isChecked = false;
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
+  String memoText = '';
 
   @override
   void dispose() {
@@ -109,11 +115,32 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                 ),
                 Row(
                   children: [
+                    ///
                     /// 2段目のメモボタン
-                    Container(
-                      width: 32.0,
-                      height: 32.0,
-                      child: Image.asset('assets/images/Memo.png'),
+                    ///
+                    GestureDetector(
+                      onTap: () async {
+                        final memo = await showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return MemoSettingDialog();
+                          },
+                        );
+
+                        if (memo != null) {
+                          // 選択された日時を受け取る処理
+                          print('選択された日時: $memo');
+                          setState(() {
+                            memoText = memo;
+                          });
+                          widget.onMemoChanged(memoText);
+                        }
+                      },
+                      child: Container(
+                        width: 32.0,
+                        height: 32.0,
+                        child: Image.asset('assets/images/Memo.png'),
+                      ),
                     ),
                     SizedBox(
                       width: 8.0,
