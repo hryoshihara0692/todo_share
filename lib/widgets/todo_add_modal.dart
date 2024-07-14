@@ -22,6 +22,7 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   bool isChecked = false;
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
   String memo = '';
+  List<String> managerList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +70,11 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                     memo = newValue;
                   },
                 );
+              },
+              onManagerListChanged: (newValue){
+                setState((){
+                  managerList = newValue;
+                });
               },
             ),
             SizedBox(
@@ -143,6 +149,8 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                       print('content: $content');
                       print('isChecked: $isChecked');
                       print('deadline: $deadline');
+                      print('managerList: $managerList');
+
                       Navigator.pop(context);
                     },
                     // ボタンの色と枠線を設定する

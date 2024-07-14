@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
+import 'package:todo_share/widgets/manager_setting_dialog.dart';
 import 'package:todo_share/widgets/memo_setting_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 
@@ -12,6 +13,7 @@ class TodoCardCreate extends StatefulWidget {
   final ValueChanged<bool> onCheckChanged;
   final ValueChanged<DateTime> onDeadlineChanged;
   final ValueChanged<String> onMemoChanged;
+  final ValueChanged<List<String>> onManagerListChanged;
 
   const TodoCardCreate({
     Key? key,
@@ -19,7 +21,7 @@ class TodoCardCreate extends StatefulWidget {
     required this.onCheckChanged,
     required this.onDeadlineChanged,
     required this.onMemoChanged,
-
+    required this.onManagerListChanged,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
   bool isChecked = false;
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
   String memoText = '';
+  List<String> _managerList = [];
 
   @override
   void dispose() {
@@ -198,20 +201,48 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                     Expanded(
                       child: Container(),
                     ),
-                    Container(
-                      height: 32.0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 32.0,
-                            height: 32.0,
-                            child: Image.asset(
-                                'assets/images/add_user_button.png'),
-                          ),
-                        ],
+                    ///
+                    /// 2段目の担当者ボタン
+                    ///
+                    GestureDetector(
+                      onTap: () async {
+                        final managerList = await showDialog<List<String>>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ManagerSettingDialog();
+                          },
+                        );
+
+                        if (managerList != null) {
+                          // 選択された日時を受け取る処理
+                          print('選択された担当者リスト: $managerList');
+                          setState(() {
+                            _managerList = managerList;
+                          });
+                          widget.onManagerListChanged(_managerList);
+                        }
+                      },
+                      child: Container(
+                        width: 32.0,
+                        height: 32.0,
+                        child: Image.asset('assets/images/add_user_button.png'),
                       ),
                     ),
+
+                    // Container(
+                    //   height: 32.0,
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       Container(
+                    //         width: 32.0,
+                    //         height: 32.0,
+                    //         child: Image.asset(
+                    //             'assets/images/add_user_button.png'),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     SizedBox(
                       width: 8.0,
                     ),
