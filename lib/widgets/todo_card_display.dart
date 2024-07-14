@@ -1,9 +1,14 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
+import 'package:path/path.dart' as path;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class TodoCardDisplay extends StatelessWidget {
   final TodoFields todoFields;
@@ -13,8 +18,45 @@ class TodoCardDisplay extends StatelessWidget {
     required this.todoFields,
   });
 
+  // UIDを用いてユーザーのICON_URLを取得する関数
+  Future<String> _getUserIconUrl(String uid) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('USER').doc(uid).get();
+    return userDoc.data()?['ICON_URL'] ?? '';
+  }
+
+  Future<String> getUserIconPath(String userId) async {
+    // アプリのドキュメントディレクトリーを取得
+    final directory = await getApplicationDocumentsDirectory();
+    final String dirPath = path.join(directory.path, 'user_icons');
+
+    // ユーザーごとのアイコン画像のファイルパス
+    final String filePath = path.join(dirPath, '$userId.png');
+
+    // ファイルが存在するかチェック
+    bool fileExists = await File(filePath).exists();
+
+    if (fileExists) {
+      // ローカルにファイルがある場合はそのパスを返す
+      return filePath;
+    } else {
+      // FirestoreからアイコンURLを取得して、ローカルに保存する
+      final iconUrl = await _getUserIconUrl(userId);
+      await _downloadAndSaveImage(iconUrl, filePath);
+      return filePath;
+    }
+  }
+
+  Future<void> _downloadAndSaveImage(String imageUrl, String filePath) async {
+    final response =
+        await FirebaseStorage.instance.refFromURL(imageUrl).getData();
+    await File(filePath).writeAsBytes(response!);
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<String> userIds = todoFields.managerIdList;
+
     return Container(
       width: double.infinity,
       height: 104,
@@ -144,20 +186,212 @@ class TodoCardDisplay extends StatelessWidget {
                     Expanded(
                       child: Container(),
                     ),
-                    Container(
-                      height: 32.0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            width: 32.0,
-                            height: 32.0,
-                            child: Image.asset(
-                                'assets/images/add_user_button.png'),
-                          ),
-                        ],
+                    // Container(
+                    //   height: 32.0,
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.end,
+                    //     children: [
+                    //       Container(
+                    //         width: 32.0,
+                    //         height: 32.0,
+                    //         child: Image.asset(
+                    //             'assets/images/add_user_button.png'),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    Stack(children: [
+                      Container(
+                        width: 80,
+                        height: 32,
                       ),
-                    ),
+                      ...userIds.map((userId) {
+                        int index = userIds.indexOf(userId);
+                        if (index > 0) {
+                          return Positioned(
+                            top: 0,
+                            right: 24,
+                            child: Container(
+                              height: 32,
+                              child: FutureBuilder<String>(
+                                future: getUserIconPath(
+                                    userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text('Error: ${snapshot.error}'),
+                                    );
+                                  } else {
+                                    String? iconPath = snapshot.data;
+
+                                    if (iconPath != null) {
+                                      // ローカルにファイルが存在する場合はその画像を表示
+                                      return Image.file(
+                                        File(iconPath),
+                                        width: 32,
+                                        height: 32,
+                                      );
+                                    } else {
+                                      print('Firestore Storageから直接表示してます');
+                                      // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                      return FutureBuilder<String>(
+                                        future: _getUserIconUrl(userId),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                              child:
+                                                  Text('Failed to load image'),
+                                            );
+                                          } else {
+                                            String iconUrl =
+                                                snapshot.data ?? '';
+
+                                            return Image.network(
+                                              iconUrl,
+                                              width: 32,
+                                              height: 32,
+                                              loadingBuilder:
+                                                  (BuildContext context,
+                                                      Widget child,
+                                                      ImageChunkEvent?
+                                                          loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                  ),
+                                                );
+                                              },
+                                              errorBuilder:
+                                                  (BuildContext context,
+                                                      Object exception,
+                                                      StackTrace? stackTrace) {
+                                                // エラー時の処理
+                                                return Center(
+                                                  child: Text(
+                                                      'Failed to load image'),
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            height: 32,
+                            child: FutureBuilder<String>(
+                              future: getUserIconPath(
+                                  userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                    child: Text('Error: ${snapshot.error}'),
+                                  );
+                                } else {
+                                  String? iconPath = snapshot.data;
+
+                                  if (iconPath != null) {
+                                    // ローカルにファイルが存在する場合はその画像を表示
+                                    return Image.file(
+                                      File(iconPath),
+                                      width: 32,
+                                      height: 32,
+                                    );
+                                  } else {
+                                    print('Firestore Storageから直接表示してます');
+                                    // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                    return FutureBuilder<String>(
+                                      future: _getUserIconUrl(userId),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Center(
+                                            child: Text('Failed to load image'),
+                                          );
+                                        } else {
+                                          String iconUrl = snapshot.data ?? '';
+
+                                          return Image.network(
+                                            iconUrl,
+                                            width: 32,
+                                            height: 32,
+                                            loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent?
+                                                        loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes!
+                                                      : null,
+                                                ),
+                                              );
+                                            },
+                                            errorBuilder: (BuildContext context,
+                                                Object exception,
+                                                StackTrace? stackTrace) {
+                                              // エラー時の処理
+                                              return Center(
+                                                child: Text(
+                                                    'Failed to load image'),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          );
+                        }
+                      }).toList(),
+                    ]),
                     SizedBox(
                       width: 8.0,
                     ),
