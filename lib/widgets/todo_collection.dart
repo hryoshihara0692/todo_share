@@ -52,11 +52,15 @@ class TodoCollection extends ConsumerWidget {
                         itemCount: todoData.length,
                         itemBuilder: (context, index) {
                           TodoFields todoFields = TodoFields(
-                            content: todoData[index]['CONTENT'],
                             checkFlg: todoData[index]['CHECK_FLG'],
+                            content: todoData[index]['CONTENT'],
+                            memo: todoData[index]['MEMO'],
+                            deadline: todoData[index]['DEADLINE'],
+                            managerIdList: List<String>.from(todoData[index]['MANAGER_ID_LIST']),
                             createDate: todoData[index]['CREATE_DATE'],
                             updateDate: todoData[index]['UPDATE_DATE'],
                           );
+
                           return Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 4.0, 12.0),
                             // child: TodoCard(todo: todoList[index]),

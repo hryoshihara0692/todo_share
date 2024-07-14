@@ -132,24 +132,27 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                   child: ElevatedButton(
                     onPressed: () async {
                       // print('Tapおっけー');
-                      // TodoFields todoFields = TodoFields(
-                      //   content: content.isNotEmpty
-                      //       ? content
-                      //       : 'だめっぽい', // テスト用のデフォルト値
-                      //   checkFlg: false,
-                      //   createDate: Timestamp.fromDate(DateTime.now()),
-                      //   updateDate: Timestamp.fromDate(DateTime.now()),
-                      // );
+                      TodoFields todoFields = TodoFields(
+                        checkFlg: false,
+                        content: content.isNotEmpty
+                            ? content
+                            : '',
+                        memo: memo,
+                        deadline: Timestamp.fromDate(deadline),
+                        managerIdList: managerList,
+                        createDate: Timestamp.fromDate(DateTime.now()),
+                        updateDate: Timestamp.fromDate(DateTime.now()),
+                      );
 
-                      // // TODOLISTコレクションにドキュメント追加
-                      // await TodoDataService.createTodoData(
-                      //     selectedGroupID.value!,
-                      //     selectedTodoListID.value!,
-                      //     todoFields.toMap());
-                      print('content: $content');
-                      print('isChecked: $isChecked');
-                      print('deadline: $deadline');
-                      print('managerList: $managerList');
+                      // TODOLISTコレクションにドキュメント追加
+                      await TodoDataService.createTodoData(
+                          selectedGroupID.value!,
+                          selectedTodoListID.value!,
+                          todoFields.toMap());
+                      // print('content: $content');
+                      // print('isChecked: $isChecked');
+                      // print('deadline: $deadline');
+                      // print('managerList: $managerList');
 
                       Navigator.pop(context);
                     },
