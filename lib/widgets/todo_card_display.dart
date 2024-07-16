@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/utils/modal_utils.dart';
+import 'package:todo_share/widgets/deadline_edit_dialog.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
 import 'package:todo_share/widgets/memo_edit_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
@@ -215,6 +216,17 @@ class TodoCardDisplay extends StatelessWidget {
                         //     return DeadlineSettingDialog();
                         //   },
                         // );
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) {
+                            return DeadlineEditDialog(
+                              initialDeadline: todoFields.deadline.toDate(),
+                              groupId: groupId,
+                              todoListId: todoListId,
+                              todoId: todoId,
+                            );
+                          },
+                        );
                       },
                       child: Container(
                         width: 32.0,
