@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
+import 'package:todo_share/widgets/memo_edit_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 import 'package:path/path.dart' as path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -68,7 +69,7 @@ class TodoCardDisplay extends StatelessWidget {
       height: 104,
       // TODOの形と影を設定する
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: todoFields.checkFlg ? Colors.grey : Colors.white,
         borderRadius: const BorderRadius.all(
           Radius.circular(10.0),
         ),
@@ -138,7 +139,7 @@ class TodoCardDisplay extends StatelessWidget {
                             alignment: Alignment.centerLeft, // テキストを中央左寄せにする
                           ),
                           onPressed: () {
-                            // showAddTodoModal(context);
+                            // TodoAddModalの編集版を表示
                           },
                           onLongPress: () {
                             showDialog<void>(
@@ -179,10 +180,25 @@ class TodoCardDisplay extends StatelessWidget {
                 Row(
                   children: [
                     /// 2段目のメモボタン
-                    Container(
-                      width: 32.0,
-                      height: 32.0,
-                      child: Image.asset('assets/images/Memo.png'),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) {
+                            return MemoEditDialog(
+                              groupId: groupId,
+                              todoListId: todoListId,
+                              todoId: todoId,
+                              memo: todoFields.memo,
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        width: 32.0,
+                        height: 32.0,
+                        child: Image.asset('assets/images/Memo.png'),
+                      ),
                     ),
                     SizedBox(
                       width: 8.0,
