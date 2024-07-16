@@ -234,6 +234,28 @@ class TodoCardDisplay extends StatelessWidget {
                         child: Image.asset('assets/images/Deadline.jpeg'),
                       ),
                     ),
+
+                    ///
+                    /// 期限テキスト表示
+                    ///
+                    if (todoFields.deadline.toDate().year != 2000 &&
+                        todoFields.deadline.toDate().month != 1 &&
+                        todoFields.deadline.toDate().day != 1)
+                      Text(
+                        todoFields.deadline
+                            .toDate()
+                            .toString()
+                            .substring(0, 16),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: GoogleFonts.notoSansJp(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ).fontFamily,
+                        ),
+                      ),
+
                     Expanded(
                       child: Container(),
                     ),

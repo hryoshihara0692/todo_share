@@ -31,12 +31,17 @@ class _DeadlineEditDialogState extends State<DeadlineEditDialog> {
   @override
   void initState() {
     super.initState();
+
+    DateTime initialDate = widget.initialDeadline;
+    // Check if the initialDeadline is January 1, 2000
+    if (initialDate == DateTime(2000, 1, 1)) {
+      initialDate = DateTime.now();
+    }
+
     _calendarFormat = CalendarFormat.month;
-    _focusedDay = widget.initialDeadline;
-    _selectedDay = widget.initialDeadline;
-    _selectedTime = TimeOfDay(
-        hour: widget.initialDeadline.hour,
-        minute: widget.initialDeadline.minute);
+    _focusedDay = initialDate;
+    _selectedDay = initialDate;
+    _selectedTime = TimeOfDay(hour: initialDate.hour, minute: initialDate.minute);
     _isTimeSelected = true;
   }
 
