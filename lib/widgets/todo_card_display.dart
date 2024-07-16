@@ -12,10 +12,16 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 class TodoCardDisplay extends StatelessWidget {
   final TodoFields todoFields;
+  final String groupId;
+  final String todoListId;
+  final String todoId;
 
   const TodoCardDisplay({
     super.key,
     required this.todoFields,
+    required this.groupId,
+    required this.todoListId,
+    required this.todoId,
   });
 
   // UIDを用いてユーザーのICON_URLを取得する関数
@@ -81,13 +87,30 @@ class TodoCardDisplay extends StatelessWidget {
           /// チェックボタン
           ///
           InkWell(
-            onTap: () {
-              print('Tapおっけー');
+            onTap: () async {
+              // print('Tapおっけー');
+              try {
+                await FirebaseFirestore.instance
+                    .collection('GROUP')
+                    .doc(groupId)
+                    .collection('TODOLIST')
+                    .doc(todoListId)
+                    .collection('TODO')
+                    .doc(todoId)
+                    .update({
+                  'CHECK_FLG': !todoFields.checkFlg,
+                });
+                print('チェックフラグを更新しました');
+              } catch (e) {
+                print('エラーが発生しました: $e');
+              }
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Image.asset(
-                'assets/images/check_button.png',
+                todoFields.checkFlg
+                    ? 'assets/images/check_button_checked.png'
+                    : 'assets/images/check_button.png',
                 width: 32,
                 height: 32,
               ),

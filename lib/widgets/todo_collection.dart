@@ -63,9 +63,20 @@ class TodoCollection extends ConsumerWidget {
 
                           return Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 4.0, 12.0),
-                            // child: TodoCard(todo: todoList[index]),
-                            child: TodoCardDisplay(
-                              todoFields: todoFields,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Document ID: ${todoData[index].id}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                                ),
+                                TodoCardDisplay(
+                                  groupId: groupId,
+                                  todoListId: todoListId,
+                                  todoId: todoData[index].id,
+                                  todoFields: todoFields,
+                                ),
+                              ],
                             ),
                           );
                         },
