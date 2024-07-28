@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/deadline_edit_dialog.dart';
 import 'package:todo_share/widgets/deadline_setting_dialog.dart';
+import 'package:todo_share/widgets/manager_edit_dialog.dart';
 import 'package:todo_share/widgets/memo_edit_dialog.dart';
 import 'package:todo_share/widgets/todo_delete_dialog.dart';
 import 'package:path/path.dart' as path;
@@ -273,18 +275,124 @@ class TodoCardDisplay extends StatelessWidget {
                     //     ],
                     //   ),
                     // ),
-                    Stack(children: [
-                      Container(
-                        width: 80,
-                        height: 32,
-                      ),
-                      ...userIds.map((userId) {
-                        int index = userIds.indexOf(userId);
-                        if (index > 0) {
-                          return Positioned(
-                            top: 0,
-                            right: 24,
-                            child: Container(
+                    GestureDetector(
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) {
+                            return ManagerEditDialog(
+                              managerList: todoFields.managerIdList,
+                              groupId: groupId,
+                              todoListId: todoListId,
+                              todoId: todoId,
+                            );
+                          },
+                        );
+                      },
+                      child: Stack(children: [
+                        Container(
+                          width: 80,
+                          height: 32,
+                        ),
+                        ...userIds.map((userId) {
+                          int index = userIds.indexOf(userId);
+                          if (index > 0) {
+                            return Positioned(
+                              top: 0,
+                              right: 24,
+                              child: Container(
+                                height: 32,
+                                child: FutureBuilder<String>(
+                                  future: getUserIconPath(
+                                      userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Center(
+                                        child: Text('Error: ${snapshot.error}'),
+                                      );
+                                    } else {
+                                      String? iconPath = snapshot.data;
+
+                                      if (iconPath != null) {
+                                        // ローカルにファイルが存在する場合はその画像を表示
+                                        return Image.file(
+                                          File(iconPath),
+                                          width: 32,
+                                          height: 32,
+                                        );
+                                      } else {
+                                        print('Firestore Storageから直接表示してます');
+                                        // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                                        return FutureBuilder<String>(
+                                          future: _getUserIconUrl(userId),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Center(
+                                                child: Text(
+                                                    'Failed to load image'),
+                                              );
+                                            } else {
+                                              String iconUrl =
+                                                  snapshot.data ?? '';
+
+                                              return Image.network(
+                                                iconUrl,
+                                                width: 32,
+                                                height: 32,
+                                                loadingBuilder:
+                                                    (BuildContext context,
+                                                        Widget child,
+                                                        ImageChunkEvent?
+                                                            loadingProgress) {
+                                                  if (loadingProgress == null)
+                                                    return child;
+                                                  return Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      value: loadingProgress
+                                                                  .expectedTotalBytes !=
+                                                              null
+                                                          ? loadingProgress
+                                                                  .cumulativeBytesLoaded /
+                                                              loadingProgress
+                                                                  .expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  );
+                                                },
+                                                errorBuilder: (BuildContext
+                                                        context,
+                                                    Object exception,
+                                                    StackTrace? stackTrace) {
+                                                  // エラー時の処理
+                                                  return Center(
+                                                    child: Text(
+                                                        'Failed to load image'),
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                        );
+                                      }
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container(
                               height: 32,
                               child: FutureBuilder<String>(
                                 future: getUserIconPath(
@@ -373,98 +481,11 @@ class TodoCardDisplay extends StatelessWidget {
                                   }
                                 },
                               ),
-                            ),
-                          );
-                        } else {
-                          return Container(
-                            height: 32,
-                            child: FutureBuilder<String>(
-                              future: getUserIconPath(
-                                  userId), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (snapshot.hasError) {
-                                  return Center(
-                                    child: Text('Error: ${snapshot.error}'),
-                                  );
-                                } else {
-                                  String? iconPath = snapshot.data;
-
-                                  if (iconPath != null) {
-                                    // ローカルにファイルが存在する場合はその画像を表示
-                                    return Image.file(
-                                      File(iconPath),
-                                      width: 32,
-                                      height: 32,
-                                    );
-                                  } else {
-                                    print('Firestore Storageから直接表示してます');
-                                    // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
-                                    return FutureBuilder<String>(
-                                      future: _getUserIconUrl(userId),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return Center(
-                                            child: CircularProgressIndicator(),
-                                          );
-                                        } else if (snapshot.hasError) {
-                                          return Center(
-                                            child: Text('Failed to load image'),
-                                          );
-                                        } else {
-                                          String iconUrl = snapshot.data ?? '';
-
-                                          return Image.network(
-                                            iconUrl,
-                                            width: 32,
-                                            height: 32,
-                                            loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent?
-                                                        loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                      : null,
-                                                ),
-                                              );
-                                            },
-                                            errorBuilder: (BuildContext context,
-                                                Object exception,
-                                                StackTrace? stackTrace) {
-                                              // エラー時の処理
-                                              return Center(
-                                                child: Text(
-                                                    'Failed to load image'),
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                          );
-                        }
-                      }).toList(),
-                    ]),
+                            );
+                          }
+                        }).toList(),
+                      ]),
+                    ),
                     SizedBox(
                       width: 8.0,
                     ),
