@@ -66,10 +66,10 @@ class TodoCollection extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Document ID: ${todoData[index].id}',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                                ),
+                                // Text(
+                                //   'Document ID: ${todoData[index].id}',
+                                //   style: TextStyle(fontSize: 12, color: Colors.grey),
+                                // ),
                                 TodoCardDisplay(
                                   groupId: groupId,
                                   todoListId: todoListId,
