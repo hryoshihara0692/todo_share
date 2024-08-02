@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/class/notification_fields.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/database/todo_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
@@ -9,6 +10,8 @@ import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/todo_card_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_share/widgets/todolist_choise_dialog.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TodoAddModal extends ConsumerStatefulWidget {
   const TodoAddModal({
@@ -25,6 +28,7 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
   String memo = '';
   List<String> managerList = [];
+  String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +180,33 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                                   selectedGroupID.value!,
                                   selectedTodoListID.value!,
                                   todoFields.toMap());
+
+                              // NotificationFields notificationFields =
+                              //     NotificationFields(
+                              //   userId: uid,
+                              //   userName: 'userName',
+                              //   groupId: 'test_group_id',
+                              //   groupName: 'test_group_name',
+                              //   todolistId: 'test_todolist_id',
+                              //   todolistName: 'test_todolist_name',
+                              //   todoId: 'test_todo_id',
+                              //   content: 'test_content',
+                              //   beforeContent: 'test_before_content',
+                              //   notificationType: 'CREATE',
+                              //   notificationDate:
+                              //       Timestamp.fromDate(DateTime.now()),
+                              //   createDate: Timestamp.fromDate(DateTime.now()),
+                              //   updateDate: Timestamp.fromDate(DateTime.now()),
+                              // );
+
+                              // var uuid = Uuid();
+                              // var notificationID = uuid.v4();
+                              // await FirebaseFirestore.instance
+                              //     .collection('USER')
+                              //     .doc(uid)
+                              //     .collection('NOTIFICATION')
+                              //     .doc(notificationID)
+                              //     .set(notificationFields.toMap());
 
                               Navigator.pop(context);
                             },

@@ -10,6 +10,7 @@ import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/database/user_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:todo_share/widgets/notification_dialog.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
 import 'package:todo_share/widgets/todo_add_modal.dart';
 import 'package:todo_share/widgets/admob_banner.dart';
@@ -129,7 +130,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                     '\u{1F514}',
                     style: TextStyle(fontSize: 40),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) {
+                        return NotificationDialog();
+                      },
+                    );
+                  },
                   style: TextButton.styleFrom(
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(0),
