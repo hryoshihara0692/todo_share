@@ -37,79 +37,78 @@ class _DeadlineSettingDialogState extends State<DeadlineSettingDialog> {
     });
   }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
-      context: context,
-      builder: (BuildContext context) {
-        int selectedHour = _selectedTime.hour;
-        int selectedMinute = (_selectedTime.minute ~/ 5) * 5;
+Future<void> _selectTime(BuildContext context) async {
+  final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
+    context: context,
+    builder: (BuildContext context) {
+      int selectedHour = _selectedTime.hour;
+      int selectedMinute = _selectedTime.minute; // 1分単位で表示
 
-        return AlertDialog(
-          title: Text('時間を選択'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      height: 150, // 高さを指定
-                      child: NumberPicker(
-                        // initialValue: initialHour,
-                        initialValue: 12,
-                        minValue: 0,
-                        maxValue: 23,
-                        onChanged: (value) {
-                          selectedHour = value;
-                        },
-                      ),
+      return AlertDialog(
+        title: Text('時間を選択'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    height: 150, // 高さを指定
+                    child: NumberPicker(
+                      initialValue: selectedHour,
+                      minValue: 0,
+                      maxValue: 23,
+                      onChanged: (value) {
+                        selectedHour = value;
+                      },
                     ),
                   ),
-                  Text(':'),
-                  Expanded(
-                    child: Container(
-                      height: 150, // 高さを指定
-                      child: NumberPicker(
-                        initialValue: selectedMinute,
-                        minValue: 0,
-                        maxValue: 55,
-                        step: 5,
-                        onChanged: (value) {
-                          selectedMinute = value;
-                        },
-                      ),
+                ),
+                Text(':'),
+                Expanded(
+                  child: Container(
+                    height: 150, // 高さを指定
+                    child: NumberPicker(
+                      initialValue: selectedMinute,
+                      minValue: 0,
+                      maxValue: 59, // 59まで表示
+                      step: 1, // 1分単位
+                      onChanged: (value) {
+                        selectedMinute = value;
+                      },
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('キャンセル'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context)
-                    .pop(TimeOfDay(hour: selectedHour, minute: selectedMinute));
-              },
+                ),
+              ],
             ),
           ],
-        );
-      },
-    );
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('キャンセル'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context)
+                  .pop(TimeOfDay(hour: selectedHour, minute: selectedMinute));
+            },
+          ),
+        ],
+      );
+    },
+  );
 
-    if (pickedTime != null) {
-      setState(() {
-        _selectedTime = pickedTime;
-        _isTimeSelected = true;
-      });
-    }
+  if (pickedTime != null) {
+    setState(() {
+      _selectedTime = pickedTime;
+      _isTimeSelected = true;
+    });
   }
+}
 
   String _formatTime(TimeOfDay time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';

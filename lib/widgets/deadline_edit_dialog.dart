@@ -54,12 +54,12 @@ class _DeadlineEditDialogState extends State<DeadlineEditDialog> {
     });
   }
 
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
-      context: context,
-      builder: (BuildContext context) {
-        int selectedHour = _selectedTime.hour;
-        int selectedMinute = (_selectedTime.minute ~/ 5) * 5;
+Future<void> _selectTime(BuildContext context) async {
+  final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
+    context: context,
+    builder: (BuildContext context) {
+      int selectedHour = _selectedTime.hour;
+      int selectedMinute = _selectedTime.minute; // 1分単位で表示
 
         return AlertDialog(
           title: Text('時間を選択'),
@@ -88,8 +88,8 @@ class _DeadlineEditDialogState extends State<DeadlineEditDialog> {
                       child: NumberPicker(
                         initialValue: selectedMinute,
                         minValue: 0,
-                        maxValue: 55,
-                        step: 5,
+                        maxValue: 59,
+                        step: 1,
                         onChanged: (value) {
                           selectedMinute = value;
                         },
