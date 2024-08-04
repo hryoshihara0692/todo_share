@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_share/widgets/todo_add_modal.dart';
 import 'package:todo_share/widgets/group_setting_modal.dart';
-import 'package:todo_share/widgets/user_setting_modal.dart';
+import 'package:todo_share/widgets/user_edit_modal.dart';
 
 void showTodoAddModal(BuildContext context, String groupID) {
   showModalBottomSheet<void>(
@@ -30,7 +30,7 @@ void showUserSettingModal(BuildContext context) {
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (BuildContext context) {
-      return UserSettingModal();
+      return UserEditModal();
     },
   );
 }

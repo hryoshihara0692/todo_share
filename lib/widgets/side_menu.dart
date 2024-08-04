@@ -12,7 +12,7 @@ import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/group_join_dialog.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
-import 'package:todo_share/widgets/user_setting_modal.dart';
+import 'package:todo_share/widgets/user_edit_modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -106,6 +106,12 @@ class SideMenu extends ConsumerWidget {
     final response =
         await FirebaseStorage.instance.refFromURL(imageUrl).getData();
     await File(filePath).writeAsBytes(response!);
+  }
+
+  Future<String> _getUserName(String uid) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('USER').doc(uid).get();
+    return userDoc.data()?['USER_NAME'] ?? 'Unknown User';
   }
 
   @override
@@ -253,17 +259,45 @@ class SideMenu extends ConsumerWidget {
                                     ),
                                   ),
                                   SizedBox(width: 16.0),
-                                  Text(
-                                    'あおやぎ',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: GoogleFonts.notoSansJp(
-                                        textStyle: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ).fontFamily,
-                                    ),
+                                  FutureBuilder<String>(
+                                    future: _getUserName(uid),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error: ${snapshot.error}'));
+                                      } else {
+                                        final userName =
+                                            snapshot.data ?? 'Unknown User';
+                                        return Text(
+                                          userName,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily: GoogleFonts.notoSansJp(
+                                              textStyle: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ).fontFamily,
+                                          ),
+                                        );
+                                      }
+                                    },
                                   ),
+                                  // Text(
+                                  //   'あおやぎ',
+                                  //   style: TextStyle(
+                                  //     fontSize: 18,
+                                  //     fontFamily: GoogleFonts.notoSansJp(
+                                  //       textStyle: TextStyle(
+                                  //         fontWeight: FontWeight.w700,
+                                  //       ),
+                                  //     ).fontFamily,
+                                  //   ),
+                                  // ),
                                   Expanded(child: Container()),
                                   Padding(
                                     padding: const EdgeInsets.only(right: 16.0),
