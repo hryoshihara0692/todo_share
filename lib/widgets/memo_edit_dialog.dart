@@ -100,8 +100,8 @@ class _MemoEditDialogState extends State<MemoEditDialog> {
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 decoration: InputDecoration(
-                  hintText: 'Enter your note here...',
-                  // border: OutlineInputBorder(),
+                  hintText: 'メモを記入してください\u{270D}\n(改行することもできます！)',
+                  border: InputBorder.none,
                   filled: true,
                   fillColor: Colors.transparent,
                 ),
