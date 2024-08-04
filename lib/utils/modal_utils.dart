@@ -6,6 +6,7 @@ import 'package:todo_share/widgets/user_setting_modal.dart';
 void showTodoAddModal(BuildContext context, String groupID) {
   showModalBottomSheet<void>(
     context: context,
+    isScrollControlled: true, // 高さ制約を解除
     builder: (BuildContext context) {
       return TodoAddModal();
     },

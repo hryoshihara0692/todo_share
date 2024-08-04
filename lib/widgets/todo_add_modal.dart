@@ -80,8 +80,10 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
     var selectedGroupID = ref.read(selectedGroupNotifierProvider);
     var selectedTodoListID = ref.read(selectedTodoListNotifierProvider);
 
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
     return Container(
-      height: 508,
+      height: 216 + keyboardHeight,
       decoration: const BoxDecoration(
         color: Color.fromARGB(255, 249, 245, 236),
         borderRadius: BorderRadius.all(

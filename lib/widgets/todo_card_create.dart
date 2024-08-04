@@ -30,7 +30,7 @@ class TodoCardCreate extends StatefulWidget {
 
 class _TodoCardCreateState extends State<TodoCardCreate> {
   final TextEditingController _todoContentController = TextEditingController();
-  final FocusNode _todoContentFocusNode = FocusNode();
+  // final FocusNode _todoContentFocusNode = FocusNode();
 
   bool isChecked = false;
   DateTime deadline = DateTime(2000, 1, 1, 00, 00, 00, 000);
@@ -40,16 +40,16 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
   @override
   void dispose() {
     _todoContentController.dispose();
-    _todoContentFocusNode.dispose(); // フォーカスノードの破棄
+    // _todoContentFocusNode.dispose(); // フォーカスノードの破棄
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // Post-frame callback to request focus after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _todoContentFocusNode.requestFocus();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _todoContentFocusNode.requestFocus();
+    // });
 
     return Container(
       width: double.infinity,
@@ -104,7 +104,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                 ///
                 TextField(
                   controller: _todoContentController,
-                  focusNode: _todoContentFocusNode,
+                  // focusNode: _todoContentFocusNode,
                   onChanged: (newValue) {
                     widget.onContentChanged(newValue);
                   },
