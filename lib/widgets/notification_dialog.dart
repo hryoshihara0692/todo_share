@@ -78,7 +78,8 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
               .doc(notificationId)
               .delete();
           setState(() {
-            notifications.removeWhere((notification) => notification['id'] == notificationId);
+            notifications.removeWhere(
+                (notification) => notification['id'] == notificationId);
           });
         } catch (e) {
           print("Error deleting notification: $e");
@@ -133,7 +134,13 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
             SizedBox(height: 8.0),
             Expanded(
               child: notifications.isEmpty
-                  ? Center(child: CircularProgressIndicator())
+                  ? Center(
+                      child: isLoading
+                          ? CircularProgressIndicator()
+                          : Text('通知はありません',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.black)),
+                    )
                   : ListView.builder(
                       itemCount: notifications.length + 1,
                       itemBuilder: (context, index) {
@@ -146,15 +153,19 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                                 );
                         }
                         var notification = notifications[index];
-                        var date = (notification['NOTIFICATION_DATE'] as Timestamp).toDate();
-                        var formattedDate = DateFormat('yyyy/MM/dd HH:mm').format(date);
+                        var date =
+                            (notification['NOTIFICATION_DATE'] as Timestamp)
+                                .toDate();
+                        var formattedDate =
+                            DateFormat('yyyy/MM/dd HH:mm').format(date);
 
                         return Column(
                           children: [
                             ListTile(
                               leading: IconButton(
                                 icon: Icon(Icons.delete),
-                                onPressed: () => _deleteNotification(notification['id']),
+                                onPressed: () =>
+                                    _deleteNotification(notification['id']),
                               ),
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,17 +183,20 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                                       children: [
                                         TextSpan(
                                           text: notification['GROUP_NAME'],
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         TextSpan(text: 'の'),
                                         TextSpan(
                                           text: notification['TODOLIST_NAME'],
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         TextSpan(text: 'に'),
                                         TextSpan(
                                           text: notification['USER_NAME'],
-                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         TextSpan(text: 'がTODOを追加しました。'),
                                       ],
@@ -201,7 +215,8 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                             ),
                             if (isExpanded[index])
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
                                 child: Text(notification['CONTENT']),
                               ),
                           ],
