@@ -278,6 +278,7 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                 ),
               ],
             ),
+            SizedBox(height: 24.0),
           ],
         ),
       ),
