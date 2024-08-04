@@ -110,7 +110,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                   },
                   decoration: const InputDecoration(
                     border: InputBorder.none,
-                    hintText: '\u{2709}  sample@todolist.com',
+                    hintText: '\u{1F4DD} TODOを入力してください',
                   ),
                 ),
                 SizedBox(
@@ -229,20 +229,6 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                       ),
                     ),
 
-                    // Container(
-                    //   height: 32.0,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       Container(
-                    //         width: 32.0,
-                    //         height: 32.0,
-                    //         child: Image.asset(
-                    //             'assets/images/add_user_button.png'),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     SizedBox(
                       width: 8.0,
                     ),
