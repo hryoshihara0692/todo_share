@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/class/notification_fields.dart';
 import 'package:todo_share/database/class/todo_fields.dart';
 import 'package:todo_share/database/todo_data_service.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
@@ -8,6 +9,8 @@ import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/todo_card_create.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_share/widgets/todolist_choise_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class TodoAddModal extends ConsumerStatefulWidget {
   const TodoAddModal({super.key});
@@ -27,6 +30,8 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
   bool isLoading = true;
   String? errorMessage;
   String? selectedTodoListName;
+
+  final String uid = FirebaseAuth.instance.currentUser!.uid.toString();
 
   @override
   void initState() {
@@ -206,6 +211,23 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
                         selectedTodoListID.value!,
                         todoFields.toMap(),
                       );
+
+                      // NotificationFields notificationFields =
+                      //     NotificationFields(
+                      //   userId: uid,
+                      //   userName: 'USER_NAME',
+                      //   groupId: selectedGroupID.value!,
+                      //   groupName: groupData?['GROUP_NAME'],
+                      //   todolistId: selectedTodoListID.value!,
+                      //   todolistName: todoListData?['TODOLIST_NAME'],
+                      //   todoId: 'todoId',
+                      //   content: 'content',
+                      //   beforeContent: 'beforecontent',
+                      //   notificationType: 'notificationType',
+                      //   notificationDate: Timestamp.fromDate(DateTime.now()),
+                      //   createDate: Timestamp.fromDate(DateTime.now()),
+                      //   updateDate: Timestamp.fromDate(DateTime.now()),
+                      // );
 
                       Navigator.pop(context);
                     },

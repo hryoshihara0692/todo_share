@@ -66,7 +66,7 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
     );
   }
 
-  void _deleteNotification(String notificationId) async {
+  void _markAsRead(String notificationId) async {
     var selectedGroupId = ref.read(selectedGroupNotifierProvider);
     selectedGroupId.when(
       data: (groupId) async {
@@ -76,13 +76,14 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
               .doc(uid)
               .collection('NOTIFICATION')
               .doc(notificationId)
-              .delete();
+              .update({'READ_FLAG': true});
           setState(() {
-            notifications.removeWhere(
+            var notification = notifications.firstWhere(
                 (notification) => notification['id'] == notificationId);
+            notification['READ_FLAG'] = true;
           });
         } catch (e) {
-          print("Error deleting notification: $e");
+          print("Error marking notification as read: $e");
         }
       },
       loading: () => print('Loading...'),
@@ -159,13 +160,21 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                         var formattedDate =
                             DateFormat('yyyy/MM/dd HH:mm').format(date);
 
+                        bool isRead = notification['READ_FLAG'] ?? false;
+
                         return Column(
                           children: [
                             ListTile(
                               leading: IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () =>
-                                    _deleteNotification(notification['id']),
+                                icon: Icon(
+                                  isRead
+                                      ? Icons.mark_email_read_outlined
+                                      : Icons.mark_email_unread_outlined,
+                                  color: isRead ? Colors.grey : Colors.blue,
+                                ),
+                                onPressed: isRead
+                                    ? null
+                                    : () => _markAsRead(notification['id']),
                               ),
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,50 +183,55 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                                     formattedDate,
                                     style: TextStyle(fontSize: 12),
                                   ),
-                                  RichText(
-                                    text: TextSpan(
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
+                                  Container(
+                                    padding: EdgeInsets.all(8.0),
+                                    decoration: BoxDecoration(
+                                      color: isRead
+                                          ? Colors.grey.shade200
+                                          : Colors.yellow.shade100,
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                          fontWeight: isRead
+                                              ? FontWeight.normal
+                                              : FontWeight.bold,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text:
+                                                notification['GROUP_NAME'] ?? '',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(text: 'の'),
+                                          TextSpan(
+                                            text: notification['TODOLIST_NAME'] ?? '',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(text: 'に'),
+                                          TextSpan(
+                                            text: notification['USER_NAME'] ?? '',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          TextSpan(text: 'がTODOを追加しました。'),
+                                        ],
                                       ),
-                                      children: [
-                                        TextSpan(
-                                          text: notification['GROUP_NAME'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(text: 'の'),
-                                        TextSpan(
-                                          text: notification['TODOLIST_NAME'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(text: 'に'),
-                                        TextSpan(
-                                          text: notification['USER_NAME'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        TextSpan(text: 'がTODOを追加しました。'),
-                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                              // trailing: IconButton(
-                              //   icon: Icon(isExpanded[index] ? Icons.expand_less : Icons.expand_more),
-                              //   onPressed: () {
-                              //     setState(() {
-                              //       isExpanded[index] = !isExpanded[index];
-                              //     });
-                              //   },
-                              // ),
                             ),
                             if (isExpanded[index])
                               Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16.0),
-                                child: Text(notification['CONTENT']),
+                                child: Text(notification['CONTENT'] ?? ''),
                               ),
                           ],
                         );
