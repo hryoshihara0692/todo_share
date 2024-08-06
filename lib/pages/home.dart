@@ -123,57 +123,72 @@ class _HomePageState extends ConsumerState<HomePage> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 8.0),
-            child: Stack(
-              children: [
-                TextButton(
-                  child: Text(
-                    '\u{1F514}',
-                    style: TextStyle(fontSize: 40),
-                  ),
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (_) {
-                        return NotificationDialog();
-                      },
-                    );
+            // child: Stack(
+            //   children: [
+            //     TextButton(
+            //       child: Text(
+            //         '\u{1F514}',
+            //         style: TextStyle(fontSize: 40),
+            //       ),
+            //       onPressed: () {
+            //         showDialog<void>(
+            //           context: context,
+            //           builder: (_) {
+            //             return NotificationDialog();
+            //           },
+            //         );
+            //       },
+            //       style: TextButton.styleFrom(
+            //         alignment: Alignment.center,
+            //         padding: EdgeInsets.all(0),
+            //       ),
+            //     ),
+            //     Positioned(
+            //       right: 8,
+            //       bottom: 4,
+            //       child: GestureDetector(
+            //         onTap: () {
+            //           showDialog<void>(
+            //             context: context,
+            //             builder: (_) {
+            //               return NotificationDialog();
+            //             },
+            //           );
+            //         },
+            //         child: Container(
+            //           padding: EdgeInsets.all(4),
+            //           decoration: BoxDecoration(
+            //             color: Colors.red,
+            //             shape: BoxShape.circle,
+            //           ),
+            //           child: Text(
+            //             '99',
+            //             style: TextStyle(
+            //               color: Colors.white,
+            //               fontSize: 12,
+            //               fontWeight: FontWeight.bold,
+            //               fontFeatures: [FontFeature.tabularFigures()],
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            child: GestureDetector(
+              onTap: () {
+                showDialog<void>(
+                  context: context,
+                  builder: (_) {
+                    return NotificationDialog();
                   },
-                  style: TextButton.styleFrom(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(0),
-                  ),
-                ),
-                Positioned(
-                  right: 8,
-                  bottom: 4,
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (_) {
-                          return NotificationDialog();
-                        },
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '99',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                );
+              },
+              child: Container(
+                width: 48,
+                height: 48,
+                child: Image.asset('assets/images/group_invite.png'),
+              ),
             ),
           )
         ],
