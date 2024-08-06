@@ -32,6 +32,9 @@ dev_dependencies:
   intl: ^0.18.1
   flutter_localization: ^0.2.0
   table_calendar: ^3.0.9
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^5.0.0
+
 
 flutter:
   uses-material-design: true

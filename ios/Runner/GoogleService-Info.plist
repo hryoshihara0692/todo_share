@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>651396716124-6fgc1ivqahtitj0d5rjjaa8o8ggsar4j.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.651396716124-6fgc1ivqahtitj0d5rjjaa8o8ggsar4j</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCyBtYKt3IuBKMtKlCdCYpCsUq691H47bE</string>
 	<key>GCM_SENDER_ID</key>
@@ -9,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.todoShare</string>
+	<string>com.AoyagiGames.TODOShare</string>
 	<key>PROJECT_ID</key>
 	<string>todo-share-bbb6a</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:651396716124:ios:b233a8c5388a39c292b899</string>
+	<string>1:651396716124:ios:41065e7cd4481edc92b899</string>
 </dict>
 </plist>

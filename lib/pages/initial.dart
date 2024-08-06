@@ -5,16 +5,35 @@ import 'package:todo_share/pages/login.dart';
 import 'package:todo_share/components/screen_pod.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:todo_share/pages/home.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-class InitialPage extends ConsumerWidget {
+class InitialPage extends StatefulWidget {
   final bool isNewAccount;
 
   const InitialPage({Key? key, required this.isNewAccount}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _InitialPageState createState() => _InitialPageState();
+}
+
+class _InitialPageState extends State<InitialPage> {
+  bool _isLoading = false;
+  late int initialTabIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    initialTabIndex = widget.isNewAccount ? 1 : 0;
+  }
+
+  // const InitialPage({Key? key, required this.isNewAccount}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     bool _isLoading = false;
-    int initialTabIndex = isNewAccount ? 1 : 0;
+    int initialTabIndex = widget.isNewAccount ? 1 : 0;
 
     final screen = ScreenRef(context).watch(screenProvider);
     final designW = screen.designW(200);
@@ -86,7 +105,7 @@ class InitialPage extends ConsumerWidget {
                                   width: 300,
                                   btnText: 'AppleID でログイン',
                                   onPressed: () async {
-                                    // await _handleSignInWithApple();
+                                    await _handleSignInWithApple();
                                     // await checkUserCollection();
                                     Navigator.of(context).pushReplacement(
                                       PageRouteBuilder(
@@ -129,7 +148,7 @@ class InitialPage extends ConsumerWidget {
                                   width: 300,
                                   btnText: 'Google でログイン',
                                   onPressed: () async {
-                                    // await _handleSignInWithGoogle();
+                                    await _handleSignInWithGoogle();
                                     // await checkUserCollection();
                                     Navigator.of(context).pushReplacement(
                                       PageRouteBuilder(
@@ -465,43 +484,46 @@ class InitialPage extends ConsumerWidget {
   /// ここからコメントアウト
   ///
 
-  // Future<void> _handleSignInWithGoogle() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
+  Future<void> _handleSignInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-  //   try {
-  //     await signInWithGoogle();
-  //     // ログイン成功後の処理
-  //   } catch (e) {
-  //     // エラー処理
-  //     print("Google Sign In Error: $e");
-  //   } finally {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
+    try {
+      await signInWithGoogle();
+      // ログイン成功後の処理
+    } catch (e) {
+      // エラー処理
+      print("Google Sign In Error: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
-  // // Future<UserCredential> signInWithGoogle() async {
   // Future<UserCredential> signInWithGoogle() async {
-  //   // Trigger the authentication flow
-  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-  //   // Obtain the auth details from the request
-  //   final GoogleSignInAuthentication? googleAuth =
-  //       await googleUser?.authentication;
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
 
-  //   // Create a new credential
-  //   final credential = GoogleAuthProvider.credential(
-  //     accessToken: googleAuth?.accessToken,
-  //     idToken: googleAuth?.idToken,
-  //   );
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
 
-  //   // Once signed in, return the UserCredential
-  //   return await FirebaseAuth.instance.signInWithCredential(credential);
-  // }
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
+///
+///だれでもろぐいん
+///
   // // Future<UserCredential> signInWithGoogle() async {
   // Future<void> signInAnonymous() async {
   //   // // Trigger the authentication flow
@@ -626,52 +648,52 @@ class InitialPage extends ConsumerWidget {
   //   }
   // }
 
-  // Future<void> _handleSignInWithApple() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
+  Future<void> _handleSignInWithApple() async {
+    setState(() {
+      _isLoading = true;
+    });
 
-  //   try {
-  //     await signInWithApple();
-  //     // ログイン成功後の処理
-  //   } catch (e) {
-  //     // エラー処理
-  //     print("Apple Sign In Error: $e");
-  //   } finally {
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //   }
-  // }
+    try {
+      await signInWithApple();
+      // ログイン成功後の処理
+    } catch (e) {
+      // エラー処理
+      print("Apple Sign In Error: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
-  // Future<UserCredential> signInWithApple() async {
-  //   print('AppSignInを実行');
-  //   // To prevent replay attacks with the credential returned from Apple, we
-  //   // include a nonce in the credential request. When signing in with
-  //   // Firebase, the nonce in the id token returned by Apple, is expected to
-  //   // match the sha256 hash of `rawNonce`.
-  //   final rawNonce = generateNonce();
+  Future<UserCredential> signInWithApple() async {
+    print('AppSignInを実行');
+    // To prevent replay attacks with the credential returned from Apple, we
+    // include a nonce in the credential request. When signing in with
+    // Firebase, the nonce in the id token returned by Apple, is expected to
+    // match the sha256 hash of `rawNonce`.
+    final rawNonce = generateNonce();
 
-  //   // Request credential for the currently signed in Apple account.
-  //   final appleCredential = await SignInWithApple.getAppleIDCredential(
-  //     scopes: [
-  //       AppleIDAuthorizationScopes.email,
-  //       AppleIDAuthorizationScopes.fullName,
-  //     ],
-  //   );
-  //   print(appleCredential);
-  //   // Create an `OAuthCredential` from the credential returned by Apple.
-  //   final oauthCredential = OAuthProvider("apple.com").credential(
-  //     idToken: appleCredential.identityToken,
-  //     rawNonce: rawNonce,
-  //   );
-  //   // // ここに画面遷移をするコードを書く!
-  //   // Navigator.push(
-  //   //     context, MaterialPageRoute(builder: (context) => NextPage()));
-  //   // print(appleCredential);
+    // Request credential for the currently signed in Apple account.
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+    print(appleCredential);
+    // Create an `OAuthCredential` from the credential returned by Apple.
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+    );
+    // // ここに画面遷移をするコードを書く!
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (context) => NextPage()));
+    // print(appleCredential);
 
-  //   // Sign in the user with Firebase. If the nonce we generated earlier does
-  //   // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-  //   return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-  // }
+    // Sign in the user with Firebase. If the nonce we generated earlier does
+    // not match the nonce in `appleCredential.identityToken`, sign in will fail.
+    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+  }
 }
