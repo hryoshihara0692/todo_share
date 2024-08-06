@@ -116,7 +116,7 @@ class SideMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String? uid = UID().uid;
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
     var selectedGroupID = ref.read(selectedGroupNotifierProvider);
 
     return FutureBuilder<String>(
