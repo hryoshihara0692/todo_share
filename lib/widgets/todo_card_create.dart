@@ -173,7 +173,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                       child: Container(
                         width: 32.0,
                         height: 32.0,
-                        child: Image.asset('assets/images/Deadline.jpeg'),
+                        child: Image.asset('assets/images/Deadline.png'),
                       ),
                     ),
 
