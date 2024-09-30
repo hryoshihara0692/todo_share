@@ -97,8 +97,20 @@ class _HomePageState extends ConsumerState<HomePage> {
                           showGroupSettingModal(context);
                         },
                         style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStateProperty.all<Color>(Colors.black),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            const Color.fromARGB(255, 15, 9, 64),
+                          ),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.withOpacity(0.3),
+                          ),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
                         ),
                         child: ResponsiveText(
                           text: groupData['GROUP_NAME'],

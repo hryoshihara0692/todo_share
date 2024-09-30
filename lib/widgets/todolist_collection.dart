@@ -46,11 +46,20 @@ class TodoListCollection extends ConsumerWidget {
                       },
                     );
                   },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    foregroundColor: Color.fromARGB(255, 15, 9, 64),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 12),
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 15, 9, 64),
+                    ),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      Colors.grey.withOpacity(0.3),
+                    ),
+                    shape: MaterialStateProperty.all<OutlinedBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
                   ),
                   child: Text(
@@ -85,11 +94,20 @@ class TodoListCollection extends ConsumerWidget {
                           },
                         );
                       },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        foregroundColor: Color.fromARGB(255, 15, 9, 64),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                          EdgeInsets.symmetric(horizontal: 12),
+                        ),
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 15, 9, 64),
+                        ),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                          Colors.grey.withOpacity(0.3),
+                        ),
+                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
                       ),
                       child: Text(

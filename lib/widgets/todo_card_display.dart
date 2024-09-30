@@ -137,9 +137,26 @@ class TodoCardDisplay extends StatelessWidget {
                         height: 48.0,
                         alignment: Alignment.centerLeft, // コンテナ内のテキストを中央左寄せにする
                         child: TextButton(
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero, // 余分なパディングを除去
-                            alignment: Alignment.centerLeft, // テキストを中央左寄せにする
+                          // style: TextButton.styleFrom(
+                          //   padding: EdgeInsets.zero, // 余分なパディングを除去
+                          //   alignment: Alignment.centerLeft, // テキストを中央左寄せにする
+                          // ),
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.zero,
+                            ),
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 15, 9, 64),
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                              Colors.grey.withOpacity(0.3),
+                            ),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            alignment: Alignment.centerLeft,
                           ),
                           onPressed: () {
                             // TodoAddModalの編集版を表示
