@@ -55,7 +55,9 @@ class _InitialPageState extends State<InitialPage> {
                   flexibleSpace: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(child: Image.asset('assets/images/Logo.png'),),
+                      Container(
+                        child: Image.asset('assets/images/Logo.png'),
+                      ),
                       // Container(
                       //   height: screen.designH(250),
                       //   decoration: const BoxDecoration(
@@ -68,8 +70,16 @@ class _InitialPageState extends State<InitialPage> {
                       Container(
                         height: kToolbarHeight,
                         child: TabBar(
-                          indicatorColor: Colors.blue,
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.withOpacity(0.3),
+                          ),
+                          indicatorColor: Colors.blueGrey,
                           labelColor: Colors.black,
+                          // indicatorWeight: 12.0, // 下線の太さ
+                          indicatorPadding:
+                              EdgeInsets.symmetric(horizontal: 0), // 左右のパディング
+                          // labelColor: Colors.black,
+                          unselectedLabelColor: Colors.grey,
                           tabs: [
                             Tab(
                               text: '新規登録',
@@ -275,7 +285,8 @@ class _InitialPageState extends State<InitialPage> {
                       ],
                     ),
                   ),
-                                    ///
+
+                  ///
                   /// ログイン側
                   ///
                   Container(
@@ -467,7 +478,6 @@ class _InitialPageState extends State<InitialPage> {
                       ],
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -525,9 +535,9 @@ class _InitialPageState extends State<InitialPage> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-///
-///だれでもろぐいん
-///
+  ///
+  ///だれでもろぐいん
+  ///
   // // Future<UserCredential> signInWithGoogle() async {
   // Future<void> signInAnonymous() async {
   //   // // Trigger the authentication flow
