@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/pages/create_account.dart';
 import 'package:todo_share/pages/login.dart';
 import 'package:todo_share/components/screen_pod.dart';
@@ -82,10 +83,30 @@ class _InitialPageState extends State<InitialPage> {
                           unselectedLabelColor: Colors.grey,
                           tabs: [
                             Tab(
-                              text: '新規登録',
+                              child: Text(
+                                '    新規登録     ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: GoogleFonts.notoSansJp(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ).fontFamily,
+                                ),
+                              ),
                             ),
                             Tab(
-                              text: 'ログイン',
+                              child: Text(
+                                '    ログイン    ',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: GoogleFonts.notoSansJp(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ).fontFamily,
+                                ),
+                              ),
                             ),
                           ],
                         ),
