@@ -137,7 +137,7 @@ class _InitialPageState extends State<InitialPage> {
                                   btnTextColor: Colors.white,
                                   btnColor: Colors.black,
                                   width: 300,
-                                  btnText: 'AppleID で登録',
+                                  btnText: 'AppleID で新規登録',
                                   onPressed: () async {
                                     // await _handleSignInWithApple();
                                     // await checkUserCollection();
@@ -180,7 +180,7 @@ class _InitialPageState extends State<InitialPage> {
                                   btnTextColor: Colors.black87,
                                   btnColor: Colors.white,
                                   width: 300,
-                                  btnText: 'Google で登録',
+                                  btnText: 'Google で新規登録',
                                   onPressed: () async {
                                     // await _handleSignInWithGoogle();
                                     // await checkUserCollection();
@@ -225,7 +225,7 @@ class _InitialPageState extends State<InitialPage> {
                                   btnColor: Color.fromARGB(255, 202, 233, 248),
                                   btnTextColor: Colors.black54,
                                   width: 300,
-                                  btnText: 'メールアドレスで登録',
+                                  btnText: 'メールアドレス で新規登録',
                                   onPressed: () {
                                     Navigator.of(context).push(
                                       PageRouteBuilder(
@@ -266,7 +266,7 @@ class _InitialPageState extends State<InitialPage> {
                                   btnTextColor: Colors.black87,
                                   btnColor: Colors.white,
                                   width: 300,
-                                  btnText: 'ゲストとして利用する',
+                                  btnText: '登録しないで使う※要検討',
                                   onPressed: () async {
                                     // await signInAnonymous();
                                     // await checkUserCollection();
