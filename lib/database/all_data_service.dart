@@ -165,7 +165,7 @@ class AllDataService {
       print('Field updated successfully.');
     }).catchError((error) {
       // 更新が失敗した場合のエラーハンドリング
-      print('Failed to update field : $error');
+      print('Failed to update field alldata1: $error');
     });
 
     // userIDs.forEach((element) async {
@@ -191,7 +191,7 @@ class AllDataService {
       print('Field updated successfully.');
     }).catchError((error) {
       // 更新が失敗した場合のエラーハンドリング
-      print('Failed to update field : $error');
+      print('Failed to update field alldata2: $error');
     });
   }
 

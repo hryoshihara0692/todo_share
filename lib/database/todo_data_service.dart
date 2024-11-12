@@ -84,7 +84,7 @@ class TodoDataService {
       print('Field updated successfully.');
     }).catchError((error) {
       // 更新が失敗した場合のエラーハンドリング
-      print('Failed to update field : $error');
+      print('Failed to update field todo1: $error');
     });
 
     // userIDs.forEach((element) async {
@@ -110,7 +110,7 @@ class TodoDataService {
       print('Field updated successfully.');
     }).catchError((error) {
       // 更新が失敗した場合のエラーハンドリング
-      print('Failed to update field : $error');
+      print('Failed to update field todo2: $error');
     });
   }
 
