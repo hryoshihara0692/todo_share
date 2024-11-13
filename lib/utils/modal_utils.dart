@@ -8,7 +8,11 @@ void showTodoAddModal(BuildContext context, String groupID) {
     context: context,
     isScrollControlled: true, // 高さ制約を解除
     builder: (BuildContext context) {
-      return TodoAddModal();
+      // return TodoAddModal();
+      return FractionallySizedBox(
+        heightFactor: 0.6, // 高さを画面の60%に固定
+        child: TodoAddModal(),
+      );
     },
   );
 }
