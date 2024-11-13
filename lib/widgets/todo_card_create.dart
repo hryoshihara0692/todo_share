@@ -14,6 +14,7 @@ class TodoCardCreate extends StatefulWidget {
   final ValueChanged<DateTime> onDeadlineChanged;
   final ValueChanged<String> onMemoChanged;
   final ValueChanged<List<String>> onManagerListChanged;
+  final FocusNode todoContentFocusNode;
 
   const TodoCardCreate({
     Key? key,
@@ -22,6 +23,7 @@ class TodoCardCreate extends StatefulWidget {
     required this.onDeadlineChanged,
     required this.onMemoChanged,
     required this.onManagerListChanged,
+    required this.todoContentFocusNode,
   }) : super(key: key);
 
   @override
@@ -104,7 +106,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                 ///
                 TextField(
                   controller: _todoContentController,
-                  // focusNode: _todoContentFocusNode,
+                  focusNode: widget.todoContentFocusNode,
                   onChanged: (newValue) {
                     widget.onContentChanged(newValue);
                   },

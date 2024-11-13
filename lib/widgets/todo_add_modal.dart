@@ -11,7 +11,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_share/widgets/todolist_choise_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class TodoAddModal extends ConsumerStatefulWidget {
   const TodoAddModal({super.key});
 
@@ -33,10 +32,23 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
 
   final String uid = FirebaseAuth.instance.currentUser!.uid.toString();
 
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // モーダルが表示された後にフォーカスをリクエスト
+      _focusNode.requestFocus();
+    });
     _fetchFirestoreData();
+  }
+
+  @override
+  void dispose() {
+    // FocusNode を破棄してメモリリークを防ぐ
+    _focusNode.dispose();
+    super.dispose();
   }
 
   Future<void> _fetchFirestoreData() async {
@@ -85,186 +97,192 @@ class _AddTodoModalState extends ConsumerState<TodoAddModal> {
     var selectedGroupID = ref.read(selectedGroupNotifierProvider);
     var selectedTodoListID = ref.read(selectedTodoListNotifierProvider);
 
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
-    return Container(
-      height: 216 + keyboardHeight,
-      decoration: const BoxDecoration(
-        color: Color.fromARGB(255, 249, 245, 236),
-        borderRadius: BorderRadius.all(
-          Radius.circular(25.0),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TodoCardCreate(
-              onContentChanged: (newValue) {
-                setState(() {
-                  content = newValue;
-                });
-              },
-              onCheckChanged: (newValue) {
-                setState(() {
-                  isChecked = newValue;
-                });
-              },
-              onDeadlineChanged: (newValue) {
-                setState(() {
-                  deadline = newValue;
-                });
-              },
-              onMemoChanged: (newValue) {
-                setState(() {
-                  memo = newValue;
-                });
-              },
-              onManagerListChanged: (newValue) {
-                setState(() {
-                  managerList = newValue;
-                });
-              },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+        return Container(
+          height: 216 + keyboardHeight,
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 249, 245, 236),
+            borderRadius: BorderRadius.all(
+              Radius.circular(25.0),
             ),
-            const SizedBox(height: 16.0),
-            Row(
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  child: InkWell(
-                    onTap: () {
-                      print('aaaaaaa');
-                    },
-                    child: Image.asset('assets/images/SelectMark.png'),
-                  ),
-                ),
-                const SizedBox(width: 8.0),
-                GestureDetector(
-                  onTap: () async {
-                    String? selectedTodoListId = await showDialog<String>(
-                      context: context,
-                      builder: (_) {
-                        return TodoListChoiceDialog(
-                          groupId: selectedGroupID.value!,
-                          initialTodoListId: selectedTodoListID.value!,
-                        );
-                      },
-                    );
-
-                    if (selectedTodoListId != null) {
-                      var selectedTodoListDoc = await FirebaseFirestore.instance
-                          .collection('GROUP')
-                          .doc(selectedGroupID.value!)
-                          .collection('TODOLIST')
-                          .doc(selectedTodoListId)
-                          .get();
-                      setState(() {
-                        selectedTodoListName =
-                            selectedTodoListDoc.data()?['TODOLIST_NAME'];
-                      });
-                    }
+                TodoCardCreate(
+                  onContentChanged: (newValue) {
+                    setState(() {
+                      content = newValue;
+                    });
                   },
-                  child: Text(
-                    selectedTodoListName ?? 'No TODO List Selected',
-                    style: GoogleFonts.notoSansJp(
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                        decoration: TextDecoration.underline,
+                  onCheckChanged: (newValue) {
+                    setState(() {
+                      isChecked = newValue;
+                    });
+                  },
+                  onDeadlineChanged: (newValue) {
+                    setState(() {
+                      deadline = newValue;
+                    });
+                  },
+                  onMemoChanged: (newValue) {
+                    setState(() {
+                      memo = newValue;
+                    });
+                  },
+                  onManagerListChanged: (newValue) {
+                    setState(() {
+                      managerList = newValue;
+                    });
+                  },
+                  todoContentFocusNode: _focusNode,
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Container(
+                      width: 32,
+                      height: 32,
+                      child: InkWell(
+                        onTap: () {
+                          print('aaaaaaa');
+                        },
+                        child: Image.asset('assets/images/SelectMark.png'),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(child: Container()),
-                Container(
-                  width: 128,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(25.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black,
-                        blurRadius: 0,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      TodoFields todoFields = TodoFields(
-                        checkFlg: false,
-                        content: content.isNotEmpty ? content : '',
-                        memo: memo,
-                        deadline: Timestamp.fromDate(deadline),
-                        managerIdList: managerList,
-                        createDate: Timestamp.fromDate(DateTime.now()),
-                        updateDate: Timestamp.fromDate(DateTime.now()),
-                      );
+                    const SizedBox(width: 8.0),
+                    GestureDetector(
+                      onTap: () async {
+                        String? selectedTodoListId = await showDialog<String>(
+                          context: context,
+                          builder: (_) {
+                            return TodoListChoiceDialog(
+                              groupId: selectedGroupID.value!,
+                              initialTodoListId: selectedTodoListID.value!,
+                            );
+                          },
+                        );
 
-                      // TODOLISTコレクションにドキュメント追加
-                      await TodoDataService.createTodoData(
-                        selectedGroupID.value!,
-                        selectedTodoListID.value!,
-                        todoFields.toMap(),
-                      );
-
-                      // NotificationFields notificationFields =
-                      //     NotificationFields(
-                      //   userId: uid,
-                      //   userName: 'USER_NAME',
-                      //   groupId: selectedGroupID.value!,
-                      //   groupName: groupData?['GROUP_NAME'],
-                      //   todolistId: selectedTodoListID.value!,
-                      //   todolistName: todoListData?['TODOLIST_NAME'],
-                      //   todoId: 'todoId',
-                      //   content: 'content',
-                      //   beforeContent: 'beforecontent',
-                      //   notificationType: 'notificationType',
-                      //   notificationDate: Timestamp.fromDate(DateTime.now()),
-                      //   createDate: Timestamp.fromDate(DateTime.now()),
-                      //   updateDate: Timestamp.fromDate(DateTime.now()),
-                      // );
-
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 15, 217, 15),
-                      side: const BorderSide(color: Colors.black, width: 2),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                        if (selectedTodoListId != null) {
+                          var selectedTodoListDoc = await FirebaseFirestore
+                              .instance
+                              .collection('GROUP')
+                              .doc(selectedGroupID.value!)
+                              .collection('TODOLIST')
+                              .doc(selectedTodoListId)
+                              .get();
+                          setState(() {
+                            selectedTodoListName =
+                                selectedTodoListDoc.data()?['TODOLIST_NAME'];
+                          });
+                        }
+                      },
                       child: Text(
-                        '決  定',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontFamily: GoogleFonts.notoSansJp(
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ).fontFamily,
-                          shadows: const [
-                            Shadow(
-                              color: Color.fromARGB(255, 128, 128, 128),
-                              blurRadius: 0,
-                              offset: Offset(0, 2.5),
-                            ),
-                          ],
+                        selectedTodoListName ?? 'No TODO List Selected',
+                        style: GoogleFonts.notoSansJp(
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            decoration: TextDecoration.underline,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    Expanded(child: Container()),
+                    Container(
+                      width: 128,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 0,
+                            offset: Offset(0, 3),
+                          )
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          TodoFields todoFields = TodoFields(
+                            checkFlg: false,
+                            content: content.isNotEmpty ? content : '',
+                            memo: memo,
+                            deadline: Timestamp.fromDate(deadline),
+                            managerIdList: managerList,
+                            createDate: Timestamp.fromDate(DateTime.now()),
+                            updateDate: Timestamp.fromDate(DateTime.now()),
+                          );
+
+                          // TODOLISTコレクションにドキュメント追加
+                          await TodoDataService.createTodoData(
+                            selectedGroupID.value!,
+                            selectedTodoListID.value!,
+                            todoFields.toMap(),
+                          );
+
+                          // NotificationFields notificationFields =
+                          //     NotificationFields(
+                          //   userId: uid,
+                          //   userName: 'USER_NAME',
+                          //   groupId: selectedGroupID.value!,
+                          //   groupName: groupData?['GROUP_NAME'],
+                          //   todolistId: selectedTodoListID.value!,
+                          //   todolistName: todoListData?['TODOLIST_NAME'],
+                          //   todoId: 'todoId',
+                          //   content: 'content',
+                          //   beforeContent: 'beforecontent',
+                          //   notificationType: 'notificationType',
+                          //   notificationDate: Timestamp.fromDate(DateTime.now()),
+                          //   createDate: Timestamp.fromDate(DateTime.now()),
+                          //   updateDate: Timestamp.fromDate(DateTime.now()),
+                          // );
+
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          foregroundColor: Colors.white,
+                          backgroundColor:
+                              const Color.fromARGB(255, 15, 217, 15),
+                          side: const BorderSide(color: Colors.black, width: 2),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                          child: Text(
+                            '決  定',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontFamily: GoogleFonts.notoSansJp(
+                                textStyle: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ).fontFamily,
+                              shadows: const [
+                                Shadow(
+                                  color: Color.fromARGB(255, 128, 128, 128),
+                                  blurRadius: 0,
+                                  offset: Offset(0, 2.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
