@@ -223,7 +223,7 @@ class _InitialPageState extends State<InitialPage> {
                                   imagePosition: ImagePosition.left,
                                   buttonSize: ButtonSize.large,
                                   btnColor: Color.fromARGB(255, 202, 233, 248),
-                                  btnTextColor: Colors.black54,
+                                  btnTextColor: Colors.black87,
                                   width: 300,
                                   btnText: 'メールアドレス で新規登録',
                                   onPressed: () {
