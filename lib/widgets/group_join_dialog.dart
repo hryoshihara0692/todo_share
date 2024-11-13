@@ -28,7 +28,8 @@ class GroupJoinDialog extends ConsumerWidget {
       _groupIdFocusNode.requestFocus();
     });
 
-    final String? uid = UID().uid;
+    // final String? uid = UID().uid;
+    final String? uid = FirebaseAuth.instance.currentUser?.uid;
 
     Future<int> getGroupUserDocumentCount(String groupId) async {
       try {
@@ -256,6 +257,9 @@ class GroupJoinDialog extends ConsumerWidget {
                   SizedBox(
                     width: 24.0,
                   ),
+                  ///
+                  /// 決定ボタン
+                  ///
                   Container(
                     width: 128,
                     height: 40,
@@ -277,7 +281,7 @@ class GroupJoinDialog extends ConsumerWidget {
                         String groupId = _groupIdController.text;
                         if (groupId.isNotEmpty) {
                           try {
-                            // groupコレクションからドキュメントを取得
+                            // groupコレクションから参加するgroupIDのドキュメントを取得
                             DocumentSnapshot groupDoc = await FirebaseFirestore
                                 .instance
                                 .collection('GROUP')
@@ -292,7 +296,6 @@ class GroupJoinDialog extends ConsumerWidget {
                                       .doc(groupId)
                                       .collection('TODOLIST')
                                       .get();
-
                               List<String> todoListIds = todoListSnapshot.docs
                                   .map((doc) => doc.id)
                                   .toList();
@@ -309,6 +312,7 @@ class GroupJoinDialog extends ConsumerWidget {
                                 'CREATE_DATE': Timestamp.now(),
                                 'UPDATE_DATE': Timestamp.now(),
                               });
+                              print('現在のuid：' + uid!);
 
                               // USERコレクションの配下のGROUPサブコレクションにgroupIDでドキュメントを作成
                               if (uid != null) {
@@ -318,9 +322,12 @@ class GroupJoinDialog extends ConsumerWidget {
                                         .doc(uid)
                                         .collection('GROUP')
                                         .doc(groupId);
+                                print('参加するgroupId：' + groupId);
 
+                                // 参加するユーザの参加しているGROUPの数を取得→参加グループを一番最後にするため
                                 int groupCount =
                                     await getUserGroupDocumentCount(uid);
+                                // 参加するグループで、初期表示するTODOLISTのIDを取得
                                 if (todoListIds.isNotEmpty) {
                                   String firstTodoListID = todoListIds.first;
                                   await userGroupRef.set({
@@ -330,6 +337,11 @@ class GroupJoinDialog extends ConsumerWidget {
                                     'UPDATE_DATE': Timestamp.now(),
                                   });
 
+                                  ///
+                                  ///
+                                  ///いらなそう
+                                  ///
+                                  ///
                                   // GROUPサブコレクションの配下にTODOLISTコレクションを作成し、todoListIdsをドキュメントIDとして登録
                                   for (int i = 0; i < todoListIds.length; i++) {
                                     String todoListId = todoListIds[i];
