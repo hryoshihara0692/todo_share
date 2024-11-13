@@ -34,6 +34,8 @@ dev_dependencies:
   table_calendar: ^3.0.9
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^5.0.0
+  image_picker: ^1.1.2
+  image_cropper: ^8.0.1
 
 
 flutter:
