@@ -71,6 +71,23 @@ class TodoDataService {
   ///
   /// FirestoreのTodoの内容更新
   ///
+static Future<void> updateTodoData(
+    String groupId, String todoListId, String todoId, Map<String, dynamic> todoData) async {
+  try {
+    await FirebaseFirestore.instance
+        .collection('GROUP')
+        .doc(groupId)
+        .collection('TODOLIST')
+        .doc(todoListId)
+        .collection('TODO')
+        .doc(todoId)
+        .update(todoData);
+  } catch (e) {
+    // エラーハンドリング（例えば、該当ドキュメントが存在しない場合など）
+    print('Error updating TODO data: $e');
+  }
+}
+
   static Future<void> updateTodoListName(
       String todolistId, String todoListName, List<String> userIDs) async {
     await FirebaseFirestore.instance

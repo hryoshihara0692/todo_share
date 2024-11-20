@@ -5,7 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 
 class ManagerSettingDialog extends ConsumerStatefulWidget {
-  ManagerSettingDialog({super.key});
+  final List<String>? initialManagerList;
+
+  const ManagerSettingDialog({Key? key, this.initialManagerList})
+      : super(key: key);
 
   @override
   _ManagerSettingDialogState createState() => _ManagerSettingDialogState();
@@ -25,7 +28,10 @@ class _ManagerSettingDialogState extends ConsumerState<ManagerSettingDialog> {
         _fetchUserIds(groupId).then((ids) {
           setState(() {
             userIds = ids;
-            _checked = List<bool>.filled(userIds.length, false);
+            // チェックボックスの初期状態を設定
+            _checked = userIds.map((id) {
+              return widget.initialManagerList?.contains(id) ?? false;
+            }).toList();
           });
         });
       },

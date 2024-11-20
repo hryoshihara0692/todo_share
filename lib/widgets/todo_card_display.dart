@@ -159,7 +159,7 @@ class TodoCardDisplay extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                           ),
                           onPressed: () {
-                            // TodoAddModalの編集版を表示
+                            editTodoAddModal(context, this.groupId, this.todoListId, this.todoId);
                           },
                           onLongPress: () {
                             showDialog<void>(

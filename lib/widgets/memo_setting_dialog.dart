@@ -4,16 +4,21 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class MemoSettingDialog extends StatefulWidget {
+  final String? initialMemo;
+
+  const MemoSettingDialog({Key? key, this.initialMemo}) : super(key: key);
+
   @override
   _MemoSettingDialogState createState() => _MemoSettingDialogState();
 }
 
 class _MemoSettingDialogState extends State<MemoSettingDialog> {
-  final TextEditingController _controller = TextEditingController();
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = TextEditingController(text: widget.initialMemo);
   }
 
   @override

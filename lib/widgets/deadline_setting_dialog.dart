@@ -4,6 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class DeadlineSettingDialog extends StatefulWidget {
+  final DateTime? initialDeadline;
+
+  const DeadlineSettingDialog({Key? key, this.initialDeadline})
+      : super(key: key);
+
   @override
   _DeadlineSettingDialogState createState() => _DeadlineSettingDialogState();
 }
@@ -19,13 +24,29 @@ class _DeadlineSettingDialogState extends State<DeadlineSettingDialog> {
   void initState() {
     super.initState();
     _calendarFormat = CalendarFormat.month;
-    _focusedDay = DateTime.now();
-    _selectedDay = DateTime.now();
+    // _focusedDay = DateTime.now();
+    // _selectedDay = DateTime.now();
 
-    // 現在時刻から1時間後の時刻を取得し、分を00に設定する
-    final now = DateTime.now();
-    final initialHour = now.add(Duration(hours: 1)).hour;
-    _selectedTime = TimeOfDay(hour: initialHour, minute: 0);
+    // // 現在時刻から1時間後の時刻を取得し、分を00に設定する
+    // final now = DateTime.now();
+    // final initialHour = now.add(Duration(hours: 1)).hour;
+    // _selectedTime = TimeOfDay(hour: initialHour, minute: 0);
+
+    if (widget.initialDeadline != null) {
+      final initial = widget.initialDeadline!;
+      print(initial);
+      _focusedDay = initial;
+      _selectedDay = initial;
+      _selectedTime = TimeOfDay(hour: initial.hour, minute: initial.minute);
+      _isTimeSelected = true;
+    } else {
+      // デフォルト値
+      _focusedDay = DateTime.now();
+      _selectedDay = DateTime.now();
+      final now = DateTime.now();
+      final initialHour = now.add(Duration(hours: 1)).hour;
+      _selectedTime = TimeOfDay(hour: initialHour, minute: 0);
+    }
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -37,78 +58,78 @@ class _DeadlineSettingDialogState extends State<DeadlineSettingDialog> {
     });
   }
 
-Future<void> _selectTime(BuildContext context) async {
-  final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
-    context: context,
-    builder: (BuildContext context) {
-      int selectedHour = _selectedTime.hour;
-      int selectedMinute = _selectedTime.minute; // 1分単位で表示
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showDialog<TimeOfDay>(
+      context: context,
+      builder: (BuildContext context) {
+        int selectedHour = _selectedTime.hour;
+        int selectedMinute = _selectedTime.minute; // 1分単位で表示
 
-      return AlertDialog(
-        title: Text('時間を選択'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    height: 150, // 高さを指定
-                    child: NumberPicker(
-                      initialValue: selectedHour,
-                      minValue: 0,
-                      maxValue: 23,
-                      onChanged: (value) {
-                        selectedHour = value;
-                      },
+        return AlertDialog(
+          title: Text('時間を選択'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      height: 150, // 高さを指定
+                      child: NumberPicker(
+                        initialValue: selectedHour,
+                        minValue: 0,
+                        maxValue: 23,
+                        onChanged: (value) {
+                          selectedHour = value;
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Text(':'),
-                Expanded(
-                  child: Container(
-                    height: 150, // 高さを指定
-                    child: NumberPicker(
-                      initialValue: selectedMinute,
-                      minValue: 0,
-                      maxValue: 59, // 59まで表示
-                      step: 1, // 1分単位
-                      onChanged: (value) {
-                        selectedMinute = value;
-                      },
+                  Text(':'),
+                  Expanded(
+                    child: Container(
+                      height: 150, // 高さを指定
+                      child: NumberPicker(
+                        initialValue: selectedMinute,
+                        minValue: 0,
+                        maxValue: 59, // 59まで表示
+                        step: 1, // 1分単位
+                        onChanged: (value) {
+                          selectedMinute = value;
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('キャンセル'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(TimeOfDay(hour: selectedHour, minute: selectedMinute));
+              },
             ),
           ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('キャンセル'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(context)
-                  .pop(TimeOfDay(hour: selectedHour, minute: selectedMinute));
-            },
-          ),
-        ],
-      );
-    },
-  );
+        );
+      },
+    );
 
-  if (pickedTime != null) {
-    setState(() {
-      _selectedTime = pickedTime;
-      _isTimeSelected = true;
-    });
+    if (pickedTime != null) {
+      setState(() {
+        _selectedTime = pickedTime;
+        _isTimeSelected = true;
+      });
+    }
   }
-}
 
   String _formatTime(TimeOfDay time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
