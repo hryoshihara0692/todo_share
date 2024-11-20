@@ -108,7 +108,7 @@ class CreateUserPage extends ConsumerWidget {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return const IconSettingDialog();
+                              return IconSettingDialog();
                             },
                           ).then((result) {
                             if (result != 'confirmed') {
