@@ -161,7 +161,7 @@ class SideMenu extends ConsumerWidget {
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(24.0),
+                              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 4.0, 16.0),
                               child: Row(
                                 children: [
                                   Container(
@@ -273,15 +273,21 @@ class SideMenu extends ConsumerWidget {
                                       } else {
                                         final userName =
                                             snapshot.data ?? 'Unknown User';
-                                        return Text(
-                                          userName,
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontFamily: GoogleFonts.notoSansJp(
-                                              textStyle: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ).fontFamily,
+                                        return Container(
+                                          width: 144,
+                                          child: Text(
+                                            userName.length > 16
+                                                ? '${userName.substring(0, 16)}…'
+                                                : userName,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontFamily:
+                                                  GoogleFonts.notoSansJp(
+                                                textStyle: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ).fontFamily,
+                                            ),
                                           ),
                                         );
                                       }
