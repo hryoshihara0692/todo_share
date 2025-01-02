@@ -6,7 +6,7 @@ class TodoFields {
   final String memo;
   final Timestamp deadline;
   final List<String> managerIdList;
-  final Timestamp createDate;
+  final Timestamp? createDate;
   final Timestamp updateDate;
 
   TodoFields({
@@ -15,7 +15,7 @@ class TodoFields {
     required this.memo,
     required this.deadline,
     required this.managerIdList,
-    required this.createDate,
+    this.createDate,
     required this.updateDate,
   });
 

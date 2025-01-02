@@ -229,7 +229,7 @@ class _EditTodoModalState extends ConsumerState<TodoEditModal> {
                             memo: memo,
                             deadline: Timestamp.fromDate(deadline),
                             managerIdList: managerList,
-                            createDate: Timestamp.fromDate(DateTime.now()),
+                            // createDate: Timestamp.fromDate(DateTime.now()),
                             updateDate: Timestamp.fromDate(DateTime.now()),
                           );
 
