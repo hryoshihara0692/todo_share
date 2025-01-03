@@ -124,6 +124,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 maxLines: 1,
                               ),
                             ),
+                            //絵文字
                             Text(
                               '\u{2699}',
                               style: TextStyle(

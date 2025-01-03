@@ -112,6 +112,7 @@ class _TodoCardCreateState extends State<TodoCardCreate> {
                   },
                   decoration: const InputDecoration(
                     border: InputBorder.none,
+                    //絵文字
                     hintText: '\u{1F4DD} TODOを入力してください',
                   ),
                 ),
