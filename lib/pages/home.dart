@@ -112,11 +112,25 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ),
                         ),
-                        child: ResponsiveText(
-                          text: groupData['GROUP_NAME'],
-                          maxFontSize: 40,
-                          minFontSize: 16,
-                          maxLines: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: ResponsiveText(
+                                text: groupData['GROUP_NAME'],
+                                maxFontSize: 40,
+                                minFontSize: 16,
+                                maxLines: 1,
+                              ),
+                            ),
+                            Text(
+                              '\u{2699}',
+                              style: TextStyle(
+                                fontSize: 40, // フォントサイズを指定
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -134,7 +148,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         ///
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8.0),
+            padding: EdgeInsets.only(right: 16.0),
             // child: Stack(
             //   children: [
             //     TextButton(
