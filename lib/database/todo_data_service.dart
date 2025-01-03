@@ -36,7 +36,8 @@ class TodoDataService {
   ///
   /// FirestoreへTodoの取得
   ///
-  static Stream<QuerySnapshot> getTodoCollection(String groupID, String todoListID) {
+  static Stream<QuerySnapshot> getTodoCollection(
+      String groupID, String todoListID) {
     final db = FirebaseFirestore.instance;
     final collectionRef = db
         .collection('GROUP')
@@ -47,7 +48,7 @@ class TodoDataService {
         // .where('TodoListID', isEqualTo: todoListId)
         // .orderBy(sortColumnTodo, descending: descendingTodo)
         .orderBy('CREATE_DATE', descending: false);
-        // .orderBy(sortColumnTodo, descending: descendingTodo);
+    // .orderBy(sortColumnTodo, descending: descendingTodo);
     return collectionRef.snapshots();
   }
 
@@ -71,22 +72,22 @@ class TodoDataService {
   ///
   /// FirestoreのTodoの内容更新
   ///
-static Future<void> updateTodoData(
-    String groupId, String todoListId, String todoId, Map<String, dynamic> todoData) async {
-  try {
-    await FirebaseFirestore.instance
-        .collection('GROUP')
-        .doc(groupId)
-        .collection('TODOLIST')
-        .doc(todoListId)
-        .collection('TODO')
-        .doc(todoId)
-        .update(todoData);
-  } catch (e) {
-    // エラーハンドリング（例えば、該当ドキュメントが存在しない場合など）
-    print('Error updating TODO data: $e');
+  static Future<void> updateTodoData(String groupId, String todoListId,
+      String todoId, Map<String, dynamic> todoData) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('GROUP')
+          .doc(groupId)
+          .collection('TODOLIST')
+          .doc(todoListId)
+          .collection('TODO')
+          .doc(todoId)
+          .update(todoData);
+    } catch (e) {
+      // エラーハンドリング（例えば、該当ドキュメントが存在しない場合など）
+      print('Error updating TODO data: $e');
+    }
   }
-}
 
   static Future<void> updateTodoListName(
       String todolistId, String todoListName, List<String> userIDs) async {
@@ -138,6 +139,23 @@ static Future<void> updateTodoData(
         .delete()
         .then((value) {
       print('Document with ID $todolistId deleted successfully.');
+    }).catchError((error) {
+      print('Failed to delete document: $error');
+    });
+  }
+
+  static Future<void> deleteTodoData(
+      String groupId, String todoListId, String todoId) async {
+    FirebaseFirestore.instance
+        .collection('GROUP')
+        .doc(groupId)
+        .collection('TODOLIST')
+        .doc(todoListId)
+        .collection('TODO')
+        .doc(todoId)
+        .delete()
+        .then((value) {
+      print('Document with ID $todoId deleted successfully.');
     }).catchError((error) {
       print('Failed to delete document: $error');
     });

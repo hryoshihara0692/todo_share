@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/todo_data_service.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:todo_share/widgets/todo_card_display.dart';
 
 class DeleteDialog extends ConsumerWidget {
+  final String groupId;
+  final String todoListId;
+  final String todoId;
+
   const DeleteDialog({
     super.key,
+    required this.groupId,
+    required this.todoListId,
+    required this.todoId,
   });
 
   @override
@@ -49,6 +57,7 @@ class DeleteDialog extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12.0, 24.0, 12.0, 16.0),
+
               ///
               /// 削除するデータの取得〜表示処理の追加
               ///
@@ -129,9 +138,15 @@ class DeleteDialog extends ConsumerWidget {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // print('Tapおっけー');
                       // _showModal(context);
+                      await TodoDataService.deleteTodoData(
+                        groupId,
+                        todoListId,
+                        todoId,
+                      );
+                      Navigator.pop(context);
                     },
                     // ボタンの色と枠線を設定する
                     style: ElevatedButton.styleFrom(

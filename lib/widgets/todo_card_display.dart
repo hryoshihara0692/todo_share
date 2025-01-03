@@ -162,14 +162,18 @@ class TodoCardDisplay extends StatelessWidget {
                             editTodoAddModal(context, this.groupId,
                                 this.todoListId, this.todoId);
                           },
-                          onLongPress: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) {
-                                return DeleteDialog();
-                              },
-                            );
-                          },
+                          // onLongPress: () {
+                          //   showDialog<void>(
+                          //     context: context,
+                          //     builder: (_) {
+                          //       return DeleteDialog(
+                          //         groupId: groupId,
+                          //         todoListId: todoListId,
+                          //         todoId: todoId,
+                          //       );
+                          //     },
+                          //   );
+                          // },
                           child: Container(
                             alignment:
                                 Alignment.centerLeft, // 内側のコンテナ内のテキストを中央左寄せにする
@@ -196,7 +200,11 @@ class TodoCardDisplay extends StatelessWidget {
                           showDialog<void>(
                             context: context,
                             builder: (_) {
-                              return DeleteDialog();
+                              return DeleteDialog(
+                                groupId: groupId,
+                                todoListId: todoListId,
+                                todoId: todoId,
+                              );
                             },
                           );
                         },
