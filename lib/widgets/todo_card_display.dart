@@ -159,7 +159,8 @@ class TodoCardDisplay extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                           ),
                           onPressed: () {
-                            editTodoAddModal(context, this.groupId, this.todoListId, this.todoId);
+                            editTodoAddModal(context, this.groupId,
+                                this.todoListId, this.todoId);
                           },
                           onLongPress: () {
                             showDialog<void>(
@@ -189,8 +190,37 @@ class TodoCardDisplay extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 8.0,
+                    Container(
+                      child: TextButton(
+                        onPressed: () {
+                          showDialog<void>(
+                            context: context,
+                            builder: (_) {
+                              return DeleteDialog();
+                            },
+                          );
+                        },
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                            EdgeInsets.zero,
+                          ),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.grey.withOpacity(0.0),
+                          ),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                        ),
+                        child: Text(
+                          '\u{1F5D1}',
+                          style: TextStyle(
+                            fontSize: 24, // フォントサイズを指定
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
