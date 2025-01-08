@@ -122,7 +122,8 @@ class _UserEditModalState extends State<UserEditModal> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      // return Center(child: CircularProgressIndicator());
+      return Center(child: Image.asset('assets/images/tmp.gif'),);
     }
 
     return Container(

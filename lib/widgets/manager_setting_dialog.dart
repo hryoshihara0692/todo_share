@@ -132,7 +132,8 @@ class _ManagerSettingDialogState extends ConsumerState<ManagerSettingDialog> {
                 border: Border.all(color: Colors.black, width: 1.0),
               ),
               child: userIds.isEmpty
-                  ? Center(child: CircularProgressIndicator())
+                  // ? Center(child: CircularProgressIndicator())
+                  ? Center(child: Image.asset('assets/images/tmp.gif'),)
                   : ListView.builder(
                       itemCount: userIds.length,
                       itemBuilder: (context, index) {

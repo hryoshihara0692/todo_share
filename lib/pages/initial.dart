@@ -508,7 +508,8 @@ class _InitialPageState extends State<InitialPage> {
           Container(
             color: Colors.black.withOpacity(0.5), // 半透明の黒色
             child: Center(
-              child: CircularProgressIndicator(), // ローディングインジケーター
+              // child: CircularProgressIndicator(), // ローディングインジケーター
+              child: Image.asset('assets/images/tmp.gif'),
             ),
           ),
       ],

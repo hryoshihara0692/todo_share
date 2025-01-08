@@ -35,7 +35,8 @@ class TodoCollection extends ConsumerWidget {
                 AsyncSnapshot<QuerySnapshot> snapshot,
               ) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  // return Center(child: CircularProgressIndicator());
+                  return Center(child: Image.asset('assets/images/tmp.gif'),);
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text('エラーが発生しました'));
@@ -87,11 +88,13 @@ class TodoCollection extends ConsumerWidget {
               },
             );
           },
-          loading: () => Center(child: CircularProgressIndicator()),
+          // loading: () => Center(child: CircularProgressIndicator()),
+          loading: () => Center(child: Image.asset('assets/images/tmp.gif'),),
           error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      // loading: () => Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: Image.asset('assets/images/tmp.gif'),),
       error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
     );
   }

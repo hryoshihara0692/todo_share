@@ -137,7 +137,8 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
               child: notifications.isEmpty
                   ? Center(
                       child: isLoading
-                          ? CircularProgressIndicator()
+                          // ? CircularProgressIndicator()
+                          ? Image.asset('assets/images/tmp.gif')
                           : Text('通知はありません',
                               style:
                                   TextStyle(fontSize: 18, color: Colors.black)),
@@ -147,7 +148,8 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                       itemBuilder: (context, index) {
                         if (index == notifications.length) {
                           return isLoading
-                              ? Center(child: CircularProgressIndicator())
+                              // ? Center(child: CircularProgressIndicator())
+                              ? Center(child: Image.asset('assets/images/tmp.gif'),)
                               : TextButton(
                                   onPressed: _loadMoreNotifications,
                                   child: Text('もっと読む'),

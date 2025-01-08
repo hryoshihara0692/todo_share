@@ -364,7 +364,8 @@ class TodoCardDisplay extends StatelessWidget {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                        child: CircularProgressIndicator(),
+                                        // child: CircularProgressIndicator(),
+                                        child: Image.asset('assets/images/tmp.gif'),
                                       );
                                     } else if (snapshot.hasError) {
                                       return Center(
@@ -389,8 +390,9 @@ class TodoCardDisplay extends StatelessWidget {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
                                               return Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                                // child:
+                                                //     CircularProgressIndicator(),
+                                                child: Image.asset('assets/images/tmp.gif'),
                                               );
                                             } else if (snapshot.hasError) {
                                               return Center(
@@ -413,17 +415,18 @@ class TodoCardDisplay extends StatelessWidget {
                                                   if (loadingProgress == null)
                                                     return child;
                                                   return Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      value: loadingProgress
-                                                                  .expectedTotalBytes !=
-                                                              null
-                                                          ? loadingProgress
-                                                                  .cumulativeBytesLoaded /
-                                                              loadingProgress
-                                                                  .expectedTotalBytes!
-                                                          : null,
-                                                    ),
+                                                    // child:
+                                                    //     CircularProgressIndicator(
+                                                    //   value: loadingProgress
+                                                    //               .expectedTotalBytes !=
+                                                    //           null
+                                                    //       ? loadingProgress
+                                                    //               .cumulativeBytesLoaded /
+                                                    //           loadingProgress
+                                                    //               .expectedTotalBytes!
+                                                    //       : null,
+                                                    // ),
+                                                    child: Image.asset('assets/images/tmp.gif'),
                                                   );
                                                 },
                                                 errorBuilder: (BuildContext
@@ -456,7 +459,8 @@ class TodoCardDisplay extends StatelessWidget {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return Center(
-                                      child: CircularProgressIndicator(),
+                                      // child: CircularProgressIndicator(),
+                                      child: Image.asset('assets/images/tmp.gif'),
                                     );
                                   } else if (snapshot.hasError) {
                                     return Center(
@@ -481,8 +485,9 @@ class TodoCardDisplay extends StatelessWidget {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
                                             return Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                              // child:
+                                              //     CircularProgressIndicator(),
+                                              child: Image.asset('assets/images/tmp.gif'),
                                             );
                                           } else if (snapshot.hasError) {
                                             return Center(
@@ -505,17 +510,18 @@ class TodoCardDisplay extends StatelessWidget {
                                                 if (loadingProgress == null)
                                                   return child;
                                                 return Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    value: loadingProgress
-                                                                .expectedTotalBytes !=
-                                                            null
-                                                        ? loadingProgress
-                                                                .cumulativeBytesLoaded /
-                                                            loadingProgress
-                                                                .expectedTotalBytes!
-                                                        : null,
-                                                  ),
+                                                  // child:
+                                                  //     CircularProgressIndicator(
+                                                  //   value: loadingProgress
+                                                  //               .expectedTotalBytes !=
+                                                  //           null
+                                                  //       ? loadingProgress
+                                                  //               .cumulativeBytesLoaded /
+                                                  //           loadingProgress
+                                                  //               .expectedTotalBytes!
+                                                  //       : null,
+                                                  // ),
+                                                  child: Image.asset('assets/images/tmp.gif'),
                                                 );
                                               },
                                               errorBuilder:

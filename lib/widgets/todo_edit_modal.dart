@@ -97,7 +97,8 @@ class _EditTodoModalState extends ConsumerState<TodoEditModal> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      // return const Center(child: CircularProgressIndicator());
+      return Center(child: Image.asset('assets/images/tmp.gif'),);
     } else if (errorMessage != null) {
       return Center(child: Text('Error: $errorMessage'));
     } else if (groupData == null || todoListData == null) {
