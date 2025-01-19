@@ -1,0 +1,209 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/database/todo_data_service.dart';
+import 'package:todo_share/pages/initial.dart';
+import 'package:todo_share/riverpod/selected_todolist.dart';
+import 'package:todo_share/widgets/todo_card_display.dart';
+
+class CreateAccountCancelDialog extends ConsumerWidget {
+  // final String groupId;
+  // final String todoListId;
+  // final String todoId;
+
+  const CreateAccountCancelDialog({
+    super.key,
+    // required this.groupId,
+    // required this.todoListId,
+    // required this.todoId,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // var selectedTodoList = ref.read(selectedTodoListNotifierProvider);
+
+    return Dialog(
+      insetPadding: EdgeInsets.all(0.0),
+      child: Container(
+        width: 392,
+        height: 254,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 249, 245, 236),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(25.0),
+          ),
+        ),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 24.0,
+            ),
+            Text(
+              'アカウント登録を中止してよろしいですか？',
+              style: TextStyle(
+                fontSize: 32,
+                fontFamily: GoogleFonts.notoSansJp(
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ).fontFamily,
+                shadows: [
+                  Shadow(
+                    color: Color.fromARGB(255, 195, 195, 195),
+                    blurRadius: 0,
+                    offset: Offset(0, 2.5),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 24.0, 12.0, 16.0),
+
+              ///
+              /// 削除するデータの取得〜表示処理の追加
+              ///
+              // child: TodoCardDisplay(todoData: todoData,),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Container(
+                //   width: 128,
+                //   height: 40,
+                //   // ボタンの形と影を設定する
+                //   decoration: BoxDecoration(
+                //     borderRadius: const BorderRadius.all(
+                //       Radius.circular(25.0),
+                //     ),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.black,
+                //         blurRadius: 0,
+                //         offset: Offset(0, 3),
+                //       )
+                //     ],
+                //   ),
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       // print('Tapおっけー');
+                //       // _showModal(context);
+                //     },
+                //     // ボタンの色と枠線を設定する
+                //     style: ElevatedButton.styleFrom(
+                //       padding: EdgeInsets.symmetric(horizontal: 12),
+                //       foregroundColor: Colors.white,
+                //       backgroundColor: Color.fromARGB(255, 255, 71, 46),
+                //       side: BorderSide(color: Colors.black, width: 2),
+                //     ),
+                //     child: Padding(
+                //       // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
+                //       padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                //       child: Text(
+                //         '戻  る',
+                //         style: TextStyle(
+                //           fontSize: 24,
+                //           fontFamily: GoogleFonts.notoSansJp(
+                //             textStyle: TextStyle(
+                //               fontWeight: FontWeight.w700,
+                //             ),
+                //           ).fontFamily,
+                //           shadows: [
+                //             Shadow(
+                //               color: Color.fromARGB(255, 128, 128, 128),
+                //               blurRadius: 0,
+                //               offset: Offset(0, 2.5),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(
+                //   width: 24.0,
+                // ),
+                Container(
+                  width: 128,
+                  height: 40,
+                  // ボタンの形と影を設定する
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(25.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black,
+                        blurRadius: 0,
+                        offset: Offset(0, 3),
+                      )
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // 初期画面に戻る
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) {
+                            return InitialPage(isNewAccount: false);
+                          },
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            // 右から左
+                            // final Offset begin = Offset(1.0, 0.0);
+                            // 左から右
+                            final Offset begin = Offset(-1.0, 0.0);
+                            final Offset end = Offset.zero;
+                            final Animatable<Offset> tween =
+                                Tween(begin: begin, end: end)
+                                    .chain(CurveTween(curve: Curves.easeInOut));
+                            final Animation<Offset> offsetAnimation =
+                                animation.drive(tween);
+                            return SlideTransition(
+                              position: offsetAnimation,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    // ボタンの色と枠線を設定する
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      foregroundColor: Colors.white,
+                      // backgroundColor: Color.fromARGB(255, 15, 217, 15),
+                      backgroundColor: Color.fromARGB(255, 255, 71, 46),
+                      side: BorderSide(color: Colors.black, width: 2),
+                    ),
+                    child: Padding(
+                      // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                      child: Text(
+                        '中止する',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontFamily: GoogleFonts.notoSansJp(
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ).fontFamily,
+                          shadows: [
+                            Shadow(
+                              color: Color.fromARGB(255, 128, 128, 128),
+                              blurRadius: 0,
+                              offset: Offset(0, 2.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
