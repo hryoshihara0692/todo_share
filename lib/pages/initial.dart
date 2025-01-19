@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo_share/pages/create_account.dart';
 import 'package:todo_share/pages/create_user.dart';
-import 'package:todo_share/pages/login.dart';
 import 'package:todo_share/components/screen_pod.dart';
 import 'package:sign_button/sign_button.dart';
 import 'package:todo_share/pages/home.dart';
@@ -1104,7 +1102,7 @@ class _InitialPageState extends State<InitialPage>
 
       /// メールアドレスが既に使用中の場合
       else if (e.code == 'email-already-in-use') {
-        message = 'すでに使用されているメールアドレスです。';
+        message = '登録済みのメールアドレスです。ログインするか別のメールアドレスを使用してください。';
       }
 
       /// メールアドレスがおかしい場合
