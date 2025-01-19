@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_share/pages/create_group.dart';
 import 'package:todo_share/pages/create_user.dart';
 import 'package:todo_share/components/screen_pod.dart';
 import 'package:sign_button/sign_button.dart';
@@ -8,6 +9,7 @@ import 'package:todo_share/pages/home.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class InitialPage extends StatefulWidget {
   final bool isNewAccount;
@@ -1409,27 +1411,89 @@ class _InitialPageState extends State<InitialPage>
         password: pass,
       );
 
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return HomePage();
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            // 右から左
-            final Offset begin = Offset(1.0, 0.0);
-            // 左から右
-            // final Offset begin = Offset(-1.0, 0.0);
-            final Offset end = Offset.zero;
-            final Animatable<Offset> tween = Tween(begin: begin, end: end)
-                .chain(CurveTween(curve: Curves.easeInOut));
-            final Animation<Offset> offsetAnimation = animation.drive(tween);
-            return SlideTransition(
-              position: offsetAnimation,
-              child: child,
-            );
-          },
-        ),
-      );
+      final String? uid = FirebaseAuth.instance.currentUser?.uid.toString();
+
+      DocumentReference userDocRef =
+          FirebaseFirestore.instance.collection('USER').doc(uid);
+
+      DocumentSnapshot userDoc = await userDocRef.get();
+      if (userDoc.exists) {
+        // ドキュメントが存在する場合
+        String? primaryGroupId = userDoc['PRIMARY_GROUP_ID'] as String?;
+
+        if (primaryGroupId == null || primaryGroupId.isEmpty) {
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return CreateGroupPage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                // 右から左
+                final Offset begin = Offset(1.0, 0.0);
+                // 左から右
+                // final Offset begin = Offset(-1.0, 0.0);
+                final Offset end = Offset.zero;
+                final Animatable<Offset> tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: Curves.easeInOut));
+                final Animation<Offset> offsetAnimation =
+                    animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return HomePage();
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                // 右から左
+                final Offset begin = Offset(1.0, 0.0);
+                // 左から右
+                // final Offset begin = Offset(-1.0, 0.0);
+                final Offset end = Offset.zero;
+                final Animatable<Offset> tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: Curves.easeInOut));
+                final Animation<Offset> offsetAnimation =
+                    animation.drive(tween);
+                return SlideTransition(
+                  position: offsetAnimation,
+                  child: child,
+                );
+              },
+            ),
+          );
+        }
+      } else {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return CreateUserPage();
+            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              // 右から左
+              final Offset begin = Offset(1.0, 0.0);
+              // 左から右
+              // final Offset begin = Offset(-1.0, 0.0);
+              final Offset end = Offset.zero;
+              final Animatable<Offset> tween = Tween(begin: begin, end: end)
+                  .chain(CurveTween(curve: Curves.easeInOut));
+              final Animation<Offset> offsetAnimation = animation.drive(tween);
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          ),
+        );
+      }
     }
 
     /// アカウントに失敗した場合のエラー処理
