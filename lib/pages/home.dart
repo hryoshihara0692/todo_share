@@ -149,74 +149,90 @@ class _HomePageState extends ConsumerState<HomePage> {
         ///
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            // child: Stack(
-            //   children: [
-            //     TextButton(
-            //       child: Text(
-            //         '\u{1F514}',
-            //         style: TextStyle(fontSize: 40),
-            //       ),
-            //       onPressed: () {
-            //         showDialog<void>(
-            //           context: context,
-            //           builder: (_) {
-            //             return NotificationDialog();
-            //           },
-            //         );
-            //       },
-            //       style: TextButton.styleFrom(
-            //         alignment: Alignment.center,
-            //         padding: EdgeInsets.all(0),
-            //       ),
-            //     ),
-            //     Positioned(
-            //       right: 8,
-            //       bottom: 4,
-            //       child: GestureDetector(
-            //         onTap: () {
-            //           showDialog<void>(
-            //             context: context,
-            //             builder: (_) {
-            //               return NotificationDialog();
-            //             },
-            //           );
-            //         },
-            //         child: Container(
-            //           padding: EdgeInsets.all(4),
-            //           decoration: BoxDecoration(
-            //             color: Colors.red,
-            //             shape: BoxShape.circle,
-            //           ),
-            //           child: Text(
-            //             '99',
-            //             style: TextStyle(
-            //               color: Colors.white,
-            //               fontSize: 12,
-            //               fontWeight: FontWeight.bold,
-            //               fontFeatures: [FontFeature.tabularFigures()],
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            child: GestureDetector(
-              onTap: () {
-                showDialog<void>(
-                  context: context,
-                  builder: (_) {
-                    return NotificationDialog();
+            padding: EdgeInsets.only(right: 8.0),
+            child: Stack(
+              children: [
+                TextButton(
+                  child: Text(
+                    '\u{1F514}',
+                    style: TextStyle(fontSize: 40),
+                  ),
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) {
+                        return NotificationDialog();
+                      },
+                    );
                   },
-                );
-              },
-              child: Container(
-                width: 48,
-                height: 48,
-                child: Image.asset('assets/images/group_invite.png'),
-              ),
+                  // style: TextButton.styleFrom(
+                  //   alignment: Alignment.center,
+                  //   padding: EdgeInsets.all(0),
+                  // ),
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 12),
+                    ),
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 15, 9, 64),
+                    ),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      Colors.grey.withOpacity(0.3),
+                    ),
+                    shape: MaterialStateProperty.all<OutlinedBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: 4,
+                  child: GestureDetector(
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (_) {
+                          return NotificationDialog();
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '99',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+            // child: GestureDetector(
+            //   onTap: () {
+            //     showDialog<void>(
+            //       context: context,
+            //       builder: (_) {
+            //         return NotificationDialog();
+            //       },
+            //     );
+            //   },
+            //   child: Container(
+            //     width: 48,
+            //     height: 48,
+            //     child: Image.asset('assets/images/group_invite.png'),
+            //   ),
+            // ),
           )
         ],
       ),
