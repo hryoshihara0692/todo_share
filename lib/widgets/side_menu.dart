@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/database/user_data_service.dart';
 import 'package:todo_share/pages/create_group.dart';
+import 'package:todo_share/pages/initial.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/group_join_dialog.dart';
@@ -124,7 +125,9 @@ class SideMenu extends ConsumerWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // return Center(child: CircularProgressIndicator());
-          return Center(child: Image.asset('assets/images/tmp.gif'),);
+          return Center(
+            child: Image.asset('assets/images/tmp.gif'),
+          );
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
@@ -135,7 +138,9 @@ class SideMenu extends ConsumerWidget {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 // return Center(child: CircularProgressIndicator());
-                return Center(child: Image.asset('assets/images/tmp.gif'),);
+                return Center(
+                  child: Image.asset('assets/images/tmp.gif'),
+                );
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
@@ -163,7 +168,8 @@ class SideMenu extends ConsumerWidget {
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 4.0, 16.0),
+                              padding: const EdgeInsets.fromLTRB(
+                                  16.0, 16.0, 4.0, 16.0),
                               child: Row(
                                 children: [
                                   Container(
@@ -177,7 +183,8 @@ class SideMenu extends ConsumerWidget {
                                             ConnectionState.waiting) {
                                           return Center(
                                             // child: CircularProgressIndicator(),
-                                            child: Image.asset('assets/images/tmp.gif'),
+                                            child: Image.asset(
+                                                'assets/images/tmp.gif'),
                                           );
                                         } else if (snapshot.hasError) {
                                           return Center(
@@ -206,7 +213,8 @@ class SideMenu extends ConsumerWidget {
                                                   return Center(
                                                     child:
                                                         // CircularProgressIndicator(),
-                                                        Image.asset('assets/images/tmp.gif'),
+                                                        Image.asset(
+                                                            'assets/images/tmp.gif'),
                                                   );
                                                 } else if (snapshot.hasError) {
                                                   return Center(
@@ -240,7 +248,8 @@ class SideMenu extends ConsumerWidget {
                                                         //               .expectedTotalBytes!
                                                         //       : null,
                                                         // ),
-                                                        child: Image.asset('assets/images/tmp.gif'),
+                                                        child: Image.asset(
+                                                            'assets/images/tmp.gif'),
                                                       );
                                                     },
                                                     errorBuilder:
@@ -271,7 +280,8 @@ class SideMenu extends ConsumerWidget {
                                           ConnectionState.waiting) {
                                         return Center(
                                             // child: CircularProgressIndicator());
-                                            child: Image.asset('assets/images/tmp.gif'));
+                                            child: Image.asset(
+                                                'assets/images/tmp.gif'));
                                       } else if (snapshot.hasError) {
                                         return Center(
                                             child: Text(
@@ -422,7 +432,8 @@ class SideMenu extends ConsumerWidget {
                                                       return Center(
                                                         child:
                                                             // CircularProgressIndicator(),
-                                                            Image.asset('assets/images/tmp.gif'),
+                                                            Image.asset(
+                                                                'assets/images/tmp.gif'),
                                                       );
                                                     } else if (snapshot
                                                         .hasError) {
@@ -459,7 +470,8 @@ class SideMenu extends ConsumerWidget {
                                                               return Center(
                                                                 child:
                                                                     // CircularProgressIndicator(),
-                                                                    Image.asset('assets/images/tmp.gif'),
+                                                                    Image.asset(
+                                                                        'assets/images/tmp.gif'),
                                                               );
                                                             } else if (snapshot
                                                                 .hasError) {
@@ -495,7 +507,9 @@ class SideMenu extends ConsumerWidget {
                                                                     //           loadingProgress.expectedTotalBytes!
                                                                     //       : null,
                                                                     // ),
-                                                                    child: Image.asset('assets/images/tmp.gif'),
+                                                                    child: Image
+                                                                        .asset(
+                                                                            'assets/images/tmp.gif'),
                                                                   );
                                                                 },
                                                                 errorBuilder: (BuildContext
@@ -533,7 +547,8 @@ class SideMenu extends ConsumerWidget {
                                                     return Center(
                                                       // child:
                                                       //     CircularProgressIndicator(),
-                                                        child: Image.asset('assets/images/tmp.gif'),
+                                                      child: Image.asset(
+                                                          'assets/images/tmp.gif'),
                                                     );
                                                   } else if (snapshot
                                                       .hasError) {
@@ -569,7 +584,8 @@ class SideMenu extends ConsumerWidget {
                                                             return Center(
                                                               // child:
                                                               //     CircularProgressIndicator(),
-                                                              child: Image.asset('assets/images/tmp.gif'),
+                                                              child: Image.asset(
+                                                                  'assets/images/tmp.gif'),
                                                             );
                                                           } else if (snapshot
                                                               .hasError) {
@@ -606,7 +622,9 @@ class SideMenu extends ConsumerWidget {
                                                                   //           loadingProgress.expectedTotalBytes!
                                                                   //       : null,
                                                                   // ),
-                                                                  child: Image.asset('assets/images/tmp.gif'),
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/images/tmp.gif'),
                                                                 );
                                                               },
                                                               errorBuilder: (BuildContext
@@ -776,6 +794,33 @@ class SideMenu extends ConsumerWidget {
                             ElevatedButton(
                               onPressed: () {
                                 FirebaseAuth.instance.signOut();
+
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
+                                      return InitialPage(isNewAccount: true,);
+                                    },
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      // 右から左
+                                      final Offset begin = Offset(1.0, 0.0);
+                                      // 左から右
+                                      // final Offset begin = Offset(-1.0, 0.0);
+                                      final Offset end = Offset.zero;
+                                      final Animatable<Offset> tween =
+                                          Tween(begin: begin, end: end).chain(
+                                              CurveTween(
+                                                  curve: Curves.easeInOut));
+                                      final Animation<Offset> offsetAnimation =
+                                          animation.drive(tween);
+                                      return SlideTransition(
+                                        position: offsetAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                  ),
+                                );
                               },
                               child: Text('ログアウト'),
                             ),
