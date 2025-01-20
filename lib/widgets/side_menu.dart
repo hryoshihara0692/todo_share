@@ -13,7 +13,7 @@ import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/utils/modal_utils.dart';
 import 'package:todo_share/widgets/group_join_dialog.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
-import 'package:todo_share/widgets/user_edit_modal.dart';
+import 'package:todo_share/pages/user_edit_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -328,7 +328,39 @@ class SideMenu extends ConsumerWidget {
                                       height: 32,
                                       child: InkWell(
                                         onTap: () {
-                                          showUserSettingModal(context);
+                                          Navigator.of(context).pushReplacement(
+                                            PageRouteBuilder(
+                                              pageBuilder: (context, animation,
+                                                  secondaryAnimation) {
+                                                return UserEditPage();
+                                              },
+                                              transitionsBuilder: (context,
+                                                  animation,
+                                                  secondaryAnimation,
+                                                  child) {
+                                                // 右から左
+                                                final Offset begin =
+                                                    Offset(1.0, 0.0);
+                                                // 左から右
+                                                // final Offset begin = Offset(-1.0, 0.0);
+                                                final Offset end = Offset.zero;
+                                                final Animatable<Offset> tween =
+                                                    Tween(
+                                                            begin: begin,
+                                                            end: end)
+                                                        .chain(CurveTween(
+                                                            curve: Curves
+                                                                .easeInOut));
+                                                final Animation<Offset>
+                                                    offsetAnimation =
+                                                    animation.drive(tween);
+                                                return SlideTransition(
+                                                  position: offsetAnimation,
+                                                  child: child,
+                                                );
+                                              },
+                                            ),
+                                          );
                                         },
                                         splashColor: const Color(0xff000000)
                                             .withAlpha(30),
@@ -799,7 +831,9 @@ class SideMenu extends ConsumerWidget {
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                         secondaryAnimation) {
-                                      return InitialPage(isNewAccount: true,);
+                                      return InitialPage(
+                                        isNewAccount: true,
+                                      );
                                     },
                                     transitionsBuilder: (context, animation,
                                         secondaryAnimation, child) {

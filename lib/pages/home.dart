@@ -42,154 +42,126 @@ class _HomePageState extends ConsumerState<HomePage> {
     final groupIdAsyncValue = ref.watch(selectedGroupNotifierProvider);
     final todoListIdAsyncValue = ref.watch(selectedTodoListNotifierProvider);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        toolbarHeight: 64.0,
-        backgroundColor: Color.fromARGB(255, 249, 245, 236),
+    return WillPopScope(
+      onWillPop: () async {
+        // falseを返すことで戻る操作を無効化
+        return false;
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          toolbarHeight: 64.0,
+          backgroundColor: Color.fromARGB(255, 249, 245, 236),
 
-        ///
-        /// ハンバーガーメニュー
-        ///
-        leading: Transform.translate(
-          offset: const Offset(20, 0),
-          child: Container(
-            width: 40,
-            height: 40,
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(5),
-              onTap: () {
-                // print('aaaaaaa');
-                _scaffoldKey.currentState?.openDrawer();
-              },
-              splashColor: const Color(0xff000000).withAlpha(30),
-              child: Image.asset('assets/images/humburger.png'),
+          ///
+          /// ハンバーガーメニュー
+          ///
+          leading: Transform.translate(
+            offset: const Offset(20, 0),
+            child: Container(
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(5),
+                onTap: () {
+                  // print('aaaaaaa');
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+                splashColor: const Color(0xff000000).withAlpha(30),
+                child: Image.asset('assets/images/humburger.png'),
+              ),
             ),
           ),
-        ),
 
-        ///
-        /// グループ名
-        ///
-        centerTitle: true,
-        title: groupIdAsyncValue.when(
-          data: (groupId) => FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('GROUP')
-                .doc(groupId)
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text('Loading...');
-              } else if (snapshot.hasError) {
-                return Text('Error');
-              } else if (!snapshot.hasData) {
-                return Text('No Data');
-              } else {
-                var groupData = snapshot.data!.data() as Map<String, dynamic>;
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4.0),
-                      child: TextButton(
-                        onPressed: () {
-                          showGroupSettingModal(context);
-                        },
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all<EdgeInsets>(
-                            EdgeInsets.symmetric(horizontal: 12),
-                          ),
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(255, 15, 9, 64),
-                          ),
-                          overlayColor: MaterialStateProperty.all<Color>(
-                            Colors.grey.withOpacity(0.3),
-                          ),
-                          shape: MaterialStateProperty.all<OutlinedBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
+          ///
+          /// グループ名
+          ///
+          centerTitle: true,
+          title: groupIdAsyncValue.when(
+            data: (groupId) => FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('GROUP')
+                  .doc(groupId)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('Loading...');
+                } else if (snapshot.hasError) {
+                  return Text('Error');
+                } else if (!snapshot.hasData) {
+                  return Text('No Data');
+                } else {
+                  var groupData = snapshot.data!.data() as Map<String, dynamic>;
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4.0),
+                        child: TextButton(
+                          onPressed: () {
+                            showGroupSettingModal(context);
+                          },
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all<EdgeInsets>(
+                              EdgeInsets.symmetric(horizontal: 12),
                             ),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: ResponsiveText(
-                                text: groupData['GROUP_NAME'],
-                                maxFontSize: 40,
-                                minFontSize: 16,
-                                maxLines: 1,
+                            foregroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 15, 9, 64),
+                            ),
+                            overlayColor: MaterialStateProperty.all<Color>(
+                              Colors.grey.withOpacity(0.3),
+                            ),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            Text(
-                              '\u{2699}', // 設定アイコン
-                              style: TextStyle(
-                                fontSize: 30, // グループ名と調和するサイズに調整
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ResponsiveText(
+                                  text: groupData['GROUP_NAME'],
+                                  maxFontSize: 40,
+                                  minFontSize: 16,
+                                  maxLines: 1,
+                                ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                '\u{2699}', // 設定アイコン
+                                style: TextStyle(
+                                  fontSize: 30, // グループ名と調和するサイズに調整
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              }
-            },
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+            loading: () => Text('Loading...'),
+            error: (e, stack) => Text('Error'),
           ),
-          loading: () => Text('Loading...'),
-          error: (e, stack) => Text('Error'),
-        ),
 
-        ///
-        /// 通知ボタン
-        ///
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: Stack(
-              children: [
-                TextButton(
-                  child: Text(
-                    '\u{1F514}',
-                    style: TextStyle(fontSize: 40),
-                  ),
-                  onPressed: () {
-                    showDialog<void>(
-                      context: context,
-                      builder: (_) {
-                        return NotificationDialog();
-                      },
-                    );
-                  },
-                  // style: TextButton.styleFrom(
-                  //   alignment: Alignment.center,
-                  //   padding: EdgeInsets.all(0),
-                  // ),
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 12),
+          ///
+          /// 通知ボタン
+          ///
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Stack(
+                children: [
+                  TextButton(
+                    child: Text(
+                      '\u{1F514}',
+                      style: TextStyle(fontSize: 40),
                     ),
-                    foregroundColor: MaterialStateProperty.all<Color>(
-                      const Color.fromARGB(255, 15, 9, 64),
-                    ),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                      Colors.grey.withOpacity(0.3),
-                    ),
-                    shape: MaterialStateProperty.all<OutlinedBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  right: 8,
-                  bottom: 4,
-                  child: GestureDetector(
-                    onTap: () {
+                    onPressed: () {
                       showDialog<void>(
                         context: context,
                         builder: (_) {
@@ -197,154 +169,188 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
                       );
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
+                    // style: TextButton.styleFrom(
+                    //   alignment: Alignment.center,
+                    //   padding: EdgeInsets.all(0),
+                    // ),
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all<EdgeInsets>(
+                        EdgeInsets.symmetric(horizontal: 12),
                       ),
-                      child: Text(
-                        '99',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          fontFeatures: [FontFeature.tabularFigures()],
+                      foregroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 15, 9, 64),
+                      ),
+                      overlayColor: MaterialStateProperty.all<Color>(
+                        Colors.grey.withOpacity(0.3),
+                      ),
+                      shape: MaterialStateProperty.all<OutlinedBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            // child: GestureDetector(
-            //   onTap: () {
-            //     showDialog<void>(
-            //       context: context,
-            //       builder: (_) {
-            //         return NotificationDialog();
-            //       },
-            //     );
-            //   },
-            //   child: Container(
-            //     width: 48,
-            //     height: 48,
-            //     child: Image.asset('assets/images/group_invite.png'),
-            //   ),
-            // ),
-          )
-        ],
-      ),
-
-      ///
-      /// サイドメニュー
-      ///
-      drawer: SideMenu(),
-
-      ///
-      /// ボディ
-      ///
-      body: Container(
-        color: Color.fromARGB(255, 249, 245, 236),
-        child: Column(
-          children: [
-            ///
-            /// TODOリスト一覧
-            ///
-            Padding(
-              padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
-              child: TodoListCollection(),
-            ),
-
-            ///
-            /// TODOの一覧
-            ///
-            Expanded(child: TodoCollection()),
-
-            ///
-            /// TODO追加ボタン
-            ///
-            Padding(
-              padding: EdgeInsets.only(bottom: 30),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  ///
-                  /// ボタン本体
-                  ///
-                  Container(
-                    width: 200,
-                    height: 50,
-                    // ボタンの形と影を設定する
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(25.0),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          blurRadius: 0,
-                          offset: Offset(0, 5),
-                        )
-                      ],
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // print('Tapおっけー');
-                        showTodoAddModal(context, groupIdAsyncValue.value!);
+                  Positioned(
+                    right: 8,
+                    bottom: 4,
+                    child: GestureDetector(
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) {
+                            return NotificationDialog();
+                          },
+                        );
                       },
-                      // ボタンの色と枠線を設定する
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        foregroundColor: Colors.white,
-                        backgroundColor: Color.fromARGB(255, 69, 206, 237),
-                        side: BorderSide(color: Colors.black, width: 2),
-                      ),
-                      child: Padding(
-                        // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
-                        padding: EdgeInsets.fromLTRB(0, 0, 24, 4),
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
                         child: Text(
-                          'TODOを追加',
+                          '99',
                           style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: GoogleFonts.notoSansJp(
-                              textStyle: TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ).fontFamily,
-                            shadows: [
-                              Shadow(
-                                color: Color.fromARGB(255, 128, 128, 128),
-                                blurRadius: 0,
-                                offset: Offset(0, 2.5),
-                              ),
-                            ],
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            fontFeatures: [FontFeature.tabularFigures()],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  // TODO追加ボタン用の指マーク
-                  Positioned(
-                    right: -30,
-                    top: 2,
-                    child: InkWell(
-                      onTap: () {
-                        // print('Tapおっけー');
-                        showTodoAddModal(context, groupIdAsyncValue.value!);
-                      },
-                      child: Image.asset(
-                        'assets/images/add_todo_button.png',
-                        width: 80,
-                        height: 80,
-                      ),
-                    ),
-                  ),
                 ],
               ),
-            ),
-            AdMobBanner(),
+              // child: GestureDetector(
+              //   onTap: () {
+              //     showDialog<void>(
+              //       context: context,
+              //       builder: (_) {
+              //         return NotificationDialog();
+              //       },
+              //     );
+              //   },
+              //   child: Container(
+              //     width: 48,
+              //     height: 48,
+              //     child: Image.asset('assets/images/group_invite.png'),
+              //   ),
+              // ),
+            )
           ],
+        ),
+
+        ///
+        /// サイドメニュー
+        ///
+        drawer: SideMenu(),
+
+        ///
+        /// ボディ
+        ///
+        body: Container(
+          color: Color.fromARGB(255, 249, 245, 236),
+          child: Column(
+            children: [
+              ///
+              /// TODOリスト一覧
+              ///
+              Padding(
+                padding: EdgeInsets.fromLTRB(24, 0, 24, 0),
+                child: TodoListCollection(),
+              ),
+
+              ///
+              /// TODOの一覧
+              ///
+              Expanded(child: TodoCollection()),
+
+              ///
+              /// TODO追加ボタン
+              ///
+              Padding(
+                padding: EdgeInsets.only(bottom: 30),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ///
+                    /// ボタン本体
+                    ///
+                    Container(
+                      width: 200,
+                      height: 50,
+                      // ボタンの形と影を設定する
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(25.0),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 0,
+                            offset: Offset(0, 5),
+                          )
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // print('Tapおっけー');
+                          showTodoAddModal(context, groupIdAsyncValue.value!);
+                        },
+                        // ボタンの色と枠線を設定する
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromARGB(255, 69, 206, 237),
+                          side: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        child: Padding(
+                          // 指マーク用として右にスペースを開ける＋テキスト下がるので4上げる
+                          padding: EdgeInsets.fromLTRB(0, 0, 24, 4),
+                          child: Text(
+                            'TODOを追加',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontFamily: GoogleFonts.notoSansJp(
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ).fontFamily,
+                              shadows: [
+                                Shadow(
+                                  color: Color.fromARGB(255, 128, 128, 128),
+                                  blurRadius: 0,
+                                  offset: Offset(0, 2.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // TODO追加ボタン用の指マーク
+                    Positioned(
+                      right: -30,
+                      top: 2,
+                      child: InkWell(
+                        onTap: () {
+                          // print('Tapおっけー');
+                          showTodoAddModal(context, groupIdAsyncValue.value!);
+                        },
+                        child: Image.asset(
+                          'assets/images/add_todo_button.png',
+                          width: 80,
+                          height: 80,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              AdMobBanner(),
+            ],
+          ),
         ),
       ),
     );
