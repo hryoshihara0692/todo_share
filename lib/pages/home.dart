@@ -114,9 +114,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
+                            Expanded(
                               child: ResponsiveText(
                                 text: groupData['GROUP_NAME'],
                                 maxFontSize: 40,
@@ -124,11 +124,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 maxLines: 1,
                               ),
                             ),
-                            //絵文字
                             Text(
-                              '\u{2699}',
+                              '\u{2699}', // 設定アイコン
                               style: TextStyle(
-                                fontSize: 40, // フォントサイズを指定
+                                fontSize: 30, // グループ名と調和するサイズに調整
                               ),
                             ),
                           ],
