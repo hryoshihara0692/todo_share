@@ -438,6 +438,7 @@ class SideMenu extends ConsumerWidget {
                                           maxFontSize: 16,
                                           minFontSize: 16,
                                           maxLines: 1,
+                                          shadowEnabled: true,
                                         ),
                                       ),
                                       Stack(children: [

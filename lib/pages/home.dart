@@ -127,6 +127,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   maxFontSize: 40,
                                   minFontSize: 16,
                                   maxLines: 1,
+                                  shadowEnabled: true,
                                 ),
                               ),
                               Text(

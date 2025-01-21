@@ -6,13 +6,14 @@ class ResponsiveText extends StatelessWidget {
   final double maxFontSize;
   final double minFontSize;
   final int maxLines;
+  final bool shadowEnabled;
 
-  ResponsiveText({
-    required this.text,
-    required this.maxFontSize,
-    required this.minFontSize,
-    required this.maxLines,
-  });
+  ResponsiveText(
+      {required this.text,
+      required this.maxFontSize,
+      required this.minFontSize,
+      required this.maxLines,
+      required this.shadowEnabled});
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +60,22 @@ class ResponsiveText extends StatelessWidget {
                 height: 1.0,
               ),
             ).fontFamily,
-            shadows: [
-              Shadow(
-                color: Color.fromARGB(255, 195, 195, 195),
-                blurRadius: 0,
-                offset: Offset(0, 2.5),
-              ),
-            ],
+            // shadows: [
+            //   Shadow(
+            //     color: Color.fromARGB(255, 195, 195, 195),
+            //     blurRadius: 0,
+            //     offset: Offset(0, 2.5),
+            //   ),
+            // ],
+            shadows: shadowEnabled
+                ? [
+                    Shadow(
+                      color: Color.fromARGB(255, 195, 195, 195),
+                      blurRadius: 0,
+                      offset: Offset(0, 2.5),
+                    ),
+                  ]
+                : null, // nullを指定すると影が付与されません
           ),
           maxLines: maxLines,
           overflow: TextOverflow.ellipsis,
