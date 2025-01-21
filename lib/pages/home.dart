@@ -102,9 +102,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                             showGroupSettingModal(context);
                           },
                           style: ButtonStyle(
-                            padding: MaterialStateProperty.all<EdgeInsets>(
-                              EdgeInsets.symmetric(horizontal: 12),
-                            ),
+                            // padding: MaterialStateProperty.all<EdgeInsets>(
+                            //   EdgeInsets.symmetric(horizontal: 12),
+                            // ),
                             foregroundColor: MaterialStateProperty.all<Color>(
                               const Color.fromARGB(255, 15, 9, 64),
                             ),
@@ -118,10 +118,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment:
+                                MainAxisAlignment.center, // Row内の子ウィジェットを中央揃え
                             children: [
-                              Expanded(
+                              Flexible(
                                 child: ResponsiveText(
                                   text: groupData['GROUP_NAME'],
                                   maxFontSize: 40,
@@ -130,10 +130,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   shadowEnabled: true,
                                 ),
                               ),
+                              // SizedBox(width: 8), // グループ名と絵文字の間にスペースを追加
                               Text(
                                 '\u{2699}', // 設定アイコン
                                 style: TextStyle(
-                                  fontSize: 30, // グループ名と調和するサイズに調整
+                                  fontSize: 32, // グループ名と調和するサイズに調整
                                 ),
                               ),
                             ],
