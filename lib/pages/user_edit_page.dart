@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
@@ -5,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/widgets/group_leave_dialog.dart';
+import 'package:todo_share/widgets/responsive_text.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -18,7 +20,9 @@ class _UserEditPageState extends State<UserEditPage> {
   bool isLoading = true;
   String uid = FirebaseAuth.instance.currentUser!.uid;
   final TextEditingController _nameController = TextEditingController();
-  Map<String, String> groupList = {};
+  // Map<String, String> groupList = {};
+  // List<Map<String, dynamic>> groupList = [];
+  List<Map<String, dynamic>> groupData = [];
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {
     try {
@@ -35,33 +39,6 @@ class _UserEditPageState extends State<UserEditPage> {
     }
   }
 
-  Future<List<String>> getUserGroupIds(String uid) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final groupSnapshot =
-          await firestore.collection('USER').doc(uid).collection('GROUP').get();
-      return groupSnapshot.docs.map((doc) => doc.id).toList();
-    } catch (e) {
-      print('Error getting user group IDs: $e');
-      return [];
-    }
-  }
-
-  Future<Map<String, String>> getGroupsByIds(List<String> groupIds) async {
-    try {
-      final firestore = FirebaseFirestore.instance;
-      final groupQuery = await firestore
-          .collection('GROUP')
-          .where(FieldPath.documentId, whereIn: groupIds)
-          .get();
-      return {
-        for (var doc in groupQuery.docs) doc.id: doc['GROUP_NAME'] as String,
-      };
-    } catch (e) {
-      print('Error getting groups by IDs: $e');
-      return {};
-    }
-  }
 
   Future<void> _fetchUserData() async {
     final data = await getUserData(uid);
@@ -74,19 +51,60 @@ class _UserEditPageState extends State<UserEditPage> {
     });
   }
 
-  Future<void> _fetchUserGroups() async {
-    final groupIds = await getUserGroupIds(uid);
-    final groups = await getGroupsByIds(groupIds);
+  ///
+  /// 新規でfetchデータ関数作成
+  ///
+  Future<void> fetchGroups() async {
     setState(() {
-      groupList = groups;
+      isLoading = true; // ローディング開始
     });
+
+    final data = await fetchGroupData(uid);
+
+    setState(() {
+      groupData = data;
+      isLoading = false; // ローディング終了
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchGroupData(String uid) async {
+    try {
+      final userRef = FirebaseFirestore.instance.collection('USER').doc(uid);
+      final groupSnapshot = await userRef.collection('GROUP').get();
+      final List<Map<String, dynamic>> groupData = [];
+
+      for (var doc in groupSnapshot.docs) {
+        final groupId = doc.id;
+        final orderNo = doc['ORDER_NO'];
+
+        final groupDoc = await FirebaseFirestore.instance
+            .collection('GROUP')
+            .doc(groupId)
+            .get();
+
+        if (groupDoc.exists) {
+          groupData.add({
+            'GROUP_ID': groupId,
+            'ORDER_NO': orderNo,
+            'GROUP_NAME': groupDoc['GROUP_NAME'],
+          });
+        }
+      }
+
+      groupData.sort((a, b) => a['ORDER_NO'].compareTo(b['ORDER_NO']));
+      return groupData;
+    } catch (e) {
+      print('Error fetching group data: $e');
+      return [];
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _fetchUserData();
-    _fetchUserGroups();
+    // _fetchUserGroups();
+    fetchGroups();
   }
 
   Future<void> _updateUserName() async {
@@ -113,16 +131,32 @@ class _UserEditPageState extends State<UserEditPage> {
 
   void _onReorder(int oldIndex, int newIndex) {
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = groupData.removeAt(oldIndex);
+      groupData.insert(newIndex, item);
+
+      // ORDER_NOを更新
+      for (int i = 0; i < groupData.length; i++) {
+        groupData[i]['ORDER_NO'] = i;
       }
-      final keys = groupList.keys.toList();
-      final item = keys.removeAt(oldIndex);
-      keys.insert(newIndex, item);
-      groupList = {
-        for (var key in keys) key: groupList[key]!,
-      };
     });
+
+    // Firestoreへ保存
+    _updateOrderInFirestore(groupData);
+  }
+
+  Future<void> _updateOrderInFirestore(
+      List<Map<String, dynamic>> sortedGroupData) async {
+    final batch = FirebaseFirestore.instance.batch();
+    final userRef = FirebaseFirestore.instance.collection('USER').doc(uid);
+
+    for (var group in sortedGroupData) {
+      final groupDocRef = userRef.collection('GROUP').doc(group['GROUP_ID']);
+      batch.update(groupDocRef, {'ORDER_NO': group['ORDER_NO']});
+    }
+
+    await batch.commit();
+    print('Order updated successfully in Firestore');
   }
 
   @override
@@ -141,13 +175,6 @@ class _UserEditPageState extends State<UserEditPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            // Navigator.of(context).pop();
-            // showDialog<void>(
-            //   context: context,
-            //   builder: (_) {
-            //     return CreateAccountCancelDialog();
-            //   },
-            // );
             Navigator.of(context).pushReplacement(
               PageRouteBuilder(
                 pageBuilder: (context, animation, secondaryAnimation) {
@@ -197,10 +224,6 @@ class _UserEditPageState extends State<UserEditPage> {
         height: 840,
         decoration: BoxDecoration(
           color: Color.fromARGB(255, 235, 235, 235),
-          // borderRadius: BorderRadius.only(
-          //   topLeft: Radius.circular(25.0),
-          //   topRight: Radius.circular(25.0),
-          // ),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
@@ -331,30 +354,30 @@ class _UserEditPageState extends State<UserEditPage> {
                 ),
                 child: ReorderableListView(
                   onReorder: _onReorder,
-                  children: List.generate(groupList.length, (index) {
-                    final groupId = groupList.keys.elementAt(index);
-                    final groupName = groupList[groupId]!;
+                  children: List.generate(groupData.length, (index) {
+                    print("表示直前：$groupData");
+                    // final groupId = groupList.keys.elementAt(index);
+                    final groupId = groupData[index]['GROUP_ID'];
+                    // final groupName = groupList[groupId]!;
+                    final groupName = groupData[index]['GROUP_NAME'];
                     return ListTile(
                       key: ValueKey(groupId),
                       title: Row(
                         children: [
-                          Text(
-                            groupName,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: GoogleFonts.notoSansJp(
-                                textStyle: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ).fontFamily,
+                          Expanded(
+                            child: ResponsiveText(
+                              text: groupName,
+                              maxFontSize: 20,
+                              minFontSize: 16,
+                              maxLines: 1,
+                              shadowEnabled: false,
                             ),
                           ),
-                          Expanded(
-                            child: Container(),
+                          Container(
+                            width: 8.0,
                           ),
                           GestureDetector(
                             onTap: () {
-                              // print('groupId: $groupId');
                               showDialog<void>(
                                 context: context,
                                 builder: (_) {
@@ -374,8 +397,12 @@ class _UserEditPageState extends State<UserEditPage> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                          GestureDetector(
+                            onPanUpdate: (details) {
+                              // ユーザーがハンバーガーアイコンをドラッグした場合の処理
+                              // ここで並び替え処理を組み込む
+                              print('Dragging...');
+                            },
                             child: Container(
                               width: 24,
                               height: 24,
@@ -412,15 +439,7 @@ class _UserEditPageState extends State<UserEditPage> {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // print('Tapおっけー');
-                    // showDialog<void>(
-                    //   context: context,
-                    //   builder: (_) {
-                    //     return TodoListSettingDialog();
-                    //   },
-                    // );
-                  },
+                  onPressed: () {},
                   // ボタンの色と枠線を設定する
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 12),
@@ -445,14 +464,6 @@ class _UserEditPageState extends State<UserEditPage> {
                             ).fontFamily,
                           ),
                         ),
-                        // Expanded(
-                        //   child: Container(),
-                        // ),
-                        // Container(
-                        //   width: 32,
-                        //   height: 32,
-                        //   child: Image.asset('assets/images/Tap.png'),
-                        // ),
                       ],
                     ),
                   ),
