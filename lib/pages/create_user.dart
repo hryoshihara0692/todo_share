@@ -106,9 +106,10 @@ class CreateUserPage extends ConsumerWidget {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.fill,
-                            image: AssetImage(
-                              selectedIcon,
-                            ),
+                            image: selectedIcon.startsWith('/')
+                                ? FileImage(File(selectedIcon)) // ローカルファイルの場合
+                                : AssetImage(selectedIcon)
+                                    as ImageProvider, // アセット画像の場合
                           ),
                         ),
                       ),
