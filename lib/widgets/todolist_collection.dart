@@ -15,6 +15,9 @@ class TodoListCollection extends ConsumerWidget {
     var selectedTodoListID = ref.watch(selectedTodoListNotifierProvider);
     var selectedGroupID = ref.watch(selectedGroupNotifierProvider);
 
+    print('selectedTodoListID : $selectedTodoListID');
+    print('selectedGroupID : $selectedGroupID');
+
     return selectedGroupID.when(
       data: (groupId) {
         if (groupId.isEmpty) {
@@ -29,7 +32,9 @@ class TodoListCollection extends ConsumerWidget {
           ) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // return Center(child: CircularProgressIndicator());
-              return Center(child: Image.asset('assets/images/tmp.gif'),);
+              return Center(
+                // child: Image.asset('assets/images/tmp.gif'),
+              );
             }
             if (snapshot.hasError) {
               return Center(child: Text('エラーが発生しました'));
@@ -189,7 +194,9 @@ class TodoListCollection extends ConsumerWidget {
         );
       },
       // loading: () => Center(child: CircularProgressIndicator()),
-      loading: () => Center(child: Image.asset('assets/images/tmp.gif'),),
+      loading: () => Center(
+        // child: Image.asset('assets/images/tmp.gif'),
+      ),
       error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
     );
   }

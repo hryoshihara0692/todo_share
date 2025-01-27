@@ -117,7 +117,9 @@ class _TodoListChoiceDialogState extends ConsumerState<TodoListChoiceDialog> {
               ),
               child: todoListIds.isEmpty
                   // ? Center(child: CircularProgressIndicator())
-                  ? Center(child: Image.asset('assets/images/tmp.gif'),)
+                  ? Center(
+                      // child: Image.asset('assets/images/tmp.gif'),
+                    )
                   : ListView.builder(
                       itemCount: todoListIds.length,
                       itemBuilder: (context, index) {

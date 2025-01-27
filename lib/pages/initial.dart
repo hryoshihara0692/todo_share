@@ -205,10 +205,10 @@ class _InitialPageState extends State<InitialPage>
         if (_isLoading)
           Container(
             color: Colors.black.withOpacity(0.5), // 半透明の黒色
-            child: Center(
-              // child: CircularProgressIndicator(), // ローディングインジケーター
-              child: Image.asset('assets/images/tmp.gif'),
-            ),
+            // child: Center(
+            //   // child: CircularProgressIndicator(), // ローディングインジケーター
+            //   child: Image.asset('assets/images/tmp.gif'),
+            // ),
           ),
       ],
     );

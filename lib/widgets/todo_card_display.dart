@@ -365,7 +365,7 @@ class TodoCardDisplay extends StatelessWidget {
                                         ConnectionState.waiting) {
                                       return Center(
                                         // child: CircularProgressIndicator(),
-                                        child: Image.asset('assets/images/tmp.gif'),
+                                        // child: Image.asset('assets/images/tmp.gif'),
                                       );
                                     } else if (snapshot.hasError) {
                                       return Center(
@@ -392,7 +392,7 @@ class TodoCardDisplay extends StatelessWidget {
                                               return Center(
                                                 // child:
                                                 //     CircularProgressIndicator(),
-                                                child: Image.asset('assets/images/tmp.gif'),
+                                                // child: Image.asset('assets/images/tmp.gif'),
                                               );
                                             } else if (snapshot.hasError) {
                                               return Center(
@@ -426,7 +426,7 @@ class TodoCardDisplay extends StatelessWidget {
                                                     //               .expectedTotalBytes!
                                                     //       : null,
                                                     // ),
-                                                    child: Image.asset('assets/images/tmp.gif'),
+                                                    // child: Image.asset('assets/images/tmp.gif'),
                                                   );
                                                 },
                                                 errorBuilder: (BuildContext
@@ -460,7 +460,7 @@ class TodoCardDisplay extends StatelessWidget {
                                       ConnectionState.waiting) {
                                     return Center(
                                       // child: CircularProgressIndicator(),
-                                      child: Image.asset('assets/images/tmp.gif'),
+                                      // child: Image.asset('assets/images/tmp.gif'),
                                     );
                                   } else if (snapshot.hasError) {
                                     return Center(
@@ -487,7 +487,7 @@ class TodoCardDisplay extends StatelessWidget {
                                             return Center(
                                               // child:
                                               //     CircularProgressIndicator(),
-                                              child: Image.asset('assets/images/tmp.gif'),
+                                              // child: Image.asset('assets/images/tmp.gif'),
                                             );
                                           } else if (snapshot.hasError) {
                                             return Center(
@@ -521,7 +521,7 @@ class TodoCardDisplay extends StatelessWidget {
                                                   //               .expectedTotalBytes!
                                                   //       : null,
                                                   // ),
-                                                  child: Image.asset('assets/images/tmp.gif'),
+                                                  // child: Image.asset('assets/images/tmp.gif'),
                                                 );
                                               },
                                               errorBuilder:

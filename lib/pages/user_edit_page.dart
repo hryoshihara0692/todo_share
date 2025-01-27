@@ -164,7 +164,7 @@ class _UserEditPageState extends State<UserEditPage> {
     if (isLoading) {
       // return Center(child: CircularProgressIndicator());
       return Center(
-        child: Image.asset('assets/images/tmp.gif'),
+        // child: Image.asset('assets/images/tmp.gif'),
       );
     }
 

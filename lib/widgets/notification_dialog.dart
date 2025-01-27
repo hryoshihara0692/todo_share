@@ -138,7 +138,8 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                   ? Center(
                       child: isLoading
                           // ? CircularProgressIndicator()
-                          ? Image.asset('assets/images/tmp.gif')
+                          // ? Image.asset('assets/images/tmp.gif')
+                          ? Container()
                           : Text('通知はありません',
                               style:
                                   TextStyle(fontSize: 18, color: Colors.black)),
@@ -149,7 +150,9 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                         if (index == notifications.length) {
                           return isLoading
                               // ? Center(child: CircularProgressIndicator())
-                              ? Center(child: Image.asset('assets/images/tmp.gif'),)
+                              ? Center(
+                                  // child: Image.asset('assets/images/tmp.gif'),
+                                )
                               : TextButton(
                                   onPressed: _loadMoreNotifications,
                                   child: Text('もっと読む'),
@@ -204,20 +207,23 @@ class _NotificationDialogState extends ConsumerState<NotificationDialog> {
                                         ),
                                         children: [
                                           TextSpan(
-                                            text:
-                                                notification['GROUP_NAME'] ?? '',
+                                            text: notification['GROUP_NAME'] ??
+                                                '',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           TextSpan(text: 'の'),
                                           TextSpan(
-                                            text: notification['TODOLIST_NAME'] ?? '',
+                                            text:
+                                                notification['TODOLIST_NAME'] ??
+                                                    '',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           TextSpan(text: 'に'),
                                           TextSpan(
-                                            text: notification['USER_NAME'] ?? '',
+                                            text:
+                                                notification['USER_NAME'] ?? '',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),

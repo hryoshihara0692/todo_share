@@ -36,7 +36,9 @@ class TodoCollection extends ConsumerWidget {
               ) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // return Center(child: CircularProgressIndicator());
-                  return Center(child: Image.asset('assets/images/tmp.gif'),);
+                  return Center(
+                    // child: Image.asset('assets/images/tmp.gif'),
+                  );
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text('エラーが発生しました'));
@@ -57,7 +59,8 @@ class TodoCollection extends ConsumerWidget {
                             content: todoData[index]['CONTENT'],
                             memo: todoData[index]['MEMO'],
                             deadline: todoData[index]['DEADLINE'],
-                            managerIdList: List<String>.from(todoData[index]['MANAGER_ID_LIST']),
+                            managerIdList: List<String>.from(
+                                todoData[index]['MANAGER_ID_LIST']),
                             createDate: todoData[index]['CREATE_DATE'],
                             updateDate: todoData[index]['UPDATE_DATE'],
                           );
@@ -89,12 +92,16 @@ class TodoCollection extends ConsumerWidget {
             );
           },
           // loading: () => Center(child: CircularProgressIndicator()),
-          loading: () => Center(child: Image.asset('assets/images/tmp.gif'),),
+          loading: () => Center(
+            // child: Image.asset('assets/images/tmp.gif'),
+          ),
           error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
         );
       },
       // loading: () => Center(child: CircularProgressIndicator()),
-      loading: () => Center(child: Image.asset('assets/images/tmp.gif'),),
+      loading: () => Center(
+        // child: Image.asset('assets/images/tmp.gif'),
+      ),
       error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
     );
   }
