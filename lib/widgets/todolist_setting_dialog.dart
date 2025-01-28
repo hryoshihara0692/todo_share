@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_share/database/singleton/uid.dart';
 import 'package:todo_share/database/todolist_data_service.dart';
+import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/riverpod/selected_group.dart';
 import 'package:todo_share/riverpod/selected_todolist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -289,7 +290,23 @@ class TodoListSettingDialog extends ConsumerWidget {
                           'UPDATE_DATE': Timestamp.now(),
                         });
 
-                        Navigator.pop(context);
+                        var notifier =
+                            ref.read(selectedTodoListNotifierProvider.notifier);
+                        notifier.setSelectedTodoList(todoListID);
+
+                        // Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    HomePage(),
+                            transitionDuration:
+                                Duration.zero, // アニメーションの時間を0に設定
+                            reverseTransitionDuration:
+                                Duration.zero, // 逆方向のアニメーションも0
+                          ),
+                        );
                       },
                       // ボタンの色と枠線を設定する
                       style: ElevatedButton.styleFrom(
