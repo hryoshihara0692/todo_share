@@ -18,6 +18,22 @@ class TodoListCollection extends ConsumerWidget {
     print('selectedTodoListID : $selectedTodoListID');
     print('selectedGroupID : $selectedGroupID');
 
+    final ScrollController scrollController = ScrollController();
+
+    // 初期スクロール処理をWidgetsBindingで登録
+    void scrollToSelectedTodoList(List<QueryDocumentSnapshot> todoListData) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final selectedIndex = todoListData.indexWhere(
+            (todo) => todo.id == selectedTodoListID.value);
+        if (selectedIndex != -1) {
+          scrollController.animateTo(
+            selectedIndex * 48.0, // アイテムの高さに基づいて計算
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
     return selectedGroupID.when(
       data: (groupId) {
         if (groupId.isEmpty) {
@@ -33,8 +49,8 @@ class TodoListCollection extends ConsumerWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // return Center(child: CircularProgressIndicator());
               return Center(
-                // child: Image.asset('assets/images/tmp.gif'),
-              );
+                  // child: Image.asset('assets/images/tmp.gif'),
+                  );
             }
             if (snapshot.hasError) {
               return Center(child: Text('エラーが発生しました'));
@@ -83,9 +99,14 @@ class TodoListCollection extends ConsumerWidget {
               );
             }
             var todoListData = snapshot.data!.docs;
+
+            // 初期スクロールを呼び出し
+            scrollToSelectedTodoList(todoListData);
+
             return SizedBox(
               height: 48,
               child: ListView.builder(
+                controller: scrollController, // ScrollControllerを指定
                 // key: ValueKey(selectedTodoList),  // Add key to maintain state
                 scrollDirection: Axis.horizontal,
                 itemCount: todoListData.length + 1,
@@ -195,8 +216,8 @@ class TodoListCollection extends ConsumerWidget {
       },
       // loading: () => Center(child: CircularProgressIndicator()),
       loading: () => Center(
-        // child: Image.asset('assets/images/tmp.gif'),
-      ),
+          // child: Image.asset('assets/images/tmp.gif'),
+          ),
       error: (error, stack) => Center(child: Text('エラーが発生しました: $error')),
     );
   }
