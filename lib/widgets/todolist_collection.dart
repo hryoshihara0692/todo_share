@@ -26,11 +26,12 @@ class TodoListCollection extends ConsumerWidget {
         final selectedIndex = todoListData.indexWhere(
             (todo) => todo.id == selectedTodoListID.value);
         if (selectedIndex != -1) {
-          scrollController.animateTo(
-            selectedIndex * 48.0, // アイテムの高さに基づいて計算
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
+          scrollController.jumpTo(selectedIndex * 48.0); // アニメーションなし
+          // scrollController.animateTo(
+          //   selectedIndex * 48.0, // アイテムの高さに基づいて計算
+          //   duration: const Duration(milliseconds: 300),
+          //   curve: Curves.easeInOut,
+          // );
         }
       });
     }
