@@ -1,25 +1,31 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_share/pages/home.dart';
+import 'package:todo_share/riverpod/selected_icon.dart';
 import 'package:todo_share/widgets/group_leave_dialog.dart';
+import 'package:todo_share/widgets/icon_setting_dialog_update.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:firebase_storage/firebase_storage.dart';
 
-class UserEditPage extends StatefulWidget {
+class UserEditPage extends ConsumerStatefulWidget {
   const UserEditPage({super.key});
 
   @override
   _UserEditPageState createState() => _UserEditPageState();
 }
 
-class _UserEditPageState extends State<UserEditPage> {
+class _UserEditPageState extends ConsumerState<UserEditPage> {
   Map<String, dynamic>? userData;
   bool isLoading = true;
   String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -27,6 +33,10 @@ class _UserEditPageState extends State<UserEditPage> {
   // Map<String, String> groupList = {};
   // List<Map<String, dynamic>> groupList = [];
   List<Map<String, dynamic>> groupData = [];
+
+  Future<Uint8List> loadImageBytes(String path) async {
+    return await File(path).readAsBytes();
+  }
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {
     try {
@@ -164,6 +174,7 @@ class _UserEditPageState extends State<UserEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    var selectedIcon = ref.watch(selectedIconNotifierProvider);
     if (isLoading) {
       // return Center(child: CircularProgressIndicator());
       return Center(
@@ -233,105 +244,222 @@ class _UserEditPageState extends State<UserEditPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [],
-              ),
               SizedBox(height: 16.0),
-              Container(
-                width: 160,
-                height: 160,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.grey[300], // 画像がない場合の背景色
-                ),
-                child: FutureBuilder<String>(
-                  future:
-                      getUserIconPath(uid), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                          // child: CircularProgressIndicator(),
-                          // child: Image.asset(
-                          //     'assets/images/tmp.gif'),
-                          );
-                    } else if (snapshot.hasError) {
-                      return Center(
-                        child: Text('Error: ${snapshot.error}'),
-                      );
-                    } else {
-                      String? iconPath = snapshot.data;
-                      if (iconPath != null && File(iconPath).existsSync()) {
-                        // ローカル画像を取得
-                        return Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: FileImage(File(iconPath)),
-                              fit: BoxFit.cover, // 画像を中央に拡大して丸く収める
-                            ),
-                          ),
-                        );
-                      } else {
-                        print('Firestore Storageから直接表示してます');
-                        // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
-                        return FutureBuilder<String>(
-                          future: _getUserIconUrl(uid),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(
-                                  // child:
-                                  // CircularProgressIndicator(),
-                                  // Image.asset(
-                                  //     'assets/images/tmp.gif'),
-                                  );
-                            } else if (snapshot.hasError) {
-                              return Center(
-                                child: Text('Failed to load image'),
-                              );
-                            } else {
-                              String iconUrl = snapshot.data ?? '';
+              Stack(
+                children: [
+                  // Container(
+                  //   width: 160,
+                  //   height: 160,
+                  //   decoration: BoxDecoration(
+                  //     shape: BoxShape.circle,
+                  //     color: Colors.grey[300], // 画像がない場合の背景色
+                  //   ),
+                  //   child: FutureBuilder<String>(
+                  //     future: getUserIconPath(
+                  //         uid), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                  //     builder: (context, snapshot) {
+                  //       if (snapshot.connectionState ==
+                  //           ConnectionState.waiting) {
+                  //         return Center(
+                  //             // child: CircularProgressIndicator(),
+                  //             // child: Image.asset(
+                  //             //     'assets/images/tmp.gif'),
+                  //             );
+                  //       } else if (snapshot.hasError) {
+                  //         return Center(
+                  //           child: Text('Error: ${snapshot.error}'),
+                  //         );
+                  //       } else {
+                  //         String? iconPath = snapshot.data;
+                  //         if (iconPath != null && File(iconPath).existsSync()) {
+                  //           // ローカル画像を取得
+                  //           return Container(
+                  //             decoration: BoxDecoration(
+                  //               shape: BoxShape.circle,
+                  //               image: DecorationImage(
+                  //                 image: FileImage(File(iconPath)),
+                  //                 fit: BoxFit.cover, // 画像を中央に拡大して丸く収める
+                  //               ),
+                  //             ),
+                  //           );
+                  //         } else {
+                  //           print('Firestore Storageから直接表示してます');
+                  //           // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                  //           return FutureBuilder<String>(
+                  //             future: _getUserIconUrl(uid),
+                  //             builder: (context, snapshot) {
+                  //               if (snapshot.connectionState ==
+                  //                   ConnectionState.waiting) {
+                  //                 return Center(
+                  //                     // child:
+                  //                     // CircularProgressIndicator(),
+                  //                     // Image.asset(
+                  //                     //     'assets/images/tmp.gif'),
+                  //                     );
+                  //               } else if (snapshot.hasError) {
+                  //                 return Center(
+                  //                   child: Text('Failed to load image'),
+                  //                 );
+                  //               } else {
+                  //                 String iconUrl = snapshot.data ?? '';
 
-                              return Image.network(
-                                iconUrl,
-                                width: 32,
-                                height: 32,
-                                loadingBuilder: (BuildContext context,
-                                    Widget child,
-                                    ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
+                  //                 return Image.network(
+                  //                   iconUrl,
+                  //                   width: 32,
+                  //                   height: 32,
+                  //                   loadingBuilder: (BuildContext context,
+                  //                       Widget child,
+                  //                       ImageChunkEvent? loadingProgress) {
+                  //                     if (loadingProgress == null) return child;
+                  //                     return Center(
+                  //                         // child:
+                  //                         //     CircularProgressIndicator(
+                  //                         //   value: loadingProgress
+                  //                         //               .expectedTotalBytes !=
+                  //                         //           null
+                  //                         //       ? loadingProgress
+                  //                         //               .cumulativeBytesLoaded /
+                  //                         //           loadingProgress
+                  //                         //               .expectedTotalBytes!
+                  //                         //       : null,
+                  //                         // ),
+                  //                         // child: Image.asset(
+                  //                         //     'assets/images/tmp.gif'),
+                  //                         );
+                  //                   },
+                  //                   errorBuilder: (BuildContext context,
+                  //                       Object exception,
+                  //                       StackTrace? stackTrace) {
+                  //                     // エラー時の処理
+                  //                     return Center(
+                  //                       child: Text('Failed to load image'),
+                  //                     );
+                  //                   },
+                  //                 );
+                  //               }
+                  //             },
+                  //           );
+                  //         }
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
+                  Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey[300], // 画像がない場合の背景色
+                    ),
+                    child: FutureBuilder<String>(
+                      future: getUserIconPath(uid),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else {
+                          String? iconPath = snapshot.data;
+                          if (iconPath != null && File(iconPath).existsSync()) {
+                            // 🔥 `MemoryImage` に変換するための `FutureBuilder` をネストする
+                            return FutureBuilder<Uint8List>(
+                              future: loadImageBytes(iconPath),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
                                   return Center(
-                                      // child:
-                                      //     CircularProgressIndicator(
-                                      //   value: loadingProgress
-                                      //               .expectedTotalBytes !=
-                                      //           null
-                                      //       ? loadingProgress
-                                      //               .cumulativeBytesLoaded /
-                                      //           loadingProgress
-                                      //               .expectedTotalBytes!
-                                      //       : null,
-                                      // ),
-                                      // child: Image.asset(
-                                      //     'assets/images/tmp.gif'),
-                                      );
-                                },
-                                errorBuilder: (BuildContext context,
-                                    Object exception, StackTrace? stackTrace) {
-                                  // エラー時の処理
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError ||
+                                    snapshot.data == null) {
                                   return Center(
-                                    child: Text('Failed to load image'),
+                                      child: Text('Failed to load image'));
+                                } else {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: MemoryImage(
+                                            snapshot.data!), // キャッシュ回避
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   );
-                                },
-                              );
-                            }
+                                }
+                              },
+                            );
+                          } else {
+                            print('Firestore Storageから直接表示してます');
+                            return FutureBuilder<String>(
+                              future: _getUserIconUrl(uid),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                      child: Text('Failed to load image'));
+                                } else {
+                                  String iconUrl = snapshot.data ?? '';
+                                  return Image.network(
+                                    iconUrl,
+                                    width: 160,
+                                    height: 160,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                          child: Text('Failed to load image'));
+                                    },
+                                  );
+                                }
+                              },
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return IconSettingUpdateDialog();
                           },
-                        );
-                      }
-                    }
-                  },
-                ),
+                        ).then((result) {
+                          if (result != 'confirmed') {
+                            // ダイアログが決定ボタン以外で閉じられた場合の処理
+                            // var notifier = ref.read(
+                            //     selectedIconNotifierProvider.notifier);
+                            // notifier.update('');
+                            print('confirmed来てる');
+                            uploadAndSaveAssetImage(context, selectedIcon, uid);
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 160,
+                        height: 160,
+                        child: Center(
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            child: Image.asset('assets/images/UserSetting.png'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16.0),
               Row(
@@ -593,5 +721,145 @@ class _UserEditPageState extends State<UserEditPage> {
     final response =
         await FirebaseStorage.instance.refFromURL(imageUrl).getData();
     await File(filePath).writeAsBytes(response!);
+  }
+}
+
+///
+/// テンプレートアイコン画像を、ユーザ画像として保存
+///
+Future<String> saveAssetAsFile(String assetPath, String newFileName) async {
+  try {
+    ByteData byteData = await rootBundle.load(assetPath);
+    Uint8List fileBytes = byteData.buffer.asUint8List();
+
+    final directory = await getApplicationDocumentsDirectory();
+    final String dirPath = '${directory.path}/user_icons';
+    final String newFilePath = '$dirPath/$newFileName.png';
+
+    // ディレクトリが存在するか確認し、存在しない場合は作成する
+    final dir = Directory(dirPath);
+    if (!await dir.exists()) {
+      await dir.create(recursive: true);
+    }
+
+    File newFile = File(newFilePath);
+    await newFile.writeAsBytes(fileBytes);
+
+    return newFilePath;
+  } catch (e) {
+    print('Error saving asset as file: $e');
+    throw e;
+  }
+}
+
+///
+/// テンプレートアイコン画像を、ユーザ画像として、Storageにアップロード
+/// ＋ダウンロードURLを取得
+///
+Future<String> uploadFileToFirebaseStorage(
+    String filePath, String newFileName) async {
+  try {
+    File file = File(filePath);
+    Uint8List fileBytes = await file.readAsBytes();
+
+    final Reference storageRef =
+        FirebaseStorage.instance.ref().child('user_icons/$newFileName.png');
+    final UploadTask uploadTask = storageRef.putData(fileBytes);
+
+    final TaskSnapshot snapshot = await uploadTask.whenComplete(() => {});
+    final String downloadURL = await snapshot.ref.getDownloadURL();
+
+    return downloadURL;
+  } catch (e) {
+    print('Error uploading file to Firebase Storage: $e');
+    throw e;
+  }
+}
+
+///
+/// ダウンロードURLをUSERコレクションに追加
+///
+Future<void> saveUrlToFirestore(
+    String uid, String userName, String iconURL) async {
+  try {
+    await FirebaseFirestore.instance.collection('USER').doc(uid).set({
+      'USER_NAME': userName,
+      'ICON_URL': iconURL,
+      'PRIMARY_GROUP_ID': '',
+      'CREATE_DATE': Timestamp.now(),
+      'UPDATE_DATE': Timestamp.now(),
+    });
+  } catch (e) {
+    print('Error saving URL to Firestore: $e');
+    throw e;
+  }
+}
+
+///
+/// ダウンロードURLをUSERコレクションに追加
+///
+Future<void> updateUserImageToFirestore(String uid, String iconURL) async {
+  try {
+    await FirebaseFirestore.instance.collection('USER').doc(uid).update({
+      'ICON_URL': iconURL,
+      'UPDATE_DATE': Timestamp.now(),
+    });
+  } catch (e) {
+    print('Error updating user image in Firestore: $e');
+    throw e;
+  }
+}
+
+Future<void> uploadAndSaveAssetImage(
+    BuildContext context, String imagePath, String uid) async {
+  print('どうでしょうか$imagePath');
+  try {
+    ///
+    /// 別名保存
+    ///
+    String newFilePath = await saveAssetAsFile(imagePath, uid);
+
+    ///
+    /// アップロード＋ダウンロードURL取得
+    ///
+    String downloadURL = await uploadFileToFirebaseStorage(newFilePath, uid);
+
+    ///
+    /// Firestore登録
+    ///
+    await updateUserImageToFirestore(uid, downloadURL);
+
+    ///
+    /// スナックバー
+    ///
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   content: Text('File uploaded and saved locally as $newFileName.png!'),
+    // ));
+
+    // Navigator.of(context).pushReplacement(
+    //   PageRouteBuilder(
+    //     pageBuilder: (context, animation, secondaryAnimation) {
+    //       return CreateGroupPage();
+    //     },
+    //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+    //       // 右から左
+    //       final Offset begin = Offset(1.0, 0.0);
+    //       // 左から右
+    //       // final Offset begin = Offset(-1.0, 0.0);
+    //       final Offset end = Offset.zero;
+    //       final Animatable<Offset> tween = Tween(begin: begin, end: end)
+    //           .chain(CurveTween(curve: Curves.easeInOut));
+    //       final Animation<Offset> offsetAnimation = animation.drive(tween);
+    //       return SlideTransition(
+    //         position: offsetAnimation,
+    //         child: child,
+    //       );
+    //     },
+    //   ),
+    // );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Failed to upload, download, and save file'),
+    ));
   }
 }
