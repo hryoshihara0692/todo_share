@@ -28,36 +28,37 @@ class SideMenu extends ConsumerWidget {
     return dirPath;
   }
 
-  // UIDを用いてユーザーのグループ名とユーザーID一覧を取得する関数
   Future<Map<String, dynamic>> _getUserGroupsAndUserIds(String uid) async {
-    // USERコレクションからPRIMARY_GROUP_IDを取得
     final userDoc =
         await FirebaseFirestore.instance.collection('USER').doc(uid).get();
     final primaryGroupId = userDoc.data()?['PRIMARY_GROUP_ID'];
 
-    // USERコレクションのGROUPサブコレクションのドキュメントIDを取得
     final userGroupsSnapshot = await FirebaseFirestore.instance
         .collection('USER')
         .doc(uid)
         .collection('GROUP')
         .get();
 
-    // ドキュメントIDリストを作成
     List<String> groupIds =
         userGroupsSnapshot.docs.map((doc) => doc.id).toList();
 
-    // ドキュメントIDに対応するGroupコレクションからGROUP名を取得
     Map<String, String> groupMap = {};
     Map<String, List<String>> groupUsersMap = {};
+    List<Map<String, dynamic>> groupData = [];
+
     for (String groupId in groupIds) {
       final groupSnapshot = await FirebaseFirestore.instance
           .collection('GROUP')
           .doc(groupId)
           .get();
       if (groupSnapshot.exists) {
-        groupMap[groupId] = groupSnapshot.data()?['GROUP_NAME'] ?? 'No Name';
+        final groupDataItem = {
+          'GROUP_NAME': groupSnapshot.data()?['GROUP_NAME'] ?? 'No Name',
+          'ORDER_NO': groupSnapshot.data()?['ORDER_NO'] ?? 0,
+          'GROUP_ID': groupId,
+        };
+        groupData.add(groupDataItem);
 
-        // GROUPコレクション配下のUSERサブコレクションのドキュメントID一覧を取得
         final groupUsersSnapshot = await FirebaseFirestore.instance
             .collection('GROUP')
             .doc(groupId)
@@ -68,11 +69,86 @@ class SideMenu extends ConsumerWidget {
       }
     }
 
-    // PRIMARY_GROUP_IDをマップに追加
+    // ORDER_NOでソート
+    groupData.sort((a, b) => a['ORDER_NO'].compareTo(b['ORDER_NO']));
+
+    // ソート後にgroupMapに格納
+    for (var group in groupData) {
+      groupMap[group['GROUP_ID']] = group['GROUP_NAME'];
+    }
+
     groupMap['PRIMARY_GROUP_ID'] = primaryGroupId ?? '';
 
+    // 状態を返す
     return {'groupMap': groupMap, 'groupUsersMap': groupUsersMap};
   }
+
+  ///
+  ///
+  ///
+  ///過去版
+  ///
+  ///
+  ///
+  // Future<Map<String, dynamic>> _getUserGroupsAndUserIds(String uid) async {
+  //   // USERコレクションからPRIMARY_GROUP_IDを取得
+  //   final userDoc =
+  //       await FirebaseFirestore.instance.collection('USER').doc(uid).get();
+  //   final primaryGroupId = userDoc.data()?['PRIMARY_GROUP_ID'];
+
+  //   // USERコレクションのGROUPサブコレクションのドキュメントIDを取得
+  //   final userGroupsSnapshot = await FirebaseFirestore.instance
+  //       .collection('USER')
+  //       .doc(uid)
+  //       .collection('GROUP')
+  //       .get();
+
+  //   // ドキュメントIDリストを作成
+  //   List<String> groupIds =
+  //       userGroupsSnapshot.docs.map((doc) => doc.id).toList();
+
+  //   // ドキュメントIDに対応するGroupコレクションからGROUP名とORDER_NOを取得
+  //   Map<String, String> groupMap = {};
+  //   Map<String, List<String>> groupUsersMap = {};
+  //   List<Map<String, dynamic>> groupData = []; // グループデータを格納するリスト
+
+  //   for (String groupId in groupIds) {
+  //     final groupSnapshot = await FirebaseFirestore.instance
+  //         .collection('GROUP')
+  //         .doc(groupId)
+  //         .get();
+  //     if (groupSnapshot.exists) {
+  //       final groupDataItem = {
+  //         'GROUP_NAME': groupSnapshot.data()?['GROUP_NAME'] ?? 'No Name',
+  //         'ORDER_NO': groupSnapshot.data()?['ORDER_NO'] ?? 0, // ORDER_NOを取得
+  //         'GROUP_ID': groupId,
+  //       };
+  //       groupData.add(groupDataItem);
+
+  //       // GROUPコレクション配下のUSERサブコレクションのドキュメントID一覧を取得
+  //       final groupUsersSnapshot = await FirebaseFirestore.instance
+  //           .collection('GROUP')
+  //           .doc(groupId)
+  //           .collection('USER')
+  //           .get();
+  //       groupUsersMap[groupId] =
+  //           groupUsersSnapshot.docs.map((doc) => doc.id).toList();
+  //     }
+  //   }
+
+  //   // ORDER_NOでソート
+  //   groupData.sort((a, b) => a['ORDER_NO'].compareTo(b['ORDER_NO']));
+
+  //   // ソート後にgroupMapに格納
+  //   for (var group in groupData) {
+  //     groupMap[group['GROUP_ID']] = group['GROUP_NAME'];
+  //   }
+
+  //   // PRIMARY_GROUP_IDをマップに追加
+  //   groupMap['PRIMARY_GROUP_ID'] = primaryGroupId ?? '';
+
+  //   return {'groupMap': groupMap, 'groupUsersMap': groupUsersMap};
+  // }
 
   // UIDを用いてユーザーのICON_URLを取得する関数
   Future<String> _getUserIconUrl(String uid) async {
@@ -144,7 +220,13 @@ class SideMenu extends ConsumerWidget {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
+                // final groupData = snapshot.data ?? {};
+                // final groupMap = groupData['groupMap'] as Map<String, String>;
+                // final groupUsersMap =
+                //     groupData['groupUsersMap'] as Map<String, List<String>>;
+                // final primaryGroupId = groupMap.remove('PRIMARY_GROUP_ID');
                 final groupData = snapshot.data ?? {};
+                // ↓Map<String, Map<String, dynamic>>
                 final groupMap = groupData['groupMap'] as Map<String, String>;
                 final groupUsersMap =
                     groupData['groupUsersMap'] as Map<String, List<String>>;
