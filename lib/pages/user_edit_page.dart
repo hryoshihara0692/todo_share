@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_share/pages/home.dart';
 import 'package:todo_share/widgets/group_leave_dialog.dart';
 import 'package:todo_share/widgets/responsive_text.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserEditPage extends StatefulWidget {
   const UserEditPage({super.key});
@@ -38,7 +42,6 @@ class _UserEditPageState extends State<UserEditPage> {
       return null;
     }
   }
-
 
   Future<void> _fetchUserData() async {
     final data = await getUserData(uid);
@@ -164,8 +167,8 @@ class _UserEditPageState extends State<UserEditPage> {
     if (isLoading) {
       // return Center(child: CircularProgressIndicator());
       return Center(
-        // child: Image.asset('assets/images/tmp.gif'),
-      );
+          // child: Image.asset('assets/images/tmp.gif'),
+          );
     }
 
     return Scaffold(
@@ -235,21 +238,100 @@ class _UserEditPageState extends State<UserEditPage> {
                 children: [],
               ),
               SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 160,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage('assets/images/Icon_Men.jpeg'),
-                      ),
-                    ),
-                  ),
-                ],
+              Container(
+                width: 160,
+                height: 160,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[300], // 画像がない場合の背景色
+                ),
+                child: FutureBuilder<String>(
+                  future:
+                      getUserIconPath(uid), // ユーザーのアイコンのローカルファイルパスを取得する非同期関数
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                          // child: CircularProgressIndicator(),
+                          // child: Image.asset(
+                          //     'assets/images/tmp.gif'),
+                          );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text('Error: ${snapshot.error}'),
+                      );
+                    } else {
+                      String? iconPath = snapshot.data;
+                      if (iconPath != null && File(iconPath).existsSync()) {
+                        // ローカル画像を取得
+                        return Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: FileImage(File(iconPath)),
+                              fit: BoxFit.cover, // 画像を中央に拡大して丸く収める
+                            ),
+                          ),
+                        );
+                      } else {
+                        print('Firestore Storageから直接表示してます');
+                        // ファイルが存在しない場合はFirestoreからアイコンのURLを取得して表示
+                        return FutureBuilder<String>(
+                          future: _getUserIconUrl(uid),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                  // child:
+                                  // CircularProgressIndicator(),
+                                  // Image.asset(
+                                  //     'assets/images/tmp.gif'),
+                                  );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Failed to load image'),
+                              );
+                            } else {
+                              String iconUrl = snapshot.data ?? '';
+
+                              return Image.network(
+                                iconUrl,
+                                width: 32,
+                                height: 32,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                      // child:
+                                      //     CircularProgressIndicator(
+                                      //   value: loadingProgress
+                                      //               .expectedTotalBytes !=
+                                      //           null
+                                      //       ? loadingProgress
+                                      //               .cumulativeBytesLoaded /
+                                      //           loadingProgress
+                                      //               .expectedTotalBytes!
+                                      //       : null,
+                                      // ),
+                                      // child: Image.asset(
+                                      //     'assets/images/tmp.gif'),
+                                      );
+                                },
+                                errorBuilder: (BuildContext context,
+                                    Object exception, StackTrace? stackTrace) {
+                                  // エラー時の処理
+                                  return Center(
+                                    child: Text('Failed to load image'),
+                                  );
+                                },
+                              );
+                            }
+                          },
+                        );
+                      }
+                    }
+                  },
+                ),
               ),
               SizedBox(height: 16.0),
               Row(
@@ -474,5 +556,42 @@ class _UserEditPageState extends State<UserEditPage> {
         ),
       ),
     );
+  }
+
+  Future<String> getUserIconPath(String userId) async {
+    // アプリのドキュメントディレクトリーを取得
+    final directory = await getApplicationDocumentsDirectory();
+    final String dirPath = path.join(directory.path, 'user_icons');
+
+    // ユーザーごとのアイコン画像のファイルパス
+    final String filePath = path.join(dirPath, '$userId.png');
+
+    // ファイルが存在するかチェック
+    bool fileExists = await File(filePath).exists();
+
+    if (fileExists) {
+      // ローカルにファイルがある場合はそのパスを返す
+      print('ローカルを使ってます。');
+      return filePath;
+    } else {
+      print('Firestoreからダウンロードします');
+      // FirestoreからアイコンURLを取得して、ローカルに保存する
+      final iconUrl = await _getUserIconUrl(userId);
+      await _downloadAndSaveImage(iconUrl, filePath);
+      return filePath;
+    }
+  }
+
+  // UIDを用いてユーザーのICON_URLを取得する関数
+  Future<String> _getUserIconUrl(String uid) async {
+    final userDoc =
+        await FirebaseFirestore.instance.collection('USER').doc(uid).get();
+    return userDoc.data()?['ICON_URL'] ?? '';
+  }
+
+  Future<void> _downloadAndSaveImage(String imageUrl, String filePath) async {
+    final response =
+        await FirebaseStorage.instance.refFromURL(imageUrl).getData();
+    await File(filePath).writeAsBytes(response!);
   }
 }

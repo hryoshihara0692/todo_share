@@ -193,13 +193,19 @@ class SideMenu extends ConsumerWidget {
                                           );
                                         } else {
                                           String? iconPath = snapshot.data;
-
-                                          if (iconPath != null) {
-                                            // ローカルにファイルが存在する場合はその画像を表示
-                                            return Image.file(
-                                              File(iconPath),
-                                              width: 32,
-                                              height: 32,
+                                          if (iconPath != null &&
+                                              File(iconPath).existsSync()) {
+                                            // ローカル画像を取得
+                                            return Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                  image:
+                                                      FileImage(File(iconPath)),
+                                                  fit: BoxFit
+                                                      .cover, // 画像を中央に拡大して丸く収める
+                                                ),
+                                              ),
                                             );
                                           } else {
                                             print(
@@ -279,10 +285,10 @@ class SideMenu extends ConsumerWidget {
                                       if (snapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return Center(
-                                          // child: CircularProgressIndicator());
-                                          // child: Image.asset(
-                                          //     'assets/images/tmp.gif'),
-                                        );
+                                            // child: CircularProgressIndicator());
+                                            // child: Image.asset(
+                                            //     'assets/images/tmp.gif'),
+                                            );
                                       } else if (snapshot.hasError) {
                                         return Center(
                                             child: Text(
@@ -448,6 +454,7 @@ class SideMenu extends ConsumerWidget {
                                           height: 32,
                                         ),
                                         ...userIds.map((userId) {
+                                          // uidのindexをチェックして、uidだったらそのままローカル画像表示
                                           int index = userIds.indexOf(userId);
                                           if (index > 0) {
                                             return Positioned(
@@ -464,11 +471,11 @@ class SideMenu extends ConsumerWidget {
                                                         ConnectionState
                                                             .waiting) {
                                                       return Center(
-                                                        // child:
-                                                        //     // CircularProgressIndicator(),
-                                                        //     Image.asset(
-                                                        //         'assets/images/tmp.gif'),
-                                                      );
+                                                          // child:
+                                                          //     // CircularProgressIndicator(),
+                                                          //     Image.asset(
+                                                          //         'assets/images/tmp.gif'),
+                                                          );
                                                     } else if (snapshot
                                                         .hasError) {
                                                       return Center(
@@ -479,12 +486,24 @@ class SideMenu extends ConsumerWidget {
                                                       String? iconPath =
                                                           snapshot.data;
 
-                                                      if (iconPath != null) {
-                                                        // ローカルにファイルが存在する場合はその画像を表示
-                                                        return Image.file(
-                                                          File(iconPath),
-                                                          width: 32,
-                                                          height: 32,
+                                                      if (iconPath != null &&
+                                                          File(iconPath)
+                                                              .existsSync()) {
+                                                        // ローカル画像を取得
+                                                        return Container(
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            image:
+                                                                DecorationImage(
+                                                              image: FileImage(
+                                                                  File(
+                                                                      iconPath)),
+                                                              fit: BoxFit
+                                                                  .cover, // 画像を中央に拡大して丸く収める
+                                                            ),
+                                                          ),
                                                         );
                                                       } else {
                                                         print(
@@ -502,11 +521,11 @@ class SideMenu extends ConsumerWidget {
                                                                 ConnectionState
                                                                     .waiting) {
                                                               return Center(
-                                                                // child:
-                                                                //     // CircularProgressIndicator(),
-                                                                //     Image.asset(
-                                                                //         'assets/images/tmp.gif'),
-                                                              );
+                                                                  // child:
+                                                                  //     // CircularProgressIndicator(),
+                                                                  //     Image.asset(
+                                                                  //         'assets/images/tmp.gif'),
+                                                                  );
                                                             } else if (snapshot
                                                                 .hasError) {
                                                               return Center(
@@ -533,18 +552,18 @@ class SideMenu extends ConsumerWidget {
                                                                       null)
                                                                     return child;
                                                                   return Center(
-                                                                    // child:
-                                                                    //     CircularProgressIndicator(
-                                                                    //   value: loadingProgress.expectedTotalBytes !=
-                                                                    //           null
-                                                                    //       ? loadingProgress.cumulativeBytesLoaded /
-                                                                    //           loadingProgress.expectedTotalBytes!
-                                                                    //       : null,
-                                                                    // ),
-                                                                    // child: Image
-                                                                    //     .asset(
-                                                                    //         'assets/images/tmp.gif'),
-                                                                  );
+                                                                      // child:
+                                                                      //     CircularProgressIndicator(
+                                                                      //   value: loadingProgress.expectedTotalBytes !=
+                                                                      //           null
+                                                                      //       ? loadingProgress.cumulativeBytesLoaded /
+                                                                      //           loadingProgress.expectedTotalBytes!
+                                                                      //       : null,
+                                                                      // ),
+                                                                      // child: Image
+                                                                      //     .asset(
+                                                                      //         'assets/images/tmp.gif'),
+                                                                      );
                                                                 },
                                                                 errorBuilder: (BuildContext
                                                                         context,
@@ -579,11 +598,11 @@ class SideMenu extends ConsumerWidget {
                                                           .connectionState ==
                                                       ConnectionState.waiting) {
                                                     return Center(
-                                                      // child:
-                                                      //     CircularProgressIndicator(),
-                                                      // child: Image.asset(
-                                                      //     'assets/images/tmp.gif'),
-                                                    );
+                                                        // child:
+                                                        //     CircularProgressIndicator(),
+                                                        // child: Image.asset(
+                                                        //     'assets/images/tmp.gif'),
+                                                        );
                                                   } else if (snapshot
                                                       .hasError) {
                                                     return Center(
@@ -595,11 +614,21 @@ class SideMenu extends ConsumerWidget {
                                                         snapshot.data;
 
                                                     if (iconPath != null) {
-                                                      // ローカルにファイルが存在する場合はその画像を表示
-                                                      return Image.file(
-                                                        File(iconPath),
+                                                      return Container(
                                                         width: 32,
                                                         height: 32,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          image:
+                                                              DecorationImage(
+                                                            image: FileImage(
+                                                                File(iconPath)),
+                                                            fit: BoxFit
+                                                                .cover, // 画像を中央に拡大して丸く収める
+                                                          ),
+                                                        ),
                                                       );
                                                     } else {
                                                       print(
@@ -616,11 +645,11 @@ class SideMenu extends ConsumerWidget {
                                                               ConnectionState
                                                                   .waiting) {
                                                             return Center(
-                                                              // child:
-                                                              //     CircularProgressIndicator(),
-                                                              // child: Image.asset(
-                                                              //     'assets/images/tmp.gif'),
-                                                            );
+                                                                // child:
+                                                                //     CircularProgressIndicator(),
+                                                                // child: Image.asset(
+                                                                //     'assets/images/tmp.gif'),
+                                                                );
                                                           } else if (snapshot
                                                               .hasError) {
                                                             return Center(
@@ -648,18 +677,18 @@ class SideMenu extends ConsumerWidget {
                                                                     null)
                                                                   return child;
                                                                 return Center(
-                                                                  // child:
-                                                                  //     CircularProgressIndicator(
-                                                                  //   value: loadingProgress.expectedTotalBytes !=
-                                                                  //           null
-                                                                  //       ? loadingProgress.cumulativeBytesLoaded /
-                                                                  //           loadingProgress.expectedTotalBytes!
-                                                                  //       : null,
-                                                                  // ),
-                                                                  // child: Image
-                                                                  //     .asset(
-                                                                  //         'assets/images/tmp.gif'),
-                                                                );
+                                                                    // child:
+                                                                    //     CircularProgressIndicator(
+                                                                    //   value: loadingProgress.expectedTotalBytes !=
+                                                                    //           null
+                                                                    //       ? loadingProgress.cumulativeBytesLoaded /
+                                                                    //           loadingProgress.expectedTotalBytes!
+                                                                    //       : null,
+                                                                    // ),
+                                                                    // child: Image
+                                                                    //     .asset(
+                                                                    //         'assets/images/tmp.gif'),
+                                                                    );
                                                               },
                                                               errorBuilder: (BuildContext
                                                                       context,
