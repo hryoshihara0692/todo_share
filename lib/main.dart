@@ -36,6 +36,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final String? uid = UID().uid;
 
+    // ログアウト
+    // FirebaseAuth.instance.signOut();
+
     return MaterialApp(
       theme: ThemeData(
         appBarTheme: const AppBarTheme(
@@ -52,8 +55,8 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
-        const Locale('en',''),
-        const Locale('ja',''),
+        const Locale('en', ''),
+        const Locale('ja', ''),
       ],
     );
   }
